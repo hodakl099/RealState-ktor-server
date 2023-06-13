@@ -2,6 +2,7 @@ package com.example.plugins
 
 import com.apurebase.kgraphql.GraphQL
 import com.apurebase.kgraphql.KGraphQL
+import com.example.data.dao
 import com.example.model.RealState
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
@@ -31,6 +32,9 @@ fun Application.configureRouting() {
     routing {
         get("/properties") {
             call.respond(realStates)
+        }
+        get {
+            call.respond(FreeMarkerContent("index.ftl", mapOf("articles" to dao.allArticles())))
         }
     }
 
