@@ -50,4 +50,7 @@ dependencies {
     implementation("com.github.excitement-engineer:ktor-graphql:3.0.0")
     implementation("com.apurebase:kgraphql:0.19.0")
     implementation("com.apurebase:kgraphql-ktor:0.19.0")
+    implementation("org.jetbrains.exposed:exposed-core:0.41.1")
+    implementation("org.jetbrains.exposed:exposed-dao:0.41.1")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.41.1")
 }
