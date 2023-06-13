@@ -2,7 +2,9 @@ package com.example.plugins
 
 import com.apurebase.kgraphql.GraphQL
 import com.apurebase.kgraphql.KGraphQL
+import com.example.model.Dummy
 import com.example.model.RealState
+import io.ktor.http.cio.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -14,6 +16,11 @@ private val realStates = listOf(
     RealState("image1.jpg", "1000 sqft", "Location 1"),
     RealState("image2.jpg", "2000 sqft", "Location 2"),
     RealState("image1.jpg", "3000 sqft", "Location 3")
+)
+private val Dummy = listOf(
+    Dummy("Mahmoud"),
+    Dummy("Marwan"),
+    Dummy("Thanaa")
 )
 fun Application.configureGraphQl() {
     install(GraphQL) {
@@ -43,10 +50,26 @@ fun Application.configureGraphQl() {
                         }
                     }
 
+
+            type<Dummy> {
+                description = "a list of dummy shit"
+
+                property("name") {
+                    description = "The name of the property"
+                    resolver { dummy: Dummy -> dummy.name  }
+                }
+            }
+
                     query("properties") {
                         description = "Return all properties"
                         resolver { -> realStates }
                     }
+
+
+            query("dummy") {
+                description = "return the list of dummies"
+                resolver { -> Dummy }
+            }
                 }
     }
 }
