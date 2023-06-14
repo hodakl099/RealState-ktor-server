@@ -55,7 +55,12 @@ fun Application.configureRouting() {
                         is PartData.FileItem -> {
                             if (part.name == "videoURL" || part.name == "imageURL") {
                                 val fileBytes = part.streamProvider().readBytes()
-                                val filePath = "uploads/${part.originalFileName}"
+                                val dirPath = "uploads"
+                                val dir = File(dirPath)
+                                if (!dir.exists()) {
+                                    dir.mkdir()
+                                }
+                                val filePath = "$dirPath/${part.originalFileName}"
                                 File(filePath).writeBytes(fileBytes)
                                 if (part.name == "videoURL") videoURL = filePath
                                 else imageURL = filePath
