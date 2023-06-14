@@ -1,6 +1,6 @@
 package com.example.util
 
-import com.example.model.Articles
+import com.example.model.RealStates
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -15,7 +15,7 @@ object DatabaseFactory {
         val database = Database.connect(jdbcURL,driverClassName)
 
         transaction(database) {
-            SchemaUtils.create(Articles)
+            SchemaUtils.create(RealStates)
         }
     }
 
