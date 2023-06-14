@@ -28,40 +28,46 @@ fun Application.configureRouting() {
         get {
             call.respond(FreeMarkerContent("index.ftl", mapOf("articles" to dao.allRealStates())))
         }
-        post("/upload") {
-            val multiPart = call.receiveMultipart()
-            var title : String? = null
-            var description : String? = null
-            var videoURL : String? = null
-            var imageURL : String? = null
-            var latitude : Double? = null
-            var longitude : Double? = null
+        route("/upload") {
+            get {
+                call.respondText("Upload endpoint")
+            }
+            post {
+                val multiPart = call.receiveMultipart()
+                var title : String? = null
+                var description : String? = null
+                var videoURL : String? = null
+                var imageURL : String? = null
+                var latitude : Double? = null
+                var longitude : Double? = null
 
-            multiPart.forEachPart {part ->
-                when(part) {
-                    is PartData.FormItem -> {
-                        when(part.name) {
-                            "title" -> title = part.value
-                            "description" -> description = part.value
-                            "latitude" -> latitude = part.value.toDoubleOrNull()
-                            "longitude" -> longitude = part.value.toDoubleOrNull()
-                        }
+                multiPart.forEachPart {part ->
+                    when(part) {
+                        is PartData.FormItem -> {
+                            when(part.name) {
+                                "title" -> title = part.value
+                                "description" -> description = part.value
+                                "latitude" -> latitude = part.value.toDoubleOrNull()
+                                "longitude" -> longitude = part.value.toDoubleOrNull()
+                            }
 
-                    }
-                    is PartData.FileItem -> {
-                        if (part.name == "videoURL" || part.name == "imageURL") {
-                            val fileBytes = part.streamProvider().readBytes()
-                            val filePath = "uploads/${part.originalFileName}"
-                            File(filePath).writeBytes(fileBytes)
-                            if (part.name == "videoURL") videoURL = filePath
-                            else imageURL = filePath
                         }
+                        is PartData.FileItem -> {
+                            if (part.name == "videoURL" || part.name == "imageURL") {
+                                val fileBytes = part.streamProvider().readBytes()
+                                val filePath = "uploads/${part.originalFileName}"
+                                File(filePath).writeBytes(fileBytes)
+                                if (part.name == "videoURL") videoURL = filePath
+                                else imageURL = filePath
+                            }
+                        }
+                        else -> return@forEachPart
                     }
-                    else -> return@forEachPart
+                    part.dispose()
                 }
-                part.dispose()
             }
         }
+
         get("{id}") {
             val id = call.parameters.getOrFail<Int>("id").toInt()
             call.respond(FreeMarkerContent("show.ftl", mapOf("article" to dao.realState(id))))
