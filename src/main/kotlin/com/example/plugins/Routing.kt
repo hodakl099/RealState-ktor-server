@@ -53,7 +53,7 @@ fun Application.configureRouting() {
 
                         }
                         is PartData.FileItem -> {
-                            if (part.name == "videoURL" || part.name == "imageURL") {
+                            if (part.name == "video" || part.name == "image") {
                                 val fileBytes = part.streamProvider().readBytes()
                                 val dirPath = "uploads"
                                 val dir = File(dirPath)
@@ -62,7 +62,7 @@ fun Application.configureRouting() {
                                 }
                                 val filePath = "$dirPath/${part.originalFileName}"
                                 File(filePath).writeBytes(fileBytes)
-                                if (part.name == "videoURL") videoURL = filePath
+                                if (part.name == "video") videoURL = filePath
                                 else imageURL = filePath
                             }
                         }
@@ -70,6 +70,7 @@ fun Application.configureRouting() {
                     }
                     part.dispose()
                 }
+                call.respond(HttpStatusCode.OK)
             }
         }
 
@@ -97,7 +98,7 @@ fun Application.configureRouting() {
                 }
                 "delete" -> {
                     dao.deleteRealState(id)
-                    call.respondRedirect("/articles")
+                    call.respondRedirect("/realStates")
                 }
             }
         }
