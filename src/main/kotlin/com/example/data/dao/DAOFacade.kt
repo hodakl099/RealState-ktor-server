@@ -3,11 +3,11 @@ package com.example.data.dao
 import com.example.model.RealState
 
 interface DAOFacade {
-    suspend fun allArticles() : List<RealState>
-    suspend fun article(id : Int) : RealState?
-    suspend fun addNewArticle(title : String, body : String) : RealState?
-    suspend fun editArticle(id:Int, title: String,body: String) : Boolean
-    suspend fun deleteArticle(id: Int) : Boolean
+    suspend fun allRealStates() : List<RealState>
+    suspend fun realState(id : Int) : RealState?
+    suspend fun addNewRealState(title : String, description : String,latitude: Double,longitude: Double,videoURL : String,imageURL : String) : RealState?
+    suspend fun editRealState(id:Int, title : String, description : String,latitude: Double,longitude: Double,videoURL : String,imageURL : String) : Boolean
+    suspend fun deleteRealState(id: Int) : Boolean
 
 
 }

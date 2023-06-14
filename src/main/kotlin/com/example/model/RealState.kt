@@ -9,6 +9,7 @@ data class RealState(val id : Int, val title : String, val description : String,
 object RealStates : Table() {
     val id  = integer("id").autoIncrement()
     val title = varchar("title",128)
+    val description = varchar("description", 1028)
     val latitude = double("latitude")
     val longitude = double("longitude")
     val videoURL = varchar("videoURL",2048)

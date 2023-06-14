@@ -6,8 +6,8 @@ import kotlinx.coroutines.runBlocking
 
 val dao : DAOFacade = DAOFacadeImpl().apply {
     runBlocking {
-        if (allArticles().isEmpty()) {
-            addNewArticle("Jetpack compose", "jetpack compose its going to be great investment.")
+        if (allRealStates().isEmpty()) {
+            addNewRealState("Jetpack compose", "jetpack compose its going to be great investment.")
         }
     }
 }

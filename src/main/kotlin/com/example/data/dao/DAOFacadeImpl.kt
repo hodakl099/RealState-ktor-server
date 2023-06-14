@@ -8,40 +8,69 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class DAOFacadeImpl : DAOFacade {
 
-    private fun resultRowToArticle(row : ResultRow) = RealState(
+    private fun resultRowToRealState(row : ResultRow) = RealState(
         id=row[RealStates.id],
         title =row[RealStates.title],
-        body =row[RealStates.body]
+        description =row[RealStates.description],
+        imageURL = row[RealStates.imageURL],
+        videoURL = row[RealStates.videoURL],
+        latitude = row[RealStates.latitude],
+        longitude = row[RealStates.longitude]
     )
-    override suspend fun allArticles(): List<RealState> = dbQuery {
-        RealStates.selectAll().map(::resultRowToArticle)
+    override suspend fun allRealStates(): List<RealState> = dbQuery {
+        RealStates.selectAll().map(::resultRowToRealState)
     }
 
-    override suspend fun article(id: Int): RealState?  = dbQuery {
+    override suspend fun realState(id: Int): RealState?  = dbQuery {
         RealStates
             .select {
                 RealStates.id eq id
             }
-            .map(::resultRowToArticle)
+            .map(::resultRowToRealState)
             .singleOrNull()
     }
 
-    override suspend fun addNewArticle(title: String, body: String): RealState? = dbQuery {
+    override suspend fun addNewRealState(
+        title: String,
+        description: String,
+        latitude: Double,
+        longitude: Double,
+        videoURL: String,
+        imageURL: String
+    ): RealState? = dbQuery {
         val insertStatement = RealStates.insert {
             it[RealStates.title] = title
-            it[RealStates.body] = body
+            it[RealStates.description] = description
+            it[RealStates.imageURL] = imageURL
+            it[RealStates.videoURL] = videoURL
+            it[RealStates.longitude] = longitude
+            it[RealStates.latitude] = latitude
         }
-        insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToArticle)
+        insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToRealState)
     }
 
-    override suspend fun editArticle(id: Int, title: String, body: String): Boolean = dbQuery {
-     RealStates.update({ RealStates.id eq id }) {
-         it[RealStates.title] = title
-         it[RealStates.body] = body
-     } > 0
+    override suspend fun editRealState(
+        id: Int,
+        title: String,
+        description: String,
+        latitude: Double,
+        longitude: Double,
+        videoURL: String,
+        imageURL: String
+    ): Boolean = dbQuery {
+        RealStates.update({ RealStates.id eq id }) {
+            it[RealStates.title] = title
+            it[RealStates.description] = description
+            it[RealStates.latitude] = latitude
+            it[RealStates.longitude] = longitude
+            it[RealStates.videoURL] = videoURL
+            it[RealStates.imageURL] = imageURL
+        } > 0
     }
 
-    override suspend fun deleteArticle(id: Int): Boolean = dbQuery {
+
+
+    override suspend fun deleteRealState(id: Int): Boolean = dbQuery {
         RealStates.deleteWhere{
             RealStates.id eq id
         } > 0
