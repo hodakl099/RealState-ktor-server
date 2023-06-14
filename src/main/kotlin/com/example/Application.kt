@@ -8,7 +8,7 @@ import com.example.util.DatabaseFactory
 import org.h2.engine.Database
 
 fun main(args: Array<String>): Unit =
-    io.ktor.server.netty.EngineMain.main(args)
+    EngineMain.main(args)
 
 fun Application.module() {
     DatabaseFactory.init()
@@ -18,5 +18,5 @@ fun Application.module() {
     configureTemplating()
 //    configureDatabases()
 //    configureSockets()
-//    configureMonitoring()
+    configureMonitoring()
 }

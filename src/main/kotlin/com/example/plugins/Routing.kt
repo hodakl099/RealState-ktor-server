@@ -6,11 +6,13 @@ import io.ktor.server.routing.*
 import io.ktor.server.response.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.freemarker.*
 import io.ktor.server.request.*
 import io.ktor.server.util.*
 import java.awt.Frame
+import java.io.File
 
 
 fun Application.configureRouting() {
@@ -26,16 +28,39 @@ fun Application.configureRouting() {
         get {
             call.respond(FreeMarkerContent("index.ftl", mapOf("articles" to dao.allRealStates())))
         }
-        post {
-            val fromParameter = call.receiveParameters()
-            val title = fromParameter.getOrFail<String>("title")
-            val description = fromParameter.getOrFail<String>("description")
-            val videoURL = fromParameter.getOrFail<String>("videoURL")
-            val imageURL = fromParameter.getOrFail<String>("imageURL")
-            val body = fromParameter.getOrFail<String>("body")
-            val body = fromParameter.getOrFail<String>("body")
-            val description = dao.addNewRealState(title = title ?: "",description = body ?: "", videoURL = videoURL, imageURL = )
-            call.respondRedirect("/articles/${article?.id}")
+        post("/upload") {
+            val multiPart = call.receiveMultipart()
+            var title : String? = null
+            var description : String? = null
+            var videoURL : String? = null
+            var imageURL : String? = null
+            var latitude : Double? = null
+            var longitude : Double? = null
+
+            multiPart.forEachPart {part ->
+                when(part) {
+                    is PartData.FormItem -> {
+                        when(part.name) {
+                            "title" -> title = part.value
+                            "description" -> description = part.value
+                            "latitude" -> latitude = part.value.toDoubleOrNull()
+                            "longitude" -> longitude = part.value.toDoubleOrNull()
+                        }
+
+                    }
+                    is PartData.FileItem -> {
+                        if (part.name == "videoURL" || part.name == "imageURL") {
+                            val fileBytes = part.streamProvider().readBytes()
+                            val filePath = "uploads/${part.originalFileName}"
+                            File(filePath).writeBytes(fileBytes)
+                            if (part.name == "videoURL") videoURL = filePath
+                            else imageURL = filePath
+                        }
+                    }
+                    else -> return@forEachPart
+                }
+                part.dispose()
+            }
         }
         get("{id}") {
             val id = call.parameters.getOrFail<Int>("id").toInt()
@@ -50,9 +75,13 @@ fun Application.configureRouting() {
             val fromParameters = call.receiveParameters()
             when(fromParameters.getOrFail("_action")) {
                 "update" -> {
-                    val title = fromParameters.getOrFail("title")
-                    val body = fromParameters.getOrFail("body")
-                    dao.editRealState(id,title,body)
+                    val title = fromParameters.getOrFail<String>("title")
+                    val description = fromParameters.getOrFail<String>("description")
+                    val videoURL = fromParameters.getOrFail<String>("videoURL")
+                    val imageURL = fromParameters.getOrFail<String>("imageURL")
+                    val latitude = fromParameters.getOrFail<Double>("latitude")
+                    val longitude = fromParameters.getOrFail<Double>("longitude")
+                    dao.editRealState(id = id,title = title,description = description,imageURL= imageURL, videoURL = videoURL, latitude = latitude, longitude = longitude)
                     call.respondRedirect("/articles/$id")
                 }
                 "delete" -> {

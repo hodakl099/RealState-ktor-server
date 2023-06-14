@@ -13,9 +13,9 @@ import ktor.graphql.GraphQLRequest
 import java.util.*
 
 private val realStates = listOf(
-    RealState("image1.jpg", "1000 sqft", "Location 1"),
-    RealState("image2.jpg", "2000 sqft", "Location 2"),
-    RealState("image1.jpg", "3000 sqft", "Location 3")
+    RealState(0, "1000 sqft", "Location 1",0.0,0.0,"videoUrl","imageUrl"),
+    RealState(0, "1000 sqft", "Location 1",0.0,0.0,"videoUrl","imageUrl"),
+    RealState(0, "1000 sqft", "Location 1",0.0,0.0,"videoUrl","imageUrl"),
 )
 private val Dummy = listOf(
     Dummy("Mahmoud"),
@@ -34,19 +34,19 @@ fun Application.configureGraphQl() {
                     type<RealState> {
                         description = "A real estate property"
 
-                        property("image") {
+                        property("imageURL") {
                             description = "The image of the property"
-                            resolver { realState : RealState -> realState.image }
+                            resolver { realState : RealState -> realState.imageURL }
                         }
 
-                        property("realStateSize") {
+                        property("description") {
                             description = "The size of the property"
-                            resolver { realState : RealState -> realState.realStateSize }
+                            resolver { realState : RealState -> realState.description }
                         }
 
-                        property("location") {
+                        property("videoURL") {
                             description = "The location of the property"
-                            resolver { realState : RealState -> realState.location }
+                            resolver { realState : RealState -> realState.videoURL }
                         }
                     }
 
