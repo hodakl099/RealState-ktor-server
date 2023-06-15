@@ -1,9 +1,0 @@
-type RealState {
-  id: ID!
-  title: String!
-  description: String!
-  latitude: Float!
-  longitude: Float!
-  videoURL: String!
-  imageURL: String!
-}
