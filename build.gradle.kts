@@ -63,8 +63,6 @@ dependencies {
     implementation("com.expediagroup:graphql-kotlin-federation:4.0.0")
     implementation("com.expediagroup:graphql-kotlin-spring-server:4.0.0")
     implementation("org.litote.kmongo:kmongo-coroutine:4.9.0")
-    implementation("com.github.pgutkowski:kgraphql:0.16.0")
-    implementation("com.github.pgutkowski:kgraphql-upload:0.16.0")
 
 
 }

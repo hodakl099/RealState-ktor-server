@@ -24,11 +24,11 @@ private val Dummy = listOf(
     Dummy("Thanaa")
 )
 fun Application.configureGraphQl() {
-    val schemaParser = SchemaParser()
-    val schema = schemaParser.parse(
-        this::class.java.getResource("schema.graphql")?.readText() ?: return
-        listOf(Mutation())
-    )
+//    val schemaParser = SchemaParser()
+//    val schema = schemaParser.parse(
+//        this::class.java.getResource("schema.graphql")?.readText() ?: return
+//        listOf(Mutation())
+//    )
     install(GraphQL) {
         playground = true
         schema {
