@@ -70,6 +70,9 @@ fun Application.configureRouting() {
                     }
                     part.dispose()
                 }
+                dao.addNewRealState(title = title ?: "", description = description ?: "",latitude = latitude?: 0.0,longitude = longitude ?: 0.0,videoURL = videoURL ?: "",imageURL= imageURL ?: "")
+                print("Add successfully!")
+                print(dao.allRealStates())
                 call.respond(HttpStatusCode.OK)
             }
         }

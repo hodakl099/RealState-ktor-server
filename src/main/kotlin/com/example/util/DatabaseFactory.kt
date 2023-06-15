@@ -10,9 +10,12 @@ import org.jetbrains.exposed.sql.transactions.transaction
 object DatabaseFactory {
 
     fun init() {
-        val driverClassName =  "org.h2.Driver"
-        val jdbcURL = "jdbc:h2:file:./build/db"
-        val database = Database.connect(jdbcURL,driverClassName)
+       val database =  Database.connect(
+            url = "jdbc:postgresql://localhost:5432/aqarDatabase",
+            driver = "org.postgresql.Driver",
+            user = "mahmoud",
+            password = "hodakl099$"
+        )
 
         transaction(database) {
             SchemaUtils.create(RealStates)
