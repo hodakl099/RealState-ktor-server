@@ -1,0 +1,15 @@
+type Mutation  {
+    uploadData(
+        title : String!,
+        description : String,
+        videoURL : String,
+        imageURL : String,
+        latitude : Float,
+        longitude : Float
+    ) : Response
+}
+
+type Response {
+    success : Boolean!,
+    message : String
+}

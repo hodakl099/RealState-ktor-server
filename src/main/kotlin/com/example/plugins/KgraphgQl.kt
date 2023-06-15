@@ -4,6 +4,7 @@ import com.apurebase.kgraphql.GraphQL
 import com.apurebase.kgraphql.KGraphQL
 import com.example.model.Dummy
 import com.example.model.RealState
+import graphql.schema.idl.SchemaParser
 import io.ktor.http.cio.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -23,6 +24,11 @@ private val Dummy = listOf(
     Dummy("Thanaa")
 )
 fun Application.configureGraphQl() {
+    val schemaParser = SchemaParser()
+    val schema = schemaParser.parse(
+        this::class.java.getResource("schema.graphql")?.readText() ?: return
+        listOf(Mutation())
+    )
     install(GraphQL) {
         playground = true
         schema {
@@ -65,11 +71,18 @@ fun Application.configureGraphQl() {
                         resolver { -> realStates }
                     }
 
-
             query("dummy") {
                 description = "return the list of dummies"
                 resolver { -> Dummy }
             }
-                }
+        }
+        schema {
+
+        }
     }
 }
+
+/***
+ * now I created the dashboard dummy to actually add data to the database from another app.
+ * now i want to do that with GraphQl.
+ */
