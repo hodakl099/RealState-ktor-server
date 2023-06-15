@@ -57,5 +57,12 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:0.41.1")
     implementation("io.ktor:ktor-server-cors:$ktor_version")
     implementation("io.ktor:ktor-server-core:$ktor_version")
+    implementation("com.graphql-java:graphql-java-tools:5.2.4")
+    implementation("org.litote.kmongo:kmongo:4.2.3") //KMongo (MongoDB)
+    implementation("com.expediagroup:graphql-kotlin-schema-generator:4.0.0")
+    implementation("com.expediagroup:graphql-kotlin-federation:4.0.0")
+    implementation("com.expediagroup:graphql-kotlin-spring-server:4.0.0")
+    implementation("org.litote.kmongo:kmongo-coroutine:4.9.0")
+
 
 }

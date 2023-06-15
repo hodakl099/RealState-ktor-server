@@ -23,7 +23,6 @@ fun Application.module() {
     configureRouting()
     configureGraphQl()
     configureTemplating()
-//    configureDatabases()
 //    configureSockets()
     configureMonitoring()
 }

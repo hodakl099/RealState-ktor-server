@@ -1,15 +1,9 @@
-type Mutation  {
-    uploadData(
-        title : String!,
-        description : String,
-        videoURL : String,
-        imageURL : String,
-        latitude : Float,
-        longitude : Float
-    ) : Response
-}
-
-type Response {
-    success : Boolean!,
-    message : String
+type RealState {
+  id: ID!
+  title: String!
+  description: String!
+  latitude: Float!
+  longitude: Float!
+  videoURL: String!
+  imageURL: String!
 }
