@@ -3,16 +3,18 @@ package com.example.plugins
 import com.apurebase.kgraphql.GraphQL
 import com.example.data.dao
 import com.example.model.RealState
+import graphql.schema.idl.SchemaParser
 import io.ktor.http.cio.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import ktor.graphql.GraphQLRequest
 import java.util.*
 
 
-fun Application.configureGraphQl() {
 
+fun Application.configureGraphQl() {
     install(GraphQL) {
         playground = true
         schema {
@@ -44,5 +46,13 @@ fun Application.configureGraphQl() {
                         resolver { -> dao.allRealStates() }
                     }
         }
+        schema {
+
+        }
     }
 }
+
+/***
+ * now I created the dashboard dummy to actually add data to the database from another app.
+ * now i want to do that with GraphQl.
+ */

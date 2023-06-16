@@ -63,6 +63,6 @@ dependencies {
     implementation("com.expediagroup:graphql-kotlin-federation:4.0.0")
     implementation("com.expediagroup:graphql-kotlin-spring-server:4.0.0")
     implementation("org.litote.kmongo:kmongo-coroutine:4.9.0")
-
+    implementation("com.google.cloud:google-cloud-storage:1.113.14")
 
 }

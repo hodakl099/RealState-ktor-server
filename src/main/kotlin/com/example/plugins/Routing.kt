@@ -2,6 +2,10 @@ package com.example.plugins
 
 import com.example.data.dao
 import com.example.model.RealState
+import com.google.api.services.storage.Storage
+import com.google.cloud.storage.BlobId
+import com.google.cloud.storage.BlobInfo
+import com.google.cloud.storage.StorageOptions
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
 import io.ktor.server.plugins.statuspages.*
@@ -32,19 +36,20 @@ fun Application.configureRouting() {
             get {
                 call.respondText("Upload endpoint")
             }
+
             post {
                 val multiPart = call.receiveMultipart()
-                var title : String? = null
-                var description : String? = null
-                var videoURL : String? = null
-                var imageURL : String? = null
-                var latitude : Double? = null
-                var longitude : Double? = null
+                var title: String? = null
+                var description: String? = null
+                var videoURL: String? = null
+                var imageURL: String? = null
+                var latitude: Double? = null
+                var longitude: Double? = null
 
-                multiPart.forEachPart {part ->
-                    when(part) {
+                multiPart.forEachPart { part ->
+                    when (part) {
                         is PartData.FormItem -> {
-                            when(part.name) {
+                            when (part.name) {
                                 "title" -> title = part.value
                                 "description" -> description = part.value
                                 "latitude" -> latitude = part.value.toDoubleOrNull()
@@ -55,13 +60,24 @@ fun Application.configureRouting() {
                         is PartData.FileItem -> {
                             if (part.name == "video" || part.name == "image") {
                                 val fileBytes = part.streamProvider().readBytes()
-                                val dirPath = "uploads"
-                                val dir = File(dirPath)
-                                if (!dir.exists()) {
-                                    dir.mkdir()
-                                }
-                                val filePath = "$dirPath/${part.originalFileName}"
-                                File(filePath).writeBytes(fileBytes)
+                                System.setProperty("GOOGLE_APPLICATION_CREDENTIALS", "/resources/verdant-option-390012-977b2708f8e5.json")
+                                val storage: com.google.cloud.storage.Storage? = StorageOptions.getDefaultInstance().service
+
+                                // The name of your bucket
+                                val bucketName = "tajaqar"
+
+                                // Create a blobId with the name of the file
+                                val blobId = part.originalFileName?.let { BlobId.of(bucketName, it) }
+
+                                // Create a blobInfo
+                                val blobInfo = blobId?.let { BlobInfo.newBuilder(it).build() }
+
+                                // Upload the file to the bucket
+                                blobInfo?.let { storage?.create(it, fileBytes) }
+
+                                // Get the download URL
+                                val filePath = blobId?.let { storage?.get(it)?.mediaLink }
+
                                 if (part.name == "video") videoURL = filePath
                                 else imageURL = filePath
                             }
@@ -70,7 +86,14 @@ fun Application.configureRouting() {
                     }
                     part.dispose()
                 }
-                dao.addNewRealState(title = title ?: "", description = description ?: "",latitude = latitude?: 0.0,longitude = longitude ?: 0.0,videoURL = videoURL ?: "",imageURL= imageURL ?: "")
+                dao.addNewRealState(
+                    title = title ?: "",
+                    description = description ?: "",
+                    latitude = latitude ?: 0.0,
+                    longitude = longitude ?: 0.0,
+                    videoURL = videoURL ?: "",
+                    imageURL = imageURL ?: ""
+                )
                 print("Add successfully!")
                 print(dao.allRealStates())
                 call.respond(HttpStatusCode.OK)

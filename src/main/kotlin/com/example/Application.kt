@@ -17,7 +17,6 @@ fun Application.module() {
         val allRealStates = dao.allRealStates()
         println(allRealStates)
     }
-    //"
     configureSerialization()
     configureRouting()
     configureGraphQl()

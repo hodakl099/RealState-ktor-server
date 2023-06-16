@@ -11,10 +11,10 @@ object DatabaseFactory {
 
     fun init() {
        val database =  Database.connect(
-            url = "jdbc:postgresql://localhost:5432/aqarDatabase",
+            url = "jdbc:postgresql://localhost:5432/postgres",
             driver = "org.postgresql.Driver",
-            user = "mahmoud",
-            password = "hodakl099$"
+            user = "postgres",
+            password = "mahmoud99"
         )
 
         transaction(database) {

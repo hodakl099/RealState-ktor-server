@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "verdant-option-390012",
+  "private_key_id": "977b2708f8e507a08ae8881b31498a6057bfe8ba",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCfQ8RpiKcutsIV\niq21MKkbxJxy2onP42KCJDnVj2CZHvPmi98olMjFH+PklfWj+MUwAtUShBA49vtL\n2VNmKyokDuo3CBmMsdFIRQqwtcjt4CfwL5DNxTHjHOKmgbIQsXjCY0JNW0CyRbcV\n08ngsixl1v+EbHEYYdqzwEr/12VgYto9eFX4n784uoHNRGXwudAh+VR8pv9/qI29\nTmVVGRrRNSmoYFeEEAvG9ZvIQDX08GkCcweMrLeeA9BKnnpfGMSXdFf14biKG9AO\nrd4aobjduXep1fwCLmz6EeDeFNO90antkownvBK5CtB30bVVyldn943pg3lrpJ/N\nrhc418pXAgMBAAECggEAGJHtVrSgyhmixoz+8HGB3UlPM37YfOxg8Z/iFjrI1caL\nLRmOA2Y0tQiO8WBbJYFG9nmxYmpiUE92BEUSUzQ8i5SLeJL00hpKpaIVHJ7m0R/g\nOXM1HTGbWSTHKJXgoSen8CE9BM8bo4US0ji6r8H9DHcHM2hBaFgMU+fKCj8yIhTP\noQfCSO+ihMihFSxWnEi9/tkc26eFpIPvJJEcADH8BS7Jr5jOeugia2UUVvWu0cbV\n5q5C3RazfLlWm9sNg+9HTxBRU2oxW9k+7x6/hOQTy5k2r2E04MIlFgHfIDP+X8X1\n2KfwyyvHcyFWQBAGXVpo9IB4lM0FRTmPUb/lSfpeCQKBgQDUj2/DnYlap7/TIHsX\njp9mi9VxXPqPB7QKIyqM7jRhO49ooCBNYZcoa6Q15YoxgiCK5g3bpGcIVJAwfDsi\nmPi9ZLq/2vyXDUsaHjEEOu+Z503SYpny7Z9eVCZ48qRXicoOHQuh6Zd6l3SbgswZ\n5n05n5GIGPDgW+Rj45QABvhAbwKBgQC/0A3UkC+c5+ZXRkrJXEIIEDtD5Awq4z9h\nxjdT18iz4h6PYdiNzpibJ8dYpGJ92OYu0ZUgeqJRGP5Bst+hYU4kiR1FHLe2Sxvq\nz7f+3PVxUySTx5XddFg3s3RL2a/Y19fQUCVyNZ7wP3HWYEI5wKKtndMP5eCE4AbQ\nIZKz1C84mQKBgFqiwuxte0kdqGz1N6eG2C9Yxu2s0OY2Sa3c6uLnG4yuYesiBEQa\nreK9a2rT8sZDj27Kw/P5OTnTHRyfjHOnOMFBd2Qhk30xXOnJH+uG2e4NNCDWjICK\nlF8bkMAX7r2o8nBsMC6dNUs/06gP8MnGf3UXtm2K/QMeC9gQDWapkiefAoGAKL8n\n0Pn4Q1q4Ad460N+6X0Ajdt6g/xNbSYf0BOmYBy6H02mzuRwkKwGeRWRWT+mdrGB1\nT3r9tECc8pPvEbc8BGLkRuQ82orGGXGa4pdJxJMm+AWz/mFSxDJpCBvsUSI5BFWi\nPsrJQrwXkLTOHLqhVERsq7nnohJ9IAWhxnXSujECgYB82GJiKrsmp4fC2btQoIv7\nz6SJhvrc1trO82d+evW74MG/F8jAnWmhinzn/i4hqz5C5eTu390+zW8tA432aQQz\nHy3zypC7vyuEydTwpREKQ8jV9hQ5INltuBVCLR/jqPQJQg7k4v7aIwW5jxAWMj+M\nozY3KTSPFmlOQVnKBmJrEQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "tajaqar@verdant-option-390012.iam.gserviceaccount.com",
+  "client_id": "116448373407893795524",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/tajaqar%40verdant-option-390012.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
