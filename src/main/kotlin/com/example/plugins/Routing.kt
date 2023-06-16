@@ -1,22 +1,22 @@
 package com.example.plugins
 
 import com.example.data.dao
-import com.example.model.RealState
-import com.google.api.services.storage.Storage
+import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.storage.BlobId
 import com.google.cloud.storage.BlobInfo
 import com.google.cloud.storage.StorageOptions
-import io.ktor.server.routing.*
-import io.ktor.server.response.*
-import io.ktor.server.plugins.statuspages.*
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.freemarker.*
+import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import io.ktor.server.util.*
-import java.awt.Frame
-import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.FileInputStream
 
 
 fun Application.configureRouting() {
@@ -60,8 +60,11 @@ fun Application.configureRouting() {
                         is PartData.FileItem -> {
                             if (part.name == "video" || part.name == "image") {
                                 val fileBytes = part.streamProvider().readBytes()
-                                System.setProperty("GOOGLE_APPLICATION_CREDENTIALS", "/resources/verdant-option-390012-977b2708f8e5.json")
-                                val storage: com.google.cloud.storage.Storage? = StorageOptions.getDefaultInstance().service
+                                val creds = withContext(Dispatchers.IO) {
+                                    GoogleCredentials.fromStream(FileInputStream("src/main/resources/verdant-option-390012-977b2708f8e5.json"))
+                                }
+                                val storage = StorageOptions.newBuilder().setCredentials(creds).build().service
+
 
                                 // The name of your bucket
                                 val bucketName = "tajaqar"
