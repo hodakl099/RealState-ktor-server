@@ -1,7 +1,7 @@
 package com.example.data.dao
 
-import com.example.model.RealState
-import com.example.model.RealStates
+import com.example.data.RealState
+import com.example.data.RealStates
 import com.example.util.DatabaseFactory.dbQuery
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq

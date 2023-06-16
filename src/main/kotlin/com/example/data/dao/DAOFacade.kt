@@ -1,6 +1,6 @@
 package com.example.data.dao
 
-import com.example.model.RealState
+import com.example.data.RealState
 
 interface DAOFacade {
     suspend fun allRealStates() : List<RealState>

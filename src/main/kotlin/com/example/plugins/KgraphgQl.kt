@@ -2,14 +2,8 @@ package com.example.plugins
 
 import com.apurebase.kgraphql.GraphQL
 import com.example.data.dao
-import com.example.model.RealState
-import graphql.schema.idl.SchemaParser
-import io.ktor.http.cio.*
+import com.example.data.RealState
 import io.ktor.server.application.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import ktor.graphql.GraphQLRequest
 import java.util.*
 
 

@@ -1,6 +1,8 @@
 package com.example.plugins
 
 import com.example.data.dao
+import com.example.model.CreateRealState
+import com.example.util.BasicApiResponse
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.storage.BlobId
 import com.google.cloud.storage.BlobInfo
@@ -17,6 +19,7 @@ import io.ktor.server.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.FileInputStream
+import java.net.http.HttpRequest
 
 
 fun Application.configureRouting() {
@@ -49,6 +52,11 @@ fun Application.configureRouting() {
                 multiPart.forEachPart { part ->
                     when (part) {
                         is PartData.FormItem -> {
+                            if (part.name?.isEmpty() == true) {
+                                call.respond(HttpStatusCode.OK
+                                    ,BasicApiResponse(false,"${part.name} can't be empty")
+                                )
+                            }
                             when (part.name) {
                                 "title" -> title = part.value
                                 "description" -> description = part.value
@@ -97,9 +105,8 @@ fun Application.configureRouting() {
                     videoURL = videoURL ?: "",
                     imageURL = imageURL ?: ""
                 )
-                print("Add successfully!")
                 print(dao.allRealStates())
-                call.respond(HttpStatusCode.OK)
+                call.respond(HttpStatusCode.OK,BasicApiResponse(true,"New RealState Added Successfully."))
             }
         }
 
@@ -134,3 +141,4 @@ fun Application.configureRouting() {
     }
 
 }
+
