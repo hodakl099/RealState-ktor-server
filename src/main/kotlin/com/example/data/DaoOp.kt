@@ -7,7 +7,10 @@ import kotlinx.coroutines.runBlocking
 val dao : DAOFacade = DAOFacadeImpl().apply {
     runBlocking {
         if (allRealStates().isEmpty()) {
-            addNewRealState("Jetpack compose", "jetpack compose its going to be great investment.",0.0,0.0,"/","/")
+            addNewRealState("Jetpack compose", "jetpack compose its going to be great investment.",0.0,0.0,
+                mutableListOf("1","2","3"),
+                mutableListOf("1","2","3"))
         }
+
     }
 }

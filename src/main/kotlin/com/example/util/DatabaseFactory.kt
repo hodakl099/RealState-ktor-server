@@ -1,6 +1,8 @@
 package com.example.util
 
-import com.example.data.RealStates
+import com.example.data.models.Images
+import com.example.data.models.RealStates
+import com.example.data.models.Videos
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -18,7 +20,8 @@ object DatabaseFactory {
         )
 
         transaction(database) {
-            SchemaUtils.create(RealStates)
+            SchemaUtils.drop(RealStates,Images,Videos)
+            SchemaUtils.create(RealStates,Images,Videos)
         }
     }
 

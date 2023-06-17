@@ -2,7 +2,7 @@ package com.example.plugins
 
 import com.apurebase.kgraphql.GraphQL
 import com.example.data.dao
-import com.example.data.RealState
+import com.example.data.models.RealState
 import io.ktor.server.application.*
 import java.util.*
 
@@ -22,7 +22,7 @@ fun Application.configureGraphQl() {
 
                         property("imageURL") {
                             description = "The image of the property"
-                            resolver { realState : RealState -> realState.imageURL }
+                            resolver { realState : RealState -> realState.description }
                         }
 
                         property("description") {
@@ -32,7 +32,7 @@ fun Application.configureGraphQl() {
 
                         property("videoURL") {
                             description = "The location of the property"
-                            resolver { realState : RealState -> realState.videoURL }
+                            resolver { realState : RealState -> realState.longitude }
                         }
                     }
                     query("properties") {

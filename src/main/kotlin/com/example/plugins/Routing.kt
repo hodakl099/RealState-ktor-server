@@ -44,8 +44,8 @@ fun Application.configureRouting() {
                 val multiPart = call.receiveMultipart()
                 var title: String? = null
                 var description: String? = null
-                var videoURL: String? = null
-                var imageURL: String? = null
+                var videoURLs = mutableListOf<String>()
+                var imageURLs = mutableListOf<String>()
                 var latitude: Double? = null
                 var longitude: Double? = null
 
@@ -73,7 +73,6 @@ fun Application.configureRouting() {
                                 }
                                 val storage = StorageOptions.newBuilder().setCredentials(creds).build().service
 
-
                                 // The name of your bucket
                                 val bucketName = "tajaqar"
 
@@ -89,8 +88,8 @@ fun Application.configureRouting() {
                                 // Get the download URL
                                 val filePath = blobId?.let { storage?.get(it)?.mediaLink }
 
-                                if (part.name == "video") videoURL = filePath
-                                else imageURL = filePath
+                                if (part.name == "video") videoURLs.add(filePath ?: "")
+                                else imageURLs.add(filePath ?: "")
                             }
                         }
                         else -> return@forEachPart
@@ -102,8 +101,8 @@ fun Application.configureRouting() {
                     description = description ?: "",
                     latitude = latitude ?: 0.0,
                     longitude = longitude ?: 0.0,
-                    videoURL = videoURL ?: "",
-                    imageURL = imageURL ?: ""
+                    videoURL = videoURLs,
+                    imageURL = imageURLs
                 )
                 print(dao.allRealStates())
                 call.respond(HttpStatusCode.OK,BasicApiResponse(true,"New RealState Added Successfully."))
@@ -129,7 +128,7 @@ fun Application.configureRouting() {
                     val imageURL = fromParameters.getOrFail<String>("imageURL")
                     val latitude = fromParameters.getOrFail<Double>("latitude")
                     val longitude = fromParameters.getOrFail<Double>("longitude")
-                    dao.editRealState(id = id,title = title,description = description,imageURL= imageURL, videoURL = videoURL, latitude = latitude, longitude = longitude)
+//                    dao.editRealState(id = id,title = title,description = description,imageURL= imageURL, videoURL = videoURL, latitude = latitude, longitude = longitude)
                     call.respondRedirect("/articles/$id")
                 }
                 "delete" -> {
