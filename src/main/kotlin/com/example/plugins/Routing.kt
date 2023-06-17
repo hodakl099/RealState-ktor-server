@@ -1,7 +1,7 @@
 package com.example.plugins
 
-import com.example.data.dao
-import com.example.model.CreateRealState
+
+import com.example.dao.dao
 import com.example.util.BasicApiResponse
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.storage.BlobId
@@ -19,7 +19,6 @@ import io.ktor.server.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.FileInputStream
-import java.net.http.HttpRequest
 
 
 fun Application.configureRouting() {
@@ -132,7 +131,7 @@ fun Application.configureRouting() {
                     call.respondRedirect("/articles/$id")
                 }
                 "delete" -> {
-                    dao.deleteRealState(id)
+//                    dao.deleteRealState(id)
                     call.respondRedirect("/realStates")
                 }
             }

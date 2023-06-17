@@ -1,6 +1,6 @@
 package com.example
 
-import com.example.data.dao
+import com.example.dao.dao
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
 import com.example.plugins.*
@@ -14,8 +14,8 @@ fun main(args: Array<String>): Unit =
 fun Application.module() {
     DatabaseFactory.init()
     runBlocking {
-        val allRealStates = dao.allRealStates()
-        println(allRealStates)
+//        val allRealStates = dao.allRealStates()
+//        println(allRealStates)
     }
     configureSerialization()
     configureRouting()
