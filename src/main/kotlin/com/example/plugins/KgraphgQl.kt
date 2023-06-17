@@ -1,7 +1,7 @@
 package com.example.plugins
 
 import com.apurebase.kgraphql.GraphQL
-import com.example.data.dao
+import com.example.dao.dao
 import com.example.data.models.RealState
 import io.ktor.server.application.*
 import java.util.*
@@ -37,7 +37,7 @@ fun Application.configureGraphQl() {
                     }
                     query("properties") {
                         description = "Return all properties"
-                        resolver { -> dao.allRealStates() }
+                        resolver { -> dao.getAllAgriculturalProperties() }
                     }
         }
         schema {

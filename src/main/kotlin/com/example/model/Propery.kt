@@ -6,12 +6,14 @@ import java.math.BigDecimal
 data class Property(
     val id: Int,
     val agentContact: String,
-    val price: BigDecimal
+    val price: Double,
+    val images : List<String>,
+    val video : List<String>
 )
 
 object Properties : Table() {
     val id = integer("id").autoIncrement()
     val agentContact = varchar("agent_contact", 256)
-    val price = decimal("price", 12, 2)
+    val price = double("price")
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 }

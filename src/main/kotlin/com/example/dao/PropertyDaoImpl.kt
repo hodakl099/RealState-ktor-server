@@ -7,23 +7,15 @@ import org.jetbrains.exposed.sql.*
 
 class PropertyDaoImpl : PropertyDao {
 
-    private fun resultRowToResidentialProperty(row : ResultRow) = ResidentialProperty(
-        property=row[ResidentialProperty.propery],
-        propertyType =row[ResidentialProperties.propertyType],
-        description =row[RealStates.description],
-        latitude = row[RealStates.latitude],
-        longitude = row[RealStates.longitude],
-        images = emptyList(),
-        videos = emptyList()
-    )
-
 
     private fun toResidentialProperty(row: ResultRow): ResidentialProperty =
         ResidentialProperty(
             property = Property(
                 id = row[Properties.id],
                 agentContact = row[Properties.agentContact],
-                price = row[Properties.price]
+                price = row[Properties.price],
+                images = Images.select { Images.propertyId eq row[Properties.id] }.map { it[Images.url] },
+                video = Videos.select { Videos.propertyId eq row[Properties.id] }.map { it[Videos.url] }
             ),
             propertyType = row[ResidentialProperties.propertyType],
             squareFootage = row[ResidentialProperties.squareFootage],
@@ -39,7 +31,9 @@ class PropertyDaoImpl : PropertyDao {
             property = Property(
                 id = row[Properties.id],
                 agentContact = row[Properties.agentContact],
-                price = row[Properties.price]
+                price = row[Properties.price],
+                images = Images.select { Images.propertyId eq row[Properties.id] }.map { it[Images.url] },
+                video = Videos.select { Videos.propertyId eq row[Properties.id] }.map { it[Videos.url] }
             ),
             propertyType = row[AgriculturalProperties.propertyType],
             acres = row[AgriculturalProperties.acres],
@@ -51,12 +45,12 @@ class PropertyDaoImpl : PropertyDao {
         )
 
     override suspend fun addResidentialProperty(residentialProperty: ResidentialProperty): ResidentialProperty  = dbQuery{
-            val propertyId = Properties.insert {
+            val idProperty = Properties.insert {
                 it[agentContact] = residentialProperty.property.agentContact
                 it[price] = residentialProperty.property.price
             } get Properties.id
             ResidentialProperties.insert {
-                it[id] = propertyId
+                it[id] = idProperty
                 it[propertyType] = residentialProperty.propertyType
                 it[squareFootage] = residentialProperty.squareFootage
                 it[bedrooms] = residentialProperty.bedrooms
@@ -82,12 +76,12 @@ class PropertyDaoImpl : PropertyDao {
     }
 
     override suspend fun addAgriculturalProperty(agriculturalProperty: AgriculturalProperty): AgriculturalProperty = dbQuery{
-        val propertyId = Properties.insert {
+        val idProperty = Properties.insert {
             it[agentContact] = agriculturalProperty.property.agentContact
             it[price] = agriculturalProperty.property.price
         } get Properties.id
         AgriculturalProperties.insert {
-            it[id] = propertyId
+            it[id] = idProperty
             it[acres] = agriculturalProperty.acres
             it[propertyType] = agriculturalProperty.propertyType
             it[buildings] = agriculturalProperty.buildings
@@ -95,6 +89,20 @@ class PropertyDaoImpl : PropertyDao {
             it[waterSources] = agriculturalProperty.waterSources
             it[soilType] = agriculturalProperty.soilType
             it[equipment] = agriculturalProperty.equipment
+        }
+
+        agriculturalProperty.property.video.forEach { videoUrl ->
+            Videos.insert {
+                it[propertyId] = idProperty
+                it[url] = videoUrl
+            }
+        }
+        agriculturalProperty.property.images.forEach {imageUrl ->
+        Images.insert {
+            it[propertyId] = idProperty
+            it[url] = imageUrl
+        }
+
         }
         agriculturalProperty
     }
@@ -112,12 +120,15 @@ class PropertyDaoImpl : PropertyDao {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getAllResidentialProperties(): List<ResidentialProperty> {
-        TODO("Not yet implemented")
+    override suspend fun getAllResidentialProperties(): List<ResidentialProperty>  = dbQuery{
+            (Properties innerJoin ResidentialProperties)
+                .selectAll()
+                .map { toResidentialProperty(it) }
     }
 
-    override suspend fun getAllAgriculturalProperties(): List<AgriculturalProperty> {
-        TODO("Not yet implemented")
+    override suspend fun getAllAgriculturalProperties(): List<AgriculturalProperty>  = dbQuery{
+            (Properties innerJoin AgriculturalProperties)
+                .selectAll()
+                .map { toAgriculturalProperty(it) }
     }
-
 }
