@@ -7,6 +7,17 @@ import org.jetbrains.exposed.sql.*
 
 class PropertyDaoImpl : PropertyDao {
 
+    private fun resultRowToResidentialProperty(row : ResultRow) = ResidentialProperty(
+        property=row[ResidentialProperty.propery],
+        propertyType =row[ResidentialProperties.propertyType],
+        description =row[RealStates.description],
+        latitude = row[RealStates.latitude],
+        longitude = row[RealStates.longitude],
+        images = emptyList(),
+        videos = emptyList()
+    )
+
+
     private fun toResidentialProperty(row: ResultRow): ResidentialProperty =
         ResidentialProperty(
             property = Property(
@@ -70,8 +81,22 @@ class PropertyDaoImpl : PropertyDao {
         TODO("Not yet implemented")
     }
 
-    override suspend fun addAgriculturalProperty(agriculturalProperty: AgriculturalProperty): AgriculturalProperty {
-        TODO("Not yet implemented")
+    override suspend fun addAgriculturalProperty(agriculturalProperty: AgriculturalProperty): AgriculturalProperty = dbQuery{
+        val propertyId = Properties.insert {
+            it[agentContact] = agriculturalProperty.property.agentContact
+            it[price] = agriculturalProperty.property.price
+        } get Properties.id
+        AgriculturalProperties.insert {
+            it[id] = propertyId
+            it[acres] = agriculturalProperty.acres
+            it[propertyType] = agriculturalProperty.propertyType
+            it[buildings] = agriculturalProperty.buildings
+            it[crops]  = agriculturalProperty.crops
+            it[waterSources] = agriculturalProperty.waterSources
+            it[soilType] = agriculturalProperty.soilType
+            it[equipment] = agriculturalProperty.equipment
+        }
+        agriculturalProperty
     }
 
     override suspend fun getAgriculturalProperty(id: Int): AgriculturalProperty? = dbQuery{

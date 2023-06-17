@@ -1,7 +1,7 @@
 package com.example.service
 
 import com.example.dao.PropertyDao
-import com.example.model.RealState
+
 
 class RealStateService(private val dao: PropertyDao) {
 //
