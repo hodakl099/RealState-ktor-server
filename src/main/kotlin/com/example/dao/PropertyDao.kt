@@ -1,11 +1,11 @@
 package com.example.dao
 
-import com.example.data.models.RealState
+
 import com.example.model.AgriculturalProperty
 import com.example.model.ResidentialProperty
 
 interface PropertyDao {
-    suspend fun addResidentialProperty(residentialProperty: ResidentialProperty): ResidentialProperty
+    suspend fun addResidentialProperty(residentialProperty: ResidentialProperty,videoURL : List<String>,imageURL : List<String>): ResidentialProperty
     suspend fun getResidentialProperty(id: Int): ResidentialProperty?
     suspend fun deleteResidentialProperty(id: Int): Boolean
     suspend fun addAgriculturalProperty(agriculturalProperty: AgriculturalProperty): AgriculturalProperty

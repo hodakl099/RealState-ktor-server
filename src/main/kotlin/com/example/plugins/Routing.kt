@@ -122,7 +122,7 @@ fun Application.configureRouting() {
                     location = location ?: ""
                 )
 
-                dao.addResidentialProperty(residentialProperty)
+                dao.addResidentialProperty(residentialProperty, videoUrls = videoURLs, imageUrls = imageURLs)
                 call.respond(HttpStatusCode.OK, BasicApiResponse(true,"New Residential Property Added Successfully."))
             }
 

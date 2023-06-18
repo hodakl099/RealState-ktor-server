@@ -44,22 +44,38 @@ class PropertyDaoImpl : PropertyDao {
             soilType = row[AgriculturalProperties.soilType]
         )
 
-    override suspend fun addResidentialProperty(residentialProperty: ResidentialProperty): ResidentialProperty  = dbQuery{
-            val idProperty = Properties.insert {
-                it[agentContact] = residentialProperty.property.agentContact
-                it[price] = residentialProperty.property.price
-            } get Properties.id
-            ResidentialProperties.insert {
-                it[id] = idProperty
-                it[propertyType] = residentialProperty.propertyType
-                it[squareFootage] = residentialProperty.squareFootage
-                it[bedrooms] = residentialProperty.bedrooms
-                it[bathrooms] = residentialProperty.bathrooms
-                it[amenities] = residentialProperty.amenities
-                it[parking] = residentialProperty.parking
-                it[location] = residentialProperty.location
+    override suspend fun addResidentialProperty(
+        residentialProperty: ResidentialProperty,
+        imageUrls: List<String>,
+        videoUrls: List<String>
+    ): ResidentialProperty = dbQuery {
+        val idProperty = Properties.insert {
+            it[agentContact] = residentialProperty.property.agentContact
+            it[price] = residentialProperty.property.price
+        } get Properties.id
+        ResidentialProperties.insert {
+            it[id] = idProperty
+            it[propertyType] = residentialProperty.propertyType
+            it[squareFootage] = residentialProperty.squareFootage
+            it[bedrooms] = residentialProperty.bedrooms
+            it[bathrooms] = residentialProperty.bathrooms
+            it[amenities] = residentialProperty.amenities
+            it[parking] = residentialProperty.parking
+            it[location] = residentialProperty.location
+        }
+        imageUrls.forEach { imageUrl ->
+            Images.insert {
+                it[propertyId] = idProperty
+                it[url] = imageUrl
             }
-            residentialProperty
+        }
+        videoUrls.forEach { videoUrl ->
+            Videos.insert {
+                it[propertyId] = idProperty
+                it[url] = videoUrl
+            }
+        }
+        residentialProperty
     }
 
     override suspend fun getResidentialProperty(id: Int): ResidentialProperty?  =  dbQuery{

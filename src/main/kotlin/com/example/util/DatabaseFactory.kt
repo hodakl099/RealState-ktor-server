@@ -1,10 +1,10 @@
 package com.example.util
 
-import com.example.data.models.Images
-import com.example.data.models.RealStates
-import com.example.data.models.Videos
+
 import com.example.model.AgriculturalProperties
+import com.example.model.Images
 import com.example.model.ResidentialProperties
+import com.example.model.Videos
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -17,12 +17,12 @@ object DatabaseFactory {
        val database =  Database.connect(
             url = "jdbc:postgresql://localhost:5432/postgres",
             driver = "org.postgresql.Driver",
-            user = "postgres",
-            password = "mahmoud99"
+            user = "alkateb",
+            password = "weedinternal099$$#"
         )
 
         transaction(database) {
-            SchemaUtils.create(AgriculturalProperties,ResidentialProperties,Videos,Images)
+            SchemaUtils.create(AgriculturalProperties,ResidentialProperties, Videos, Images)
         }
     }
 
