@@ -5,18 +5,18 @@ import java.math.BigDecimal
 
 data class AgriculturalProperty(
     val property: Property,
-    val acres: BigDecimal,
+    val acres: Double,
     val propertyType: String,
     val buildings: String,
     val crops: String,
     val waterSources: String,
     val soilType: String,
-    val equipment: String
+    val equipment: String,
 )
 
 object AgriculturalProperties : Table() {
     val id = integer("property_id").references(Properties.id)
-    val acres = decimal("acres", 12, 2)
+    val acres = double("acres")
     val propertyType = varchar("property_type", 256)
     val buildings = varchar("buildings", 256)
     val crops = varchar("crops", 256)

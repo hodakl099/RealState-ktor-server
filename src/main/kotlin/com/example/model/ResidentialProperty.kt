@@ -11,7 +11,6 @@ data class ResidentialProperty(
     val bathrooms: Int,
     val amenities: String,
     val parking: Boolean,
-    val location: String
 )
 
 object ResidentialProperties : Table() {
@@ -22,5 +21,4 @@ object ResidentialProperties : Table() {
     val bathrooms = integer("bathrooms")
     val amenities = varchar("amenities", 256)
     val parking = bool("parking")
-    val location = varchar("location", 256)
 }

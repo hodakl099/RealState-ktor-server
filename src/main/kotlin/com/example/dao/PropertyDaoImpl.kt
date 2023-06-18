@@ -15,7 +15,8 @@ class PropertyDaoImpl : PropertyDao {
                 agentContact = row[Properties.agentContact],
                 price = row[Properties.price],
                 images = Images.select { Images.propertyId eq row[Properties.id] }.map { it[Images.url] },
-                video = Videos.select { Videos.propertyId eq row[Properties.id] }.map { it[Videos.url] }
+                video = Videos.select { Videos.propertyId eq row[Properties.id] }.map { it[Videos.url] },
+                location = row[Properties.location]
             ),
             propertyType = row[ResidentialProperties.propertyType],
             squareFootage = row[ResidentialProperties.squareFootage],
@@ -23,7 +24,6 @@ class PropertyDaoImpl : PropertyDao {
             bathrooms = row[ResidentialProperties.bathrooms],
             amenities = row[ResidentialProperties.amenities],
             parking = row[ResidentialProperties.parking],
-            location = row[ResidentialProperties.location]
         )
 
     private fun toAgriculturalProperty(row: ResultRow): AgriculturalProperty =
@@ -33,7 +33,8 @@ class PropertyDaoImpl : PropertyDao {
                 agentContact = row[Properties.agentContact],
                 price = row[Properties.price],
                 images = Images.select { Images.propertyId eq row[Properties.id] }.map { it[Images.url] },
-                video = Videos.select { Videos.propertyId eq row[Properties.id] }.map { it[Videos.url] }
+                video = Videos.select { Videos.propertyId eq row[Properties.id] }.map { it[Videos.url] },
+                location = row[Properties.location]
             ),
             propertyType = row[AgriculturalProperties.propertyType],
             acres = row[AgriculturalProperties.acres],
@@ -52,6 +53,7 @@ class PropertyDaoImpl : PropertyDao {
         val idProperty = Properties.insert {
             it[agentContact] = residentialProperty.property.agentContact
             it[price] = residentialProperty.property.price
+            it[location] = residentialProperty.property.location
         } get Properties.id
         ResidentialProperties.insert {
             it[id] = idProperty
@@ -61,7 +63,7 @@ class PropertyDaoImpl : PropertyDao {
             it[bathrooms] = residentialProperty.bathrooms
             it[amenities] = residentialProperty.amenities
             it[parking] = residentialProperty.parking
-            it[location] = residentialProperty.location
+
         }
         imageUrls.forEach { imageUrl ->
             Images.insert {
@@ -91,7 +93,11 @@ class PropertyDaoImpl : PropertyDao {
         TODO("Not yet implemented")
     }
 
-    override suspend fun addAgriculturalProperty(agriculturalProperty: AgriculturalProperty): AgriculturalProperty = dbQuery{
+    override suspend fun addAgriculturalProperty(
+        agriculturalProperty: AgriculturalProperty,
+        videoUrls: List<String>,
+        imageUrls: List<String>
+    ): AgriculturalProperty = dbQuery{
         val idProperty = Properties.insert {
             it[agentContact] = agriculturalProperty.property.agentContact
             it[price] = agriculturalProperty.property.price

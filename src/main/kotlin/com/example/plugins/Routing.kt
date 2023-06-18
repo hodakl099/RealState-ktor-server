@@ -2,6 +2,7 @@ package com.example.plugins
 
 
 import com.example.dao.dao
+import com.example.model.AgriculturalProperty
 import com.example.model.Property
 import com.example.model.ResidentialProperty
 import com.example.util.BasicApiResponse
@@ -34,9 +35,6 @@ fun Application.configureRouting() {
         get("/properties") {
             call.respond(io.ktor.websocket.Frame.Text("wtf"))
         }
-        get {
-//            call.respond(FreeMarkerContent("index.ftl", mapOf("articles" to dao.allRealStates())))
-        }
         route("/properties") {
             get {
                 call.respondText("Upload endpoint")
@@ -52,8 +50,8 @@ fun Application.configureRouting() {
                 var location: String? = null
                 var agentContact: String? = null
                 var price: Double? = null
-                var videoURLs = mutableListOf<String>()
-                var imageURLs = mutableListOf<String>()
+                val videoURLs = mutableListOf<String>()
+                val imageURLs = mutableListOf<String>()
 
                 multiPart.forEachPart { part ->
                     when (part) {
@@ -111,7 +109,8 @@ fun Application.configureRouting() {
                         agentContact = agentContact ?: "",
                         price = price ?: 0.0,
                         images = imageURLs,
-                        video = videoURLs
+                        video = videoURLs,
+                        location = location ?: "",
                     ),
                     propertyType = propertyType ?: "",
                     squareFootage = squareFootage ?: 0.0,
@@ -119,14 +118,98 @@ fun Application.configureRouting() {
                     bathrooms = bathrooms ?: 0,
                     amenities = amenities ?: "",
                     parking = parking ?: false,
-                    location = location ?: ""
                 )
 
                 dao.addResidentialProperty(residentialProperty, videoUrls = videoURLs, imageUrls = imageURLs)
                 call.respond(HttpStatusCode.OK, BasicApiResponse(true,"New Residential Property Added Successfully."))
             }
 
-            post("/agricultural") {  }
+            post("/agricultural") {
+                val multiPart = call.receiveMultipart()
+                var propertyType: String? = null
+                var agentContact: String? = null
+                var acres: Double? = null
+                var buildings: String? = null
+                var crops: String? = null
+                var waterSources: String? = null
+                var soilType: String? = null
+                var equipment: String? = null
+                var location: String? = null
+                var price: Double? = null
+                var videoURLs = mutableListOf<String>()
+                var imageURLs = mutableListOf<String>()
+
+                multiPart.forEachPart { part ->
+                    when (part) {
+                        is PartData.FormItem -> {
+                            if (part.name?.isEmpty() == true) {
+                                call.respond(HttpStatusCode.OK, BasicApiResponse(false,"${part.name} can't be empty"))
+                            }
+                            when (part.name) {
+                                "agentContact" -> agentContact = part.value
+                                "price" -> price = part.value.toDoubleOrNull()
+                                "propertyType" -> propertyType = part.value
+                                "acres" -> acres = part.value.toDoubleOrNull()
+                                "buildings" -> buildings = part.value
+                                "crops" -> crops = part.value
+                                "soilType" -> soilType = part.value
+                                "equipment" -> equipment = part.value
+                                "location" -> location = part.value
+                            }
+                        }
+                        is PartData.FileItem -> {
+                            if (part.name == "video" || part.name == "image") {
+                                val fileBytes = part.streamProvider().readBytes()
+                                val creds = withContext(Dispatchers.IO) {
+                                    GoogleCredentials.fromStream(FileInputStream("src/main/resources/verdant-option-390012-977b2708f8e5.json"))
+                                }
+                                val storage = StorageOptions.newBuilder().setCredentials(creds).build().service
+
+                                // The name of your bucket
+                                val bucketName = "tajaqar"
+
+                                // Create a blobId with the name of the file
+                                val blobId = part.originalFileName?.let { BlobId.of(bucketName, it) }
+
+                                // Create a blobInfo
+                                val blobInfo = blobId?.let { BlobInfo.newBuilder(it).build() }
+
+                                // Upload the file to the bucket
+                                blobInfo?.let { storage?.create(it, fileBytes) }
+
+                                // Get the download URL
+                                val filePath = blobId?.let { storage?.get(it)?.mediaLink }
+
+                                if (part.name == "video") videoURLs.add(filePath ?: "")
+                                else imageURLs.add(filePath ?: "")
+                            }
+                        }
+                        else -> return@forEachPart
+                    }
+                    part.dispose()
+                }
+
+                val agriculturalProperty = AgriculturalProperty(
+                    property = Property(
+                        id = 0, // This value will be replaced by autoincrement id
+                        agentContact = agentContact ?: "",
+                        price = price ?: 0.0,
+                        images = imageURLs,
+                        video = videoURLs,
+                        location = location ?: ""
+                    ),
+                    propertyType = propertyType ?: "",
+                    acres = acres  ?: 0.0,
+                    buildings = buildings ?: "",
+                    crops = crops ?: "",
+                    waterSources = waterSources ?: "",
+                    soilType = soilType ?: "",
+                    equipment = equipment ?: ""
+                )
+
+                dao.addAgriculturalProperty(agriculturalProperty, videoUrls = videoURLs, imageUrls = imageURLs)
+                call.respond(HttpStatusCode.OK, BasicApiResponse(true,"New Residential Property Added Successfully."))
+            }
 
 //            post {
 //                val multiPart = call.receiveMultipart()
