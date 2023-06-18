@@ -2,9 +2,9 @@ package com.example.plugins
 
 
 import com.example.dao.dao
-import com.example.model.AgriculturalProperty
 import com.example.model.Property
 import com.example.model.ResidentialProperty
+import com.example.model.properties.AgriculturalProperty
 import com.example.util.BasicApiResponse
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.storage.BlobId

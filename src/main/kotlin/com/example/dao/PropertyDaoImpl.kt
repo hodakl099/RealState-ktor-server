@@ -2,6 +2,10 @@ package com.example.dao
 
 
 import com.example.model.*
+import com.example.model.properties.AgriculturalProperties
+import com.example.model.properties.AgriculturalProperty
+import com.example.model.properties.ResidentialProperties
+import com.example.model.properties.ResidentialProperty
 import com.example.util.DatabaseFactory.dbQuery
 import org.jetbrains.exposed.sql.*
 

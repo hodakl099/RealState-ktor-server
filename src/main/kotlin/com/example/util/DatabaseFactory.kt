@@ -2,6 +2,8 @@ package com.example.util
 
 
 import com.example.model.*
+import com.example.model.properties.AgriculturalProperties
+import com.example.model.properties.ResidentialProperties
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -19,7 +21,7 @@ object DatabaseFactory {
         )
 
         transaction(database) {
-            SchemaUtils.create(AgriculturalProperties,ResidentialProperties, Videos, Images,Properties)
+            SchemaUtils.create(AgriculturalProperties, ResidentialProperties, Videos, Images,Properties)
         }
     }
 
