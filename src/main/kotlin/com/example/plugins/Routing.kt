@@ -13,7 +13,6 @@ import com.google.cloud.storage.StorageOptions
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
-import io.ktor.server.freemarker.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -22,7 +21,6 @@ import io.ktor.server.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.FileInputStream
-import java.math.BigDecimal
 
 
 fun Application.configureRouting() {
@@ -109,7 +107,7 @@ fun Application.configureRouting() {
                         agentContact = agentContact ?: "",
                         price = price ?: 0.0,
                         images = imageURLs,
-                        video = videoURLs,
+                        videos = videoURLs,
                         location = location ?: "",
                     ),
                     propertyType = propertyType ?: "",
@@ -120,7 +118,7 @@ fun Application.configureRouting() {
                     parking = parking ?: false,
                 )
 
-                dao.addResidentialProperty(residentialProperty, videoUrls = videoURLs, imageUrls = imageURLs)
+                dao.addResidentialProperty(residentialProperty, imageURL = videoURLs, videoURL = imageURLs)
                 call.respond(HttpStatusCode.OK, BasicApiResponse(true,"New Residential Property Added Successfully."))
             }
 
@@ -195,7 +193,7 @@ fun Application.configureRouting() {
                         agentContact = agentContact ?: "",
                         price = price ?: 0.0,
                         images = imageURLs,
-                        video = videoURLs,
+                        videos = videoURLs,
                         location = location ?: ""
                     ),
                     propertyType = propertyType ?: "",

@@ -1,7 +1,6 @@
 package com.example.model
 
 import org.jetbrains.exposed.sql.Table
-import java.math.BigDecimal
 
 data class Property(
     val id: Int,
@@ -9,7 +8,7 @@ data class Property(
     val price: Double,
     val location: String,
     val images : List<String>,
-    val video : List<String>,
+    val videos : List<String>,
 )
 
 object Properties : Table() {

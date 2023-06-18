@@ -15,7 +15,7 @@ class PropertyDaoImpl : PropertyDao {
                 agentContact = row[Properties.agentContact],
                 price = row[Properties.price],
                 images = Images.select { Images.propertyId eq row[Properties.id] }.map { it[Images.url] },
-                video = Videos.select { Videos.propertyId eq row[Properties.id] }.map { it[Videos.url] },
+                videos = Videos.select { Videos.propertyId eq row[Properties.id] }.map { it[Videos.url] },
                 location = row[Properties.location]
             ),
             propertyType = row[ResidentialProperties.propertyType],
@@ -33,7 +33,7 @@ class PropertyDaoImpl : PropertyDao {
                 agentContact = row[Properties.agentContact],
                 price = row[Properties.price],
                 images = Images.select { Images.propertyId eq row[Properties.id] }.map { it[Images.url] },
-                video = Videos.select { Videos.propertyId eq row[Properties.id] }.map { it[Videos.url] },
+                videos = Videos.select { Videos.propertyId eq row[Properties.id] }.map { it[Videos.url] },
                 location = row[Properties.location]
             ),
             propertyType = row[AgriculturalProperties.propertyType],
@@ -47,8 +47,8 @@ class PropertyDaoImpl : PropertyDao {
 
     override suspend fun addResidentialProperty(
         residentialProperty: ResidentialProperty,
-        imageUrls: List<String>,
-        videoUrls: List<String>
+        videoURL: List<String>,
+        imageURL: List<String>
     ): ResidentialProperty = dbQuery {
         val idProperty = Properties.insert {
             it[agentContact] = residentialProperty.property.agentContact
@@ -65,13 +65,13 @@ class PropertyDaoImpl : PropertyDao {
             it[parking] = residentialProperty.parking
 
         }
-        imageUrls.forEach { imageUrl ->
+        videoURL.forEach { imageUrl ->
             Images.insert {
                 it[propertyId] = idProperty
                 it[url] = imageUrl
             }
         }
-        videoUrls.forEach { videoUrl ->
+        imageURL.forEach { videoUrl ->
             Videos.insert {
                 it[propertyId] = idProperty
                 it[url] = videoUrl
@@ -113,7 +113,7 @@ class PropertyDaoImpl : PropertyDao {
             it[equipment] = agriculturalProperty.equipment
         }
 
-        agriculturalProperty.property.video.forEach { videoUrl ->
+        agriculturalProperty.property.videos.forEach { videoUrl ->
             Videos.insert {
                 it[propertyId] = idProperty
                 it[url] = videoUrl
