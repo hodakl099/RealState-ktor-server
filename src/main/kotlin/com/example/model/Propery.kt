@@ -15,6 +15,7 @@ object Properties : Table() {
     val id = integer("id").autoIncrement()
     val agentContact = varchar("agent_contact", 256)
     val price = double("price")
-    override val primaryKey: PrimaryKey = PrimaryKey(id)
     val location = varchar("location", 256)
+
+    override val primaryKey: PrimaryKey = PrimaryKey(id)
 }

@@ -6,11 +6,10 @@ import org.jetbrains.exposed.sql.Table
 data class OfficeProperty(
     val property: Property,
     val layoutType: String,
-    val squareFoot : String,
+    val squareFoot : Double,
     val floorNumber : Int,
     val amenities  : String,
     val accessibility : String,
-    val price : Double,
 )
 
 object OfficeProperties : Table() {
@@ -20,7 +19,6 @@ object OfficeProperties : Table() {
     val floorNumber = integer("floorNumber")
     val accessibility = varchar("accessibility",1024)
     val amenities = varchar("amenities",1024)
-    val price = double("price")
 }
 
 

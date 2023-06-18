@@ -13,7 +13,6 @@ data class IndustrialProperty(
     val powerCapabilities: String,
     val accessToTransportation : String,
     val environmentalReports : String,
-    val price : Double,
 )
 
 object IndustrialProperties : Table() {
@@ -26,7 +25,6 @@ object IndustrialProperties : Table() {
     val powerCapabilities = varchar("powerCapabilities", 1024)
     val accessToTransportation = varchar("accessToTransportation", 1024)
     val environmentalReports = varchar("environmentalReports", 1024)
-    val price = double("price")
 }
 
 

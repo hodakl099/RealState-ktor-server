@@ -205,7 +205,7 @@ fun Application.configureRouting() {
                     equipment = equipment ?: ""
                 )
 
-                dao.addAgriculturalProperty(agriculturalProperty, videoUrls = videoURLs, imageUrls = imageURLs)
+                dao.addAgriculturalProperty(agriculturalProperty, videoURL = videoURLs, imageURL = imageURLs)
                 call.respond(HttpStatusCode.OK, BasicApiResponse(true,"New Residential Property Added Successfully."))
             }
 

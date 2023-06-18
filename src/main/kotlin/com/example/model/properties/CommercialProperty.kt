@@ -12,7 +12,6 @@ data class CommercialProperty(
     val trafficCount : String,
     val zoningInfo : String,
     val amenities : String,
-    val price : Double
 )
 
 object CommercialProperties : Table() {
@@ -22,8 +21,6 @@ object CommercialProperties : Table() {
     val trafficCount = varchar("trafficCount",256)
     val zoningInfo = varchar("zoningInfo",1024)
     val amenities = varchar("amenities",1024)
-    val price = double("price")
-
 }
 
 
