@@ -14,8 +14,8 @@ fun main(args: Array<String>): Unit =
 fun Application.module() {
     DatabaseFactory.init()
     runBlocking {
-        val allRealStates = dao.getAllCommercialProperties()
-        println("The  real estate" + allRealStates)
+        val allRealStates = dao.getAllIndustrialProperties()
+        println("The  real estate" + allRealStates + "!!!!")
     }
     configureSerialization()
 

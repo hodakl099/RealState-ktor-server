@@ -451,7 +451,6 @@ class PropertyDaoImpl : PropertyDao {
                 it[propertyId] = idProperty
                 it[url] = imageUrl
             }
-
         }
         leisureAndTouristicProperty
 
