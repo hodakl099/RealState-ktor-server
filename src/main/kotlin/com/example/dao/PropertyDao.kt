@@ -26,6 +26,8 @@ interface PropertyDao {
 
     suspend fun getAllAgriculturalProperties(): List<AgriculturalProperty>
 
+    suspend fun updateAgriculturalProperty(id: Int,agriculturalProperty: AgriculturalProperty): Boolean
+
     /**
      * OfficeProperty Dao.
      */
@@ -35,6 +37,7 @@ interface PropertyDao {
 
     suspend fun getAllOfficeProperties(): List<OfficeProperty>
     suspend fun getOfficeProperty(id: Int): OfficeProperty?
+    suspend fun updateOfficeProperty(id: Int,officeProperty: OfficeProperty): Boolean
 
     /**
      * IndustrialProperty Dao.
@@ -45,7 +48,7 @@ interface PropertyDao {
 
     suspend fun getAllIndustrialProperties(): List<IndustrialProperty>
     suspend fun getIndustrialProperty(id: Int): IndustrialProperty?
-
+    suspend fun updateIndustrialProperty(id: Int,industrialProperty: IndustrialProperty): Boolean
     /**
      * Commercial Property Dao.
      */
@@ -55,7 +58,7 @@ interface PropertyDao {
 
     suspend fun getAllCommercialProperties(): List<CommercialProperty>
     suspend fun getCommercialProperty(id: Int): CommercialProperty?
-
+    suspend fun updateCommercialProperty(id: Int,commercialProperty: CommercialProperty): Boolean
 
     /**
      * leisure and touristic Property Dao.
@@ -66,4 +69,5 @@ interface PropertyDao {
 
     suspend fun getAllTouristicProperties(): List<LeisureAndTouristicProperty>
     suspend fun getTouristicProperty(id: Int): LeisureAndTouristicProperty?
+    suspend fun updateTouristicProperty(id: Int,touristicProperty: LeisureAndTouristicProperty): Boolean
 }
