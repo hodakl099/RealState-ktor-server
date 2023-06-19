@@ -2,9 +2,11 @@ package com.example.model.properties
 
 import com.example.model.Properties
 import com.example.model.Property
+import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Table
 import javax.management.monitor.StringMonitor
 
+@Serializable
 data class CommercialProperty(
     val property: Property,
     val propertyType: String,

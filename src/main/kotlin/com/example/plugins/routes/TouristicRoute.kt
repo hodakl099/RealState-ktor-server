@@ -121,7 +121,19 @@ fun Route.createTouristicRoute() {
             } else {
                 call.respond(HttpStatusCode.BadRequest, "Invalid or missing property.")
             }
-
+        }
+        get("property/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull()
+            if(id != null) {
+                val property = dao.getTouristicProperty(id)
+                if (property != null) {
+                    call.respond(HttpStatusCode.OK, property)
+                }else {
+                    call.respond(HttpStatusCode.NotFound, "No property found with the provided ID.")
+                }
+            } else {
+                call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
+            }
         }
     }
 }

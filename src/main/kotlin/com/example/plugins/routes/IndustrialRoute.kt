@@ -125,7 +125,7 @@ fun Route.createIndustrialRoute() {
             }
 
         }
-        get("get/{id}") {
+        get("property/{id}") {
             val id = call.parameters["id"]?.toIntOrNull()
             if(id != null) {
                 val property = dao.getIndustrialProperty(id)

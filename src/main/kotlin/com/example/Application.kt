@@ -14,11 +14,10 @@ fun main(args: Array<String>): Unit =
 fun Application.module() {
     DatabaseFactory.init()
     runBlocking {
-        val allRealStates = dao.getAllIndustrialProperties()
+        val allRealStates = dao.getAllResidentialProperties()
         println("The  real estate" + allRealStates + "!!!!")
     }
     configureSerialization()
-
     configureRouting()
 //    configureGraphQl()
     configureTemplating()
