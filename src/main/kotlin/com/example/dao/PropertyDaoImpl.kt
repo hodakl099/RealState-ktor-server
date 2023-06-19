@@ -6,7 +6,6 @@ import com.example.model.properties.*
 import com.example.util.DatabaseFactory.dbQuery
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.transactions.inTopLevelTransaction
 
 class PropertyDaoImpl : PropertyDao {
 
@@ -65,6 +64,34 @@ class PropertyDaoImpl : PropertyDao {
         residentialProperty
     }
 
+    override suspend fun updateResidentialProperty(id: Int, updatedProperty: ResidentialProperty): Boolean = dbQuery {
+        val updateProperty = Properties.update( { Properties.id eq id  }) {
+            it[agentContact] = updatedProperty.property.agentContact
+            it[price] = updatedProperty.property.price
+            it[location] = updatedProperty.property.location
+        }
+        val updateResidential = ResidentialProperties.update({ ResidentialProperties.id eq id }){
+            it[propertyType] = updatedProperty.propertyType
+            it[squareFootage] = updatedProperty.squareFootage
+            it[bedrooms] = updatedProperty.bedrooms
+            it[bathrooms] = updatedProperty.bathrooms
+            it[amenities] = updatedProperty.amenities
+            it[parking] = updatedProperty.parking
+        }
+        updatedProperty.property.images.forEach { imageUrl ->
+            Images.insert {
+                it[propertyId] = id
+                it[url] = imageUrl
+            }
+        }
+        updatedProperty.property.videos.forEach { videoUrl ->
+            Videos.insert {
+                it[propertyId] = id
+                it[url] = videoUrl
+            }
+        }
+        updateResidential > 0 && updateProperty > 0
+    }
     override suspend fun getResidentialProperty(id: Int): ResidentialProperty?  =  dbQuery{
         (Properties innerJoin ResidentialProperties)
             .select { Properties.id eq id }

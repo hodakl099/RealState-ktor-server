@@ -15,6 +15,7 @@ interface PropertyDao {
 
     suspend fun getAllResidentialProperties(): List<ResidentialProperty>
     suspend fun getResidentialProperty(id: Int): ResidentialProperty?
+    suspend fun updateResidentialProperty(id: Int,residentialProperty: ResidentialProperty): Boolean
 
     /**
      * AgriculturalProperty Dao.
