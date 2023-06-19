@@ -125,5 +125,18 @@ fun Route.createIndustrialRoute() {
             }
 
         }
+        get("get/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull()
+            if(id != null) {
+                val property = dao.getIndustrialProperty(id)
+                if (property != null) {
+                    call.respond(HttpStatusCode.OK, property)
+                }else {
+                    call.respond(HttpStatusCode.NotFound, "No property found with the provided ID.")
+                }
+            } else {
+                call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
+            }
+        }
     }
 }

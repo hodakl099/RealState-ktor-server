@@ -115,7 +115,6 @@ fun Route.createCommercialRoute() {
             } else {
                 call.respond(HttpStatusCode.BadRequest, "Invalid or missing property.")
             }
-
         }
     }
 }

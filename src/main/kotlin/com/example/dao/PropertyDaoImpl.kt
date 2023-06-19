@@ -318,8 +318,11 @@ class PropertyDaoImpl : PropertyDao {
             .map { toIndustrialProperty(it) }
     }
 
-    override suspend fun getIndustrialProperty(id: Int): IndustrialProperty? {
-        TODO("Not yet implemented")
+    override suspend fun getIndustrialProperty(id: Int): IndustrialProperty? = dbQuery {
+        (Properties innerJoin IndustrialProperties)
+            .select { Properties.id eq id }
+            .map { toIndustrialProperty(it) }
+            .firstOrNull()
     }
 
 
