@@ -6,6 +6,7 @@ import com.example.model.properties.*
 import com.example.util.DatabaseFactory.dbQuery
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.transactions.inTopLevelTransaction
 
 class PropertyDaoImpl : PropertyDao {
 
@@ -65,12 +66,10 @@ class PropertyDaoImpl : PropertyDao {
     }
 
     override suspend fun getResidentialProperty(id: Int): ResidentialProperty?  =  dbQuery{
-        ResidentialProperties
-            .select {
-                ResidentialProperties.id eq id
-            }
-            .mapNotNull(::toResidentialProperty)
-            .singleOrNull()
+        (Properties innerJoin ResidentialProperties)
+            .select { Properties.id eq id }
+            .map { toResidentialProperty(it) }
+            .firstOrNull()
     }
 
     override suspend fun deleteResidentialProperty(id: Int): Boolean  = dbQuery {
@@ -147,12 +146,10 @@ class PropertyDaoImpl : PropertyDao {
     }
 
     override suspend fun getAgriculturalProperty(id: Int): AgriculturalProperty? = dbQuery{
-        AgriculturalProperties
-            .select {
-                AgriculturalProperties.id eq id
-            }
-            .mapNotNull(::toAgriculturalProperty)
-            .singleOrNull()
+        (Properties innerJoin AgriculturalProperties)
+            .select { Properties.id eq id }
+            .map { toAgriculturalProperty(it) }
+            .firstOrNull()
     }
 
     override suspend fun deleteAgriculturalProperty(id: Int): Boolean = dbQuery{
@@ -239,8 +236,11 @@ class PropertyDaoImpl : PropertyDao {
             .map { toOfficeProperty(it) }
     }
 
-    override suspend fun getOfficeProperty(id: Int): OfficeProperty? {
-        TODO("Not yet implemented")
+    override suspend fun getOfficeProperty(id: Int): OfficeProperty?= dbQuery {
+        (Properties innerJoin OfficeProperties)
+            .select { Properties.id eq id }
+            .map { toOfficeProperty(it) }
+            .firstOrNull()
     }
 
     /**
@@ -396,8 +396,11 @@ class PropertyDaoImpl : PropertyDao {
             .map { toCommercialProperty(it) }
     }
 
-    override suspend fun getCommercialProperty(id: Int): CommercialProperty? {
-        TODO("Not yet implemented")
+    override suspend fun getCommercialProperty(id: Int): CommercialProperty?  = dbQuery{
+        (Properties innerJoin CommercialProperties)
+            .select { Properties.id eq id }
+            .map { toCommercialProperty(it) }
+            .firstOrNull()
     }
 
     /**
@@ -473,8 +476,11 @@ class PropertyDaoImpl : PropertyDao {
             .map { toTouristicProperty(it) }
     }
 
-    override suspend fun getTouristicProperty(id: Int): LeisureAndTouristicProperty? {
-        TODO("Not yet implemented")
+    override suspend fun getTouristicProperty(id: Int): LeisureAndTouristicProperty? = dbQuery {
+        (Properties innerJoin LeisureAndTouristicProperties)
+            .select { Properties.id eq id }
+            .map { toTouristicProperty(it) }
+            .firstOrNull()
     }
 
 }
