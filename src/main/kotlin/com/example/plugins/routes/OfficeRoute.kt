@@ -223,7 +223,7 @@ fun Route.createOfficeRoute() {
                 call.respond(HttpStatusCode.BadRequest)
                 return@delete
             }
-            if (dao.deleteImagesByPropertyId(imageId)) {
+            if (dao.deleteImageByPropertyId(imageId)) {
                 call.respond(HttpStatusCode.OK, BasicApiResponse(true, "deleted successfully!")) // Successfully deleted
             } else {
                 call.respond(HttpStatusCode.NotFound) // Image not found
@@ -236,7 +236,7 @@ fun Route.createOfficeRoute() {
                 call.respond(HttpStatusCode.BadRequest)
                 return@delete
             }
-            if (dao.deleteVideosByPropertyId(videoId)) {
+            if (dao.deleteVideosById(videoId)) {
                 call.respond(HttpStatusCode.NoContent) // Successfully deleted
             } else {
                 call.respond(HttpStatusCode.NotFound) // Video not found

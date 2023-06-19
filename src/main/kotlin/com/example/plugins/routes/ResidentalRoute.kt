@@ -2,6 +2,7 @@ package com.example.plugins.routes
 
 import com.example.dao.dao
 import com.example.model.Property
+import com.example.model.Videos
 import com.example.model.properties.ResidentialProperty
 import com.example.util.BasicApiResponse
 import com.google.auth.oauth2.GoogleCredentials
@@ -16,6 +17,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.litote.kmongo.util.idValue
 import java.io.FileInputStream
 
 fun Route.createResidentialRoute() {
@@ -102,7 +104,7 @@ fun Route.createResidentialRoute() {
             )
 
             dao.addResidentialProperty(residentialProperty, imageURL = videoURLs, videoURL = imageURLs)
-            call.respond(HttpStatusCode.OK, BasicApiResponse(true,"New Residential Property Added Successfully."))
+            call.respond(HttpStatusCode.OK, BasicApiResponse(true,"New Residential Property Added Successfully ${Videos.idValue}."))
         }
         delete("/{id}") {
             val id = call.parameters["id"]?.toIntOrNull()
@@ -224,6 +226,7 @@ fun Route.createResidentialRoute() {
                 }
             }
 
+
         delete("removeImage/{propertyId}/{id}") {
             val propertyId = call.parameters["propertyId"]?.toIntOrNull()
             val imageId = call.parameters["id"]?.toIntOrNull()
@@ -231,20 +234,20 @@ fun Route.createResidentialRoute() {
                 call.respond(HttpStatusCode.BadRequest)
                 return@delete
             }
-            if (dao.deleteImagesByPropertyId(imageId)) {
+            if (dao.deleteImageByPropertyId(imageId)) {
                 call.respond(HttpStatusCode.OK, BasicApiResponse(true, "deleted successfully!")) // Successfully deleted
             } else {
                 call.respond(HttpStatusCode.NotFound) // Image not found
             }
         }
-        delete("removeVideo/{id}") {
+        delete("removeVideo/{propertyId}/{id}") {
             val propertyId = call.parameters["propertyId"]?.toIntOrNull()
-            val videoId = call.parameters["videoId"]?.toIntOrNull()
+            val videoId = call.parameters["id"]?.toIntOrNull()
             if (propertyId == null || videoId == null) {
                 call.respond(HttpStatusCode.BadRequest)
                 return@delete
             }
-            if (dao.deleteVideosByPropertyId(videoId)) {
+            if (dao.deleteVideosById(videoId)) {
                 call.respond(HttpStatusCode.OK) // Successfully deleted
             } else {
                 call.respond(HttpStatusCode.NotFound) // Video not found

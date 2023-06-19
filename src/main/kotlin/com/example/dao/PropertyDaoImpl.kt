@@ -657,11 +657,11 @@ class PropertyDaoImpl : PropertyDao {
             .firstOrNull()
     }
 
-    override suspend fun deleteVideosByPropertyId(videoId: Int): Boolean = dbQuery  {
+    override suspend fun deleteVideosById(videoId: Int): Boolean = dbQuery  {
         Videos.deleteWhere { Videos.id eq videoId } > 0
     }
 
-    override suspend fun deleteImagesByPropertyId(imageId: Int): Boolean = dbQuery {
+    override suspend fun deleteImageByPropertyId(imageId: Int): Boolean = dbQuery {
         Images.deleteWhere { Images.id eq imageId } > 0
     }
 
