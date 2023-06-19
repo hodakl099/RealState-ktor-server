@@ -3,7 +3,6 @@ package com.example.plugins.routes
 import com.example.dao.dao
 import com.example.model.Property
 import com.example.model.properties.IndustrialProperty
-import com.example.model.properties.OfficeProperty
 import com.example.util.BasicApiResponse
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.storage.BlobId
@@ -42,7 +41,7 @@ fun Route.createIndustrialRoute() {
                 when (part) {
                     is PartData.FormItem -> {
                         if (part.name?.isEmpty() == true) {
-                            call.respond(HttpStatusCode.OK, BasicApiResponse(false,"${part.name} can't be empty"))
+                            call.respond(HttpStatusCode.OK, BasicApiResponse(false, "${part.name} can't be empty"))
                         }
                         when (part.name) {
                             "propertyType" -> propertyType = part.value
@@ -58,6 +57,7 @@ fun Route.createIndustrialRoute() {
                             "price" -> price = part.value.toDoubleOrNull()
                         }
                     }
+
                     is PartData.FileItem -> {
                         if (part.name == "video" || part.name == "image") {
                             val fileBytes = part.streamProvider().readBytes()
@@ -85,41 +85,42 @@ fun Route.createIndustrialRoute() {
                             else imageURLs.add(filePath ?: "")
                         }
                     }
+
                     else -> return@forEachPart
                 }
                 part.dispose()
             }
 
             val industrialProperty = IndustrialProperty(
-                property = Property(
-                    id = 0, // This value will be replaced by autoincrement id
-                    agentContact = agentContact ?: "",
-                    price = price ?: 0.0,
-                    images = imageURLs,
-                    videos = videoURLs,
-                    location = location ?: "",
-                ),
-                propertyType = propertyType ?: "",
-                squareFoot = squareFoot ?: 0.0,
-                zoningInfo = zoningInfo ?: "",
-                cellingHeight = cellingHeight ?:0,
-                numberOfLoadingDocks = numberOfLoadingDocks ?: 0,
-                powerCapabilities = powerCapabilities ?: "",
-                accessToTransportation = accessToTransportation ?: "",
-                environmentalReports = environmentalReports ?: ""
+                    property = Property(
+                            id = 0, // This value will be replaced by autoincrement id
+                            agentContact = agentContact ?: "",
+                            price = price ?: 0.0,
+                            images = imageURLs,
+                            videos = videoURLs,
+                            location = location ?: "",
+                    ),
+                    propertyType = propertyType ?: "",
+                    squareFoot = squareFoot ?: 0.0,
+                    zoningInfo = zoningInfo ?: "",
+                    cellingHeight = cellingHeight ?: 0,
+                    numberOfLoadingDocks = numberOfLoadingDocks ?: 0,
+                    powerCapabilities = powerCapabilities ?: "",
+                    accessToTransportation = accessToTransportation ?: "",
+                    environmentalReports = environmentalReports ?: ""
             )
 
             dao.addIndustrialProperty(industrialProperty, imageURL = videoURLs, videoURL = imageURLs)
-            call.respond(HttpStatusCode.OK, BasicApiResponse(true,"New Industrial Property Added Successfully."))
+            call.respond(HttpStatusCode.OK, BasicApiResponse(true, "New Industrial Property Added Successfully."))
         }
         delete("/{id}") {
             val id = call.parameters["id"]?.toIntOrNull()
-            if(id != null) {
+            if (id != null) {
                 val isDeleted = dao.deleteIndustrialProperty(id)
                 if (isDeleted) {
-                    call.respond(HttpStatusCode.OK, BasicApiResponse(true,"The Industrial was deleted successfully."))
-                }else {
-                    call.respond(HttpStatusCode.NotFound,"no property found")
+                    call.respond(HttpStatusCode.OK, BasicApiResponse(true, "The Industrial was deleted successfully."))
+                } else {
+                    call.respond(HttpStatusCode.NotFound, "no property found")
                 }
             } else {
                 call.respond(HttpStatusCode.BadRequest, "Invalid or missing property.")
@@ -128,11 +129,11 @@ fun Route.createIndustrialRoute() {
         }
         get("property/{id}") {
             val id = call.parameters["id"]?.toIntOrNull()
-            if(id != null) {
+            if (id != null) {
                 val property = dao.getIndustrialProperty(id)
                 if (property != null) {
                     call.respond(HttpStatusCode.OK, property)
-                }else {
+                } else {
                     call.respond(HttpStatusCode.NotFound, "No property found with the provided ID.")
                 }
             } else {
@@ -142,7 +143,7 @@ fun Route.createIndustrialRoute() {
         put("updateProperty/{id}") {
             val id = call.parameters["id"]?.toIntOrNull()
             val multiPart = call.receiveMultipart()
-            if(id != null) {
+            if (id != null) {
                 var propertyType: String? = null
                 var squareFoot: Double? = null
                 var zoningInfo: String? = null
@@ -161,7 +162,7 @@ fun Route.createIndustrialRoute() {
                     when (part) {
                         is PartData.FormItem -> {
                             if (part.name?.isEmpty() == true) {
-                                call.respond(HttpStatusCode.OK, BasicApiResponse(false,"${part.name} can't be empty"))
+                                call.respond(HttpStatusCode.OK, BasicApiResponse(false, "${part.name} can't be empty"))
                             }
                             when (part.name) {
                                 "propertyType" -> propertyType = part.value
@@ -177,6 +178,7 @@ fun Route.createIndustrialRoute() {
                                 "price" -> price = part.value.toDoubleOrNull()
                             }
                         }
+
                         is PartData.FileItem -> {
                             if (part.name == "video" || part.name == "image") {
                                 val fileBytes = part.streamProvider().readBytes()
@@ -215,7 +217,7 @@ fun Route.createIndustrialRoute() {
                                     propertyType = propertyType ?: "",
                                     squareFoot = squareFoot ?: 0.0,
                                     zoningInfo = zoningInfo ?: "",
-                                    cellingHeight = cellingHeight ?:0,
+                                    cellingHeight = cellingHeight ?: 0,
                                     numberOfLoadingDocks = numberOfLoadingDocks ?: 0,
                                     powerCapabilities = powerCapabilities ?: "",
                                     accessToTransportation = accessToTransportation ?: "",
@@ -223,12 +225,13 @@ fun Route.createIndustrialRoute() {
                             )
                             val isUpdated = dao.updateIndustrialProperty(id, industrialProperty)
                             if (isUpdated) {
-                                call.respond(HttpStatusCode.OK,BasicApiResponse(true,"Property updated successfully."))
+                                call.respond(HttpStatusCode.OK, BasicApiResponse(true, "Property updated successfully."))
                             } else {
                                 call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
                             }
 
                         }
+
                         else -> return@forEachPart
                     }
                     part.dispose()
@@ -237,5 +240,32 @@ fun Route.createIndustrialRoute() {
                 call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
             }
         }
+        delete("removeImage/{id}") {
+            val propertyId = call.parameters["id"]?.toIntOrNull()
+            val imageId = call.parameters["id"]?.toIntOrNull()
+            if (propertyId == null || imageId == null) {
+                call.respond(HttpStatusCode.BadRequest)
+                return@delete
+            }
+            if (dao.deleteImagesByPropertyId(imageId)) {
+                call.respond(HttpStatusCode.OK, BasicApiResponse(true, "deleted successfully!")) // Successfully deleted
+            } else {
+                call.respond(HttpStatusCode.NotFound) // Image not found
+            }
+        }
+        delete("removeVideo/{id}") {
+            val propertyId = call.parameters["propertyId"]?.toIntOrNull()
+            val videoId = call.parameters["videoId"]?.toIntOrNull()
+            if (propertyId == null || videoId == null) {
+                call.respond(HttpStatusCode.BadRequest)
+                return@delete
+            }
+            if (dao.deleteVideosByPropertyId(videoId)) {
+                call.respond(HttpStatusCode.NoContent) // Successfully deleted
+            } else {
+                call.respond(HttpStatusCode.NotFound) // Video not found
+            }
+        }
     }
+
 }

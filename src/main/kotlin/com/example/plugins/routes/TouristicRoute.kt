@@ -2,9 +2,7 @@ package com.example.plugins.routes
 
 import com.example.dao.dao
 import com.example.model.Property
-import com.example.model.properties.CommercialProperty
 import com.example.model.properties.LeisureAndTouristicProperty
-import com.example.model.properties.ResidentialProperty
 import com.example.util.BasicApiResponse
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.storage.BlobId
@@ -230,6 +228,32 @@ fun Route.createTouristicRoute() {
                 }
             } else {
                 call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
+            }
+        }
+        delete("removeImage/{id}") {
+            val propertyId = call.parameters["propertyId"]?.toIntOrNull()
+            val imageId = call.parameters["imageId"]?.toIntOrNull()
+            if (propertyId == null || imageId == null) {
+                call.respond(HttpStatusCode.BadRequest)
+                return@delete
+            }
+            if (dao.deleteImagesByPropertyId(imageId)) {
+                call.respond(HttpStatusCode.OK, BasicApiResponse(true, "deleted successfully!")) // Successfully deleted
+            } else {
+                call.respond(HttpStatusCode.NotFound) // Image not found
+            }
+        }
+        delete("removeVideo/{id}") {
+            val propertyId = call.parameters["propertyId"]?.toIntOrNull()
+            val videoId = call.parameters["videoId"]?.toIntOrNull()
+            if (propertyId == null || videoId == null) {
+                call.respond(HttpStatusCode.BadRequest)
+                return@delete
+            }
+            if (dao.deleteVideosByPropertyId(videoId)) {
+                call.respond(HttpStatusCode.NoContent) // Successfully deleted
+            } else {
+                call.respond(HttpStatusCode.NotFound) // Video not found
             }
         }
     }

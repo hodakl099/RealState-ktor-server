@@ -70,4 +70,8 @@ interface PropertyDao {
     suspend fun getAllTouristicProperties(): List<LeisureAndTouristicProperty>
     suspend fun getTouristicProperty(id: Int): LeisureAndTouristicProperty?
     suspend fun updateTouristicProperty(id: Int,touristicProperty: LeisureAndTouristicProperty): Boolean
+
+    suspend fun deleteVideosByPropertyId(propertyId: Int): Boolean
+
+    suspend fun deleteImagesByPropertyId(propertyId: Int): Boolean
 }

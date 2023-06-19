@@ -223,6 +223,33 @@ fun Route.createResidentialRoute() {
                     call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
                 }
             }
+
+        delete("removeImage/{propertyId}/{id}") {
+            val propertyId = call.parameters["propertyId"]?.toIntOrNull()
+            val imageId = call.parameters["id"]?.toIntOrNull()
+            if (propertyId == null || imageId == null) {
+                call.respond(HttpStatusCode.BadRequest)
+                return@delete
+            }
+            if (dao.deleteImagesByPropertyId(imageId)) {
+                call.respond(HttpStatusCode.OK, BasicApiResponse(true, "deleted successfully!")) // Successfully deleted
+            } else {
+                call.respond(HttpStatusCode.NotFound) // Image not found
+            }
+        }
+        delete("removeVideo/{id}") {
+            val propertyId = call.parameters["propertyId"]?.toIntOrNull()
+            val videoId = call.parameters["videoId"]?.toIntOrNull()
+            if (propertyId == null || videoId == null) {
+                call.respond(HttpStatusCode.BadRequest)
+                return@delete
+            }
+            if (dao.deleteVideosByPropertyId(videoId)) {
+                call.respond(HttpStatusCode.OK) // Successfully deleted
+            } else {
+                call.respond(HttpStatusCode.NotFound) // Video not found
+            }
+        }
     }
 
 }
