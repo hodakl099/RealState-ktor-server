@@ -228,7 +228,7 @@ class PropertyDaoImpl : PropertyDao {
     override suspend fun deleteOfficeProperty(id: Int): Boolean = dbQuery {
         val deleteImages  = Images.deleteWhere { Images.id eq id }
         val deleteVideos = Videos.deleteWhere { Videos.id eq id  }
-        val deleteOfficeProperty = AgriculturalProperties.deleteWhere { AgriculturalProperties.id eq id}
+        val deleteOfficeProperty = OfficeProperties.deleteWhere { AgriculturalProperties.id eq id}
         val deleteProperty  =  Properties.deleteWhere { Properties.id  eq id }
         deleteOfficeProperty > 0 && deleteProperty > 0 && deleteImages > 0 && deleteVideos > 0
     }
@@ -307,7 +307,7 @@ class PropertyDaoImpl : PropertyDao {
     override suspend fun deleteIndustrialProperty(id: Int): Boolean  =  dbQuery{
         val deleteImages  = Images.deleteWhere { Images.id eq id }
         val deleteVideos = Videos.deleteWhere { Videos.id eq id  }
-        val deleteIndustrialProperty = AgriculturalProperties.deleteWhere { AgriculturalProperties.id eq id}
+        val deleteIndustrialProperty = IndustrialProperties.deleteWhere { AgriculturalProperties.id eq id}
         val deleteProperty  =  Properties.deleteWhere { Properties.id  eq id }
          deleteIndustrialProperty > 0 && deleteProperty > 0 && deleteImages > 0 && deleteVideos > 0
     }
@@ -382,7 +382,7 @@ class PropertyDaoImpl : PropertyDao {
     override suspend fun deleteCommercialProperty(id: Int): Boolean = dbQuery  {
         val deleteImages  = Images.deleteWhere { Images.id eq id }
         val deleteVideos = Videos.deleteWhere { Videos.id eq id  }
-        val deleteCommercialProperty = AgriculturalProperties.deleteWhere { AgriculturalProperties.id eq id}
+        val deleteCommercialProperty = CommercialProperties.deleteWhere { AgriculturalProperties.id eq id}
         val deleteProperty  =  Properties.deleteWhere { Properties.id  eq id }
          deleteCommercialProperty > 0 && deleteProperty > 0 && deleteImages > 0 && deleteVideos > 0
     }
@@ -460,7 +460,7 @@ class PropertyDaoImpl : PropertyDao {
     override suspend fun deleteTouristicProperty(id: Int): Boolean  = dbQuery{
         val deleteImages  = Images.deleteWhere { Images.id eq id }
         val deleteVideos = Videos.deleteWhere { Videos.id eq id  }
-        val deleteTouristicProperty = AgriculturalProperties.deleteWhere { AgriculturalProperties.id eq id}
+        val deleteTouristicProperty = LeisureAndTouristicProperties.deleteWhere { AgriculturalProperties.id eq id}
         val deleteProperty  =  Properties.deleteWhere { Properties.id  eq id }
         deleteTouristicProperty > 0 && deleteProperty > 0 && deleteImages > 0 && deleteVideos > 0
     }
