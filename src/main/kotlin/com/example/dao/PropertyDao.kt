@@ -1,7 +1,7 @@
 package com.example.dao
 
 
-import com.example.model.ResidentialProperty
+import com.example.model.properties.ResidentialProperty
 import com.example.model.properties.*
 
 

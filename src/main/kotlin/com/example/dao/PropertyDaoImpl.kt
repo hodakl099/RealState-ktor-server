@@ -5,6 +5,7 @@ import com.example.model.*
 import com.example.model.properties.*
 import com.example.util.DatabaseFactory.dbQuery
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class PropertyDaoImpl : PropertyDao {
 
@@ -73,7 +74,11 @@ class PropertyDaoImpl : PropertyDao {
     }
 
     override suspend fun deleteResidentialProperty(id: Int): Boolean {
-        TODO("Not yet implemented")
+        val deleteImages = Images.deleteWhere { Images.id eq id  }
+        val deleteVideos = Videos.deleteWhere { Videos.id eq id }
+        val deleteResidentialProperty = ResidentialProperties.deleteWhere { ResidentialProperties.id eq  id }
+        val deleteProperty =  Properties.deleteWhere { Properties.id eq id }
+       return deleteResidentialProperty > 0 && deleteProperty > 0 && deleteImages > 0 && deleteVideos > 0
     }
     override suspend fun getAllResidentialProperties(): List<ResidentialProperty>  = dbQuery{
         (Properties innerJoin ResidentialProperties)
@@ -150,8 +155,12 @@ class PropertyDaoImpl : PropertyDao {
             .singleOrNull()
     }
 
-    override suspend fun deleteAgriculturalProperty(id: Int): Boolean {
-        TODO("Not yet implemented")
+    override suspend fun deleteAgriculturalProperty(id: Int): Boolean = dbQuery{
+        val deleteImages  = Images.deleteWhere { Images.id eq id }
+        val deleteVideos = Videos.deleteWhere { Videos.id eq id  }
+        val deleteAgriculturalProperty = AgriculturalProperties.deleteWhere { AgriculturalProperties.id eq id}
+        val deleteProperty  =  Properties.deleteWhere { Properties.id  eq id }
+        deleteAgriculturalProperty > 0 && deleteProperty > 0 && deleteImages > 0 && deleteVideos > 0
     }
 
 
@@ -217,7 +226,11 @@ class PropertyDaoImpl : PropertyDao {
     }
 
     override suspend fun deleteOfficeProperty(id: Int): Boolean {
-        TODO("Not yet implemented")
+        val deleteImages  = Images.deleteWhere { Images.id eq id }
+        val deleteVideos = Videos.deleteWhere { Videos.id eq id  }
+        val deleteOfficeProperty = AgriculturalProperties.deleteWhere { AgriculturalProperties.id eq id}
+        val deleteProperty  =  Properties.deleteWhere { Properties.id  eq id }
+        return deleteOfficeProperty > 0 && deleteProperty > 0 && deleteImages > 0 && deleteVideos > 0
     }
 
     override suspend fun getAllOfficeProperties(): List<OfficeProperty> = dbQuery{
@@ -292,7 +305,11 @@ class PropertyDaoImpl : PropertyDao {
     }
 
     override suspend fun deleteIndustrialProperty(id: Int): Boolean {
-        TODO("Not yet implemented")
+        val deleteImages  = Images.deleteWhere { Images.id eq id }
+        val deleteVideos = Videos.deleteWhere { Videos.id eq id  }
+        val deleteIndustrialProperty = AgriculturalProperties.deleteWhere { AgriculturalProperties.id eq id}
+        val deleteProperty  =  Properties.deleteWhere { Properties.id  eq id }
+        return deleteIndustrialProperty > 0 && deleteProperty > 0 && deleteImages > 0 && deleteVideos > 0
     }
 
     override suspend fun getAllIndustrialProperties(): List<IndustrialProperty> = dbQuery{
@@ -363,7 +380,11 @@ class PropertyDaoImpl : PropertyDao {
     }
 
     override suspend fun deleteCommercialProperty(id: Int): Boolean {
-        TODO("Not yet implemented")
+        val deleteImages  = Images.deleteWhere { Images.id eq id }
+        val deleteVideos = Videos.deleteWhere { Videos.id eq id  }
+        val deleteCommercialProperty = AgriculturalProperties.deleteWhere { AgriculturalProperties.id eq id}
+        val deleteProperty  =  Properties.deleteWhere { Properties.id  eq id }
+        return deleteCommercialProperty > 0 && deleteProperty > 0 && deleteImages > 0 && deleteVideos > 0
     }
 
     override suspend fun getAllCommercialProperties(): List<CommercialProperty> = dbQuery{
@@ -437,7 +458,11 @@ class PropertyDaoImpl : PropertyDao {
     }
 
     override suspend fun deleteTouristicProperty(id: Int): Boolean {
-        TODO("Not yet implemented")
+        val deleteImages  = Images.deleteWhere { Images.id eq id }
+        val deleteVideos = Videos.deleteWhere { Videos.id eq id  }
+        val deleteTouristicProperty = AgriculturalProperties.deleteWhere { AgriculturalProperties.id eq id}
+        val deleteProperty  =  Properties.deleteWhere { Properties.id  eq id }
+        return deleteTouristicProperty > 0 && deleteProperty > 0 && deleteImages > 0 && deleteVideos > 0
     }
 
     override suspend fun getAllTouristicProperties(): List<LeisureAndTouristicProperty> = dbQuery {

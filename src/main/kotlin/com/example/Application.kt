@@ -16,14 +16,17 @@ fun Application.module() {
     runBlocking {
         val allRealStates = dao.getAllResidentialProperties()
         val allStates = dao.getAllCommercialProperties()
+        val allStatesAgricultural = dao.getAllAgriculturalProperties()
         println("The database" + allRealStates)
         println("The commercial real estate" + allStates)
+        println("The commercial real estate" + allStates)
+        println("The allStatesAgricultural real estate" + allStatesAgricultural)
     }
     configureSerialization()
+
     configureRouting()
 //    configureGraphQl()
     configureTemplating()
-//    configureDatabases()
     configureSockets()
     configureMonitoring()
 }

@@ -1,7 +1,8 @@
-package com.example.model
+package com.example.model.properties
 
+import com.example.model.Properties
+import com.example.model.Property
 import org.jetbrains.exposed.sql.Table
-import java.math.BigDecimal
 
 data class ResidentialProperty(
     val property: Property,

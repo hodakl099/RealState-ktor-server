@@ -105,8 +105,22 @@ fun Route.createAgriculturalRoute() {
                 equipment = equipment ?: ""
             )
             dao.addAgriculturalProperty(agriculturalProperty, videoURL = videoURLs, imageURL = imageURLs)
-            call.respond(HttpStatusCode.OK, BasicApiResponse(true,"New Agricultural Property Added Successfully."))
+            call.respond(HttpStatusCode.OK, BasicApiResponse(true,"New Agricultural Property Added Successfully ${agriculturalProperty.property.id}."))
         }
+        delete("/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull()
+            if(id != null) {
+                val isDeleted = dao.deleteAgriculturalProperty(id)
+                if (isDeleted) {
+                    call.respond(HttpStatusCode.OK, BasicApiResponse(true,"The Agricultural was deleted successfully."))
+                }else {
+                    call.respond(HttpStatusCode.NotFound,"no property found")
+                }
+            } else {
+                call.respond(HttpStatusCode.BadRequest, "Invalid or missing property.")
+            }
 
+        }
     }
+
 }

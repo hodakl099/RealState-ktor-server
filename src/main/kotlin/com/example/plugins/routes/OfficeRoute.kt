@@ -2,7 +2,6 @@ package com.example.plugins.routes
 
 import com.example.dao.dao
 import com.example.model.Property
-import com.example.model.ResidentialProperty
 import com.example.model.properties.OfficeProperty
 import com.example.util.BasicApiResponse
 import com.google.auth.oauth2.GoogleCredentials
