@@ -24,7 +24,6 @@ object LeisureAndTouristicProperties : Table() {
     val amenities = varchar("amenities",1024)
     val proximityToAttractions = varchar("proximityToAttractions",1024)
     val occupancyRate = varchar("occupancyRate",1024)
-    val price = double("price")
 }
 
 

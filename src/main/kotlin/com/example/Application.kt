@@ -15,7 +15,9 @@ fun Application.module() {
     DatabaseFactory.init()
     runBlocking {
         val allRealStates = dao.getAllResidentialProperties()
+        val allStates = dao.getAllCommercialProperties()
         println("The database" + allRealStates)
+        println("The commercial real estate" + allStates)
     }
     configureSerialization()
     configureRouting()
