@@ -103,5 +103,19 @@ fun Route.createCommercialRoute() {
                 dao.addCommercialProperty(commercialProperty, imageURL = videoURLs, videoURL = imageURLs)
                 call.respond(HttpStatusCode.OK, BasicApiResponse(true,"New Commercial Property Added Successfully."))
             }
+        delete("/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull()
+            if(id != null) {
+                val isDeleted = dao.deleteCommercialProperty(id)
+                if (isDeleted) {
+                    call.respond(HttpStatusCode.OK, BasicApiResponse(true,"The Commercial was deleted successfully."))
+                }else {
+                    call.respond(HttpStatusCode.NotFound,"no property found")
+                }
+            } else {
+                call.respond(HttpStatusCode.BadRequest, "Invalid or missing property.")
+            }
+
+        }
     }
 }
