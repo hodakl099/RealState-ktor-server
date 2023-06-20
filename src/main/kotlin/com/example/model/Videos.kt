@@ -21,17 +21,3 @@ object Videos : IntIdTable() {
 }
 
 
-@Serializable
-data class VideoResponse(
-    val videoId : Int,
-    val propertyId: Int,
-    val url: String,
-)
-
-fun Video.toVideoResponse() : VideoResponse {
-    return VideoResponse(
-        videoId = this.videoId,
-        propertyId = this.propertyId,
-        url = this.url
-    )
-}

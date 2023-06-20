@@ -9,6 +9,8 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.FileInputStream
 
 fun Route.deleteAgriculturalImage() {
@@ -22,10 +24,12 @@ fun Route.deleteAgriculturalImage() {
         val image = dao.getImageById(imageId)
 
         if (image != null) {
-          val creds =   GoogleCredentials.fromStream(FileInputStream("src/main/resources/verdant-option-390012-977b2708f8e5.json"))
+          val creds = withContext(Dispatchers.IO) {
+              GoogleCredentials.fromStream(FileInputStream("src/main/resources/verdant-option-390012-977b2708f8e5.json"))
+          }
             val storage = StorageOptions.newBuilder().setCredentials(creds).build().service
 
-            val blobId = BlobId.of("tajaqar", image.url)
+            val blobId = BlobId.of("tajaqar", image.objectName)
             storage.delete(blobId)
         }
         if (dao.deleteImageByPropertyId(imageId)) {

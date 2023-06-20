@@ -811,22 +811,21 @@ class PropertyDaoImpl : PropertyDao {
      */
 
 
-    private fun toImage(row: ResultRow): ImageResponse =
+    private fun toImage(row: ResultRow): Image =
         Image(
             imageId = row[Images.id].value,
             propertyId = row[Images.propertyId],
             url = row[Images.url],
             objectName = row[Images.objectName]
+        )
 
-        ).toImageResponse()
-
-    private fun toVideo(row: ResultRow): VideoResponse =
+    private fun toVideo(row: ResultRow): Video =
         Video(
             videoId = row[Videos.id].value,
             propertyId = row[Videos.propertyId],
             url = row[Videos.url],
             objectName = row[Images.objectName]
-        ).toVideoResponse()
+        )
 
     override suspend fun deleteVideosById(videoId: Int): Boolean = dbQuery {
         Videos.deleteWhere { Videos.id eq videoId } > 0
@@ -836,13 +835,13 @@ class PropertyDaoImpl : PropertyDao {
         Images.deleteWhere { Images.id eq imageId } > 0
     }
 
-    override suspend fun getImageById(imageId: Int): ImageResponse? = dbQuery {
+    override suspend fun getImageById(imageId: Int): Image? = dbQuery {
         Images.select { Images.id eq imageId }
             .mapNotNull { toImage(it) }
             .singleOrNull()
     }
 
-    override suspend fun getVideoById(videoId: Int): VideoResponse? = dbQuery {
+    override suspend fun getVideoById(videoId: Int): Video? = dbQuery {
         Videos.select { Videos.id eq videoId }
             .mapNotNull { toVideo(it) }
             .singleOrNull()

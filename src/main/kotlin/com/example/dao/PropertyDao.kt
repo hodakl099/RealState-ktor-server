@@ -2,9 +2,7 @@ package com.example.dao
 
 
 import com.example.model.Image
-import com.example.model.ImageResponse
 import com.example.model.Video
-import com.example.model.VideoResponse
 import com.example.model.properties.ResidentialProperty
 import com.example.model.properties.*
 
@@ -84,7 +82,7 @@ interface PropertyDao {
 
     suspend fun deleteImageByPropertyId(imageId: Int): Boolean
 
-    suspend fun getImageById(imageId : Int) : ImageResponse?
+    suspend fun getImageById(imageId : Int) : Image?
 
-    suspend fun getVideoById(videoId : Int) : VideoResponse?
+    suspend fun getVideoById(videoId : Int) : Video?
 }
