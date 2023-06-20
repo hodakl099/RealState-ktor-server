@@ -1,10 +1,10 @@
-package com.example.plugins.routes.touristic.put
+package com.example.plugins.routes.office.put
 
 import com.example.dao.dao
 import com.example.model.Image
 import com.example.model.Property
 import com.example.model.Video
-import com.example.model.properties.LeisureAndTouristicProperty
+import com.example.model.properties.OfficeProperty
 import com.example.util.BasicApiResponse
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.storage.BlobId
@@ -20,18 +20,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.FileInputStream
 
-fun Route.putTouristicProperty() {
+fun Route.putOfficeProperty() {
     put("updateProperty/{id}") {
         val id = call.parameters["id"]?.toIntOrNull()
         val multiPart = call.receiveMultipart()
         if(id != null) {
-            var propertyType: String? = null
+            var layoutType: String? = null
             var squareFoot: Double? = null
-            var rooms: Int? = null
-            var units: Int? = null
+            var floorNumber: Int? = null
             var amenities: String? = null
-            var proximityToAttractions: String? = null
-            var occupancyRate: String? = null
+            var accessibility: String? = null
             var location: String? = null
             var agentContact: String? = null
             var price: Double? = null
@@ -45,13 +43,11 @@ fun Route.putTouristicProperty() {
                             call.respond(HttpStatusCode.OK, BasicApiResponse(false,"${part.name} can't be empty"))
                         }
                         when (part.name) {
-                            "propertyType" -> propertyType = part.value
+                            "layoutType" -> layoutType = part.value
                             "squareFoot" -> squareFoot = part.value.toDoubleOrNull()
-                            "rooms" -> rooms = part.value.toIntOrNull()
-                            "units" -> units = part.value.toIntOrNull()
+                            "floorNumber" -> floorNumber = part.value.toIntOrNull()
                             "amenities" -> amenities = part.value
-                            "proximityToAttractions" -> proximityToAttractions = part.value
-                            "occupancyRate" -> occupancyRate = part.value
+                            "accessibility" -> accessibility = part.value
                             "location" -> location = part.value
                             "agentContact" -> agentContact = part.value
                             "price" -> price = part.value.toDoubleOrNull()
@@ -83,8 +79,7 @@ fun Route.putTouristicProperty() {
                             if (part.name == "video") videoURLs.add(filePath ?: "")
                             else imageURLs.add(filePath ?: "")
                         }
-
-                        val leisureAndTouristicProperty = LeisureAndTouristicProperty(
+                        val officeProperty = OfficeProperty(
                                 property = Property(
                                         id = 0, // This value will be replaced by autoincrement id
                                         agentContact = agentContact ?: "",
@@ -93,15 +88,13 @@ fun Route.putTouristicProperty() {
                                         videos = videoURLs.map { Video(url = it, propertyId = 0, videoId = 0) },
                                         location = location ?: "",
                                 ),
-                                propertyType = propertyType ?: "",
+                                layoutType = layoutType ?: "",
                                 squareFoot = squareFoot ?: 0.0,
-                                rooms = rooms ?: 0,
-                                units = units ?: 0,
-                                proximityToAttractions = proximityToAttractions ?: "",
-                                occupancyRate = occupancyRate ?: "",
+                                floorNumber = floorNumber ?: 0,
                                 amenities = amenities ?: "",
+                                accessibility = accessibility ?: "",
                         )
-                        val isUpdated = dao.updateTouristicProperty(id, leisureAndTouristicProperty)
+                        val isUpdated = dao.updateOfficeProperty(id, officeProperty)
                         if (isUpdated) {
                             call.respond(HttpStatusCode.OK, BasicApiResponse(true,"Property updated successfully."))
                         } else {

@@ -1,10 +1,10 @@
-package com.example.plugins.routes.agricultural.post
+package com.example.plugins.routes.office.post
 
 import com.example.dao.dao
 import com.example.model.Image
 import com.example.model.Property
 import com.example.model.Video
-import com.example.model.properties.AgriculturalProperty
+import com.example.model.properties.OfficeProperty
 import com.example.util.BasicApiResponse
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.storage.BlobId
@@ -20,19 +20,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.FileInputStream
 
-fun Route.postAgriculturalRoute() {
+fun Route.postOfficeProperty() {
     post {
         val multiPart = call.receiveMultipart()
-        var propertyType: String? = null
-        var acres: Double? = null
-        var buildings: String? = null
-        var crops: String? = null
-        val waterSources: String? = null
-        var soilType: String? = null
-        var equipment: String? = null
+        var layoutType: String? = null
+        var squareFoot: Double? = null
+        var floorNumber: Int? = null
+        var amenities: String? = null
+        var accessibility: String? = null
         var location: String? = null
-        var price: Double? = null
         var agentContact: String? = null
+        var price: Double? = null
         val videoURLs = mutableListOf<String>()
         val imageURLs = mutableListOf<String>()
 
@@ -40,20 +38,20 @@ fun Route.postAgriculturalRoute() {
             when (part) {
                 is PartData.FormItem -> {
                     if (part.name?.isEmpty() == true) {
-                        call.respond(HttpStatusCode.OK, BasicApiResponse(false,"${part.name} can't be empty"))
+                        call.respond(HttpStatusCode.OK, BasicApiResponse(false, "${part.name} can't be empty"))
                     }
                     when (part.name) {
+                        "layoutType" -> layoutType = part.value
+                        "squareFoot" -> squareFoot = part.value.toDoubleOrNull()
+                        "floorNumber" -> floorNumber = part.value.toIntOrNull()
+                        "amenities" -> amenities = part.value
+                        "accessibility" -> accessibility = part.value
+                        "location" -> location = part.value
                         "agentContact" -> agentContact = part.value
                         "price" -> price = part.value.toDoubleOrNull()
-                        "propertyType" -> propertyType = part.value
-                        "acres" -> acres = part.value.toDoubleOrNull()
-                        "buildings" -> buildings = part.value
-                        "crops" -> crops = part.value
-                        "soilType" -> soilType = part.value
-                        "equipment" -> equipment = part.value
-                        "location" -> location = part.value
                     }
                 }
+
                 is PartData.FileItem -> {
                     if (part.name == "video" || part.name == "image") {
                         val fileBytes = part.streamProvider().readBytes()
@@ -81,29 +79,29 @@ fun Route.postAgriculturalRoute() {
                         else imageURLs.add(filePath ?: "")
                     }
                 }
+
                 else -> return@forEachPart
             }
             part.dispose()
         }
 
-        val agriculturalProperty = AgriculturalProperty(
+        val officeProperty = OfficeProperty(
                 property = Property(
                         id = 0, // This value will be replaced by autoincrement id
                         agentContact = agentContact ?: "",
                         price = price ?: 0.0,
                         images = imageURLs.map { Image(url = it, propertyId = 0, imageId = 0) },
                         videos = videoURLs.map { Video(url = it, propertyId = 0, videoId = 0) },
-                        location = location ?: ""
+                        location = location ?: "",
                 ),
-                propertyType = propertyType ?: "",
-                acres = acres  ?: 0.0,
-                buildings = buildings ?: "",
-                crops = crops ?: "",
-                waterSources = waterSources ?: "",
-                soilType = soilType ?: "",
-                equipment = equipment ?: ""
+                layoutType = layoutType ?: "",
+                squareFoot = squareFoot ?: 0.0,
+                floorNumber = floorNumber ?: 0,
+                amenities = amenities ?: "",
+                accessibility = accessibility ?: "",
         )
-        dao.addAgriculturalProperty(agriculturalProperty, videoURL = videoURLs, imageURL = imageURLs)
-        call.respond(HttpStatusCode.OK, BasicApiResponse(true,"New Agricultural Property Added Successfully ${agriculturalProperty.property.id}."))
+
+        dao.addOfficeProperty(officeProperty, imageURL = videoURLs, videoURL = imageURLs)
+        call.respond(HttpStatusCode.OK, BasicApiResponse(true, "New Office Property Added Successfully."))
     }
 }
