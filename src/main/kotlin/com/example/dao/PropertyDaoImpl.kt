@@ -22,14 +22,16 @@ class PropertyDaoImpl : PropertyDao {
                                 Image(
                                         imageId = it[Images.id].value,
                                         propertyId = it[Images.propertyId],
-                                        url = it[Images.url]
+                                        url = it[Images.url],
+                                        objectName = it[Images.objectName]
                                 )
                             },
                             videos = Videos.select { Videos.propertyId eq row[Properties.id] }.map {
                                 Video(
                                         videoId = it[Videos.id].value,
                                         propertyId = it[Videos.propertyId],
-                                        url = it[Videos.url]
+                                        url = it[Videos.url],
+                                        objectName = it[Images.objectName]
                                 )
                             },
                             location = row[Properties.location],
@@ -142,14 +144,16 @@ class PropertyDaoImpl : PropertyDao {
                                 Image(
                                         imageId = it[Images.id].value,
                                         propertyId = it[Images.propertyId],
-                                        url = it[Images.url]
+                                        url = it[Images.url],
+                                        objectName = it[Images.objectName]
                                 )
                             },
                             videos = Videos.select { Videos.propertyId eq row[Properties.id] }.map {
                                 Video(
                                         videoId = it[Videos.id].value,
                                         propertyId = it[Videos.propertyId],
-                                        url = it[Videos.url]
+                                        url = it[Videos.url],
+                                        objectName = it[Videos.objectName]
                                 )
                             },
                             location = row[Properties.location]
@@ -736,6 +740,28 @@ class PropertyDaoImpl : PropertyDao {
                 .firstOrNull()
     }
 
+    /**
+     * Delete/Get Images and Videos Transactions.
+     */
+
+
+    private fun toImage(row: ResultRow): Image =
+            Image(
+                    imageId = row[Images.id].value,
+                    propertyId = row[Images.propertyId],
+                    url = row[Images.url],
+                    objectName = row[Images.objectName]
+
+            )
+
+    private fun toVideo(row: ResultRow): Video =
+            Video(
+                    videoId = row[Videos.id].value,
+                    propertyId = row[Videos.propertyId],
+                    url = row[Videos.url],
+                    objectName = row[Images.objectName]
+            )
+
     override suspend fun deleteVideosById(videoId: Int): Boolean = dbQuery {
         Videos.deleteWhere { Videos.id eq videoId } > 0
     }
@@ -744,5 +770,16 @@ class PropertyDaoImpl : PropertyDao {
         Images.deleteWhere { Images.id eq imageId } > 0
     }
 
+    override suspend fun getImageById(imageId: Int): Image? = dbQuery {
+        Images.select { Images.id eq imageId }
+                .mapNotNull { toImage(it) }
+                .singleOrNull()
+    }
+
+    override suspend fun getVideoById(videoId: Int): Video? = dbQuery {
+        Videos.select { Videos.id eq videoId }
+                .mapNotNull { toVideo(it) }
+                .singleOrNull()
+    }
 
 }

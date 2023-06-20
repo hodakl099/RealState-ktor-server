@@ -6,10 +6,11 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 
 
 @Serializable
-data class Image(val imageId : Int,val propertyId: Int, val url: String)
+data class Image(val imageId : Int,val propertyId: Int, val url: String,val objectName : String)
 
 object Images : IntIdTable() {
     val propertyId = integer("propertyId").references(Properties.id)
     val url = varchar("url", 2048)
     val imageId  = integer("imageId").autoIncrement()
+    val objectName = varchar("objectName",256)
 }
