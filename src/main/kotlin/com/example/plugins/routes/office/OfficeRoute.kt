@@ -1,10 +1,10 @@
-package com.example.plugins.routes
+package com.example.plugins.routes.office
 
 import com.example.dao.dao
 import com.example.model.Image
 import com.example.model.Property
 import com.example.model.Video
-import com.example.model.properties.IndustrialProperty
+import com.example.model.properties.OfficeProperty
 import com.example.util.BasicApiResponse
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.storage.BlobId
@@ -20,19 +20,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.FileInputStream
 
-
-fun Route.createIndustrialRoute() {
-    route("/industrial") {
+fun Route.createOfficeRoute() {
+    route("/office") {
         post {
             val multiPart = call.receiveMultipart()
-            var propertyType: String? = null
+            var layoutType: String? = null
             var squareFoot: Double? = null
-            var zoningInfo: String? = null
-            var cellingHeight: Int? = null
-            var numberOfLoadingDocks: Int? = null
-            var powerCapabilities: String? = null
-            var accessToTransportation: String? = null
-            var environmentalReports: String? = null
+            var floorNumber: Int? = null
+            var amenities: String? = null
+            var accessibility: String? = null
             var location: String? = null
             var agentContact: String? = null
             var price: Double? = null
@@ -43,23 +39,19 @@ fun Route.createIndustrialRoute() {
                 when (part) {
                     is PartData.FormItem -> {
                         if (part.name?.isEmpty() == true) {
-                            call.respond(HttpStatusCode.OK, BasicApiResponse(false, "${part.name} can't be empty"))
+                            call.respond(HttpStatusCode.OK, BasicApiResponse(false,"${part.name} can't be empty"))
                         }
                         when (part.name) {
-                            "propertyType" -> propertyType = part.value
+                            "layoutType" -> layoutType = part.value
                             "squareFoot" -> squareFoot = part.value.toDoubleOrNull()
-                            "zoningInfo" -> zoningInfo = part.value
-                            "cellingHeight" -> cellingHeight = part.value.toIntOrNull()
-                            "numberOfLoadingDocks" -> numberOfLoadingDocks = part.value.toIntOrNull()
-                            "powerCapabilities" -> powerCapabilities = part.value
-                            "accessToTransportation" -> accessToTransportation = part.value
-                            "environmentalReports" -> environmentalReports = part.value
+                            "floorNumber" -> floorNumber = part.value.toIntOrNull()
+                            "amenities" -> amenities = part.value
+                            "accessibility" -> accessibility = part.value
                             "location" -> location = part.value
                             "agentContact" -> agentContact = part.value
                             "price" -> price = part.value.toDoubleOrNull()
                         }
                     }
-
                     is PartData.FileItem -> {
                         if (part.name == "video" || part.name == "image") {
                             val fileBytes = part.streamProvider().readBytes()
@@ -87,55 +79,50 @@ fun Route.createIndustrialRoute() {
                             else imageURLs.add(filePath ?: "")
                         }
                     }
-
                     else -> return@forEachPart
                 }
                 part.dispose()
             }
 
-            val industrialProperty = IndustrialProperty(
-                    property = Property(
-                            id = 0, // This value will be replaced by autoincrement id
-                            agentContact = agentContact ?: "",
-                            price = price ?: 0.0,
-                            images = imageURLs.map { Image(url = it, propertyId = 0, imageId = 0) },
-                            videos = videoURLs.map { Video(url = it, propertyId = 0, videoId = 0) },
-                            location = location ?: "",
-                    ),
-                    propertyType = propertyType ?: "",
-                    squareFoot = squareFoot ?: 0.0,
-                    zoningInfo = zoningInfo ?: "",
-                    cellingHeight = cellingHeight ?: 0,
-                    numberOfLoadingDocks = numberOfLoadingDocks ?: 0,
-                    powerCapabilities = powerCapabilities ?: "",
-                    accessToTransportation = accessToTransportation ?: "",
-                    environmentalReports = environmentalReports ?: ""
+            val officeProperty = OfficeProperty(
+                property = Property(
+                    id = 0, // This value will be replaced by autoincrement id
+                    agentContact = agentContact ?: "",
+                    price = price ?: 0.0,
+                        images = imageURLs.map { Image(url = it, propertyId = 0, imageId = 0) },
+                        videos = videoURLs.map { Video(url = it, propertyId = 0, videoId = 0) },
+                    location = location ?: "",
+                ),
+                layoutType = layoutType ?: "",
+                squareFoot = squareFoot ?: 0.0,
+                floorNumber = floorNumber ?: 0,
+                amenities = amenities ?: "",
+                accessibility = accessibility ?: "",
             )
 
-            dao.addIndustrialProperty(industrialProperty, imageURL = videoURLs, videoURL = imageURLs)
-            call.respond(HttpStatusCode.OK, BasicApiResponse(true, "New Industrial Property Added Successfully."))
+            dao.addOfficeProperty(officeProperty, imageURL = videoURLs, videoURL = imageURLs)
+            call.respond(HttpStatusCode.OK, BasicApiResponse(true,"New Office Property Added Successfully."))
         }
         delete("/{id}") {
             val id = call.parameters["id"]?.toIntOrNull()
-            if (id != null) {
-                val isDeleted = dao.deleteIndustrialProperty(id)
+            if(id != null) {
+                val isDeleted = dao.deleteOfficeProperty(id)
                 if (isDeleted) {
-                    call.respond(HttpStatusCode.OK, BasicApiResponse(true, "The Industrial was deleted successfully."))
-                } else {
-                    call.respond(HttpStatusCode.NotFound, "no property found")
+                    call.respond(HttpStatusCode.OK, BasicApiResponse(true,"The Office was deleted successfully."))
+                }else {
+                    call.respond(HttpStatusCode.NotFound,"no property found")
                 }
             } else {
                 call.respond(HttpStatusCode.BadRequest, "Invalid or missing property.")
             }
-
         }
         get("property/{id}") {
             val id = call.parameters["id"]?.toIntOrNull()
-            if (id != null) {
-                val property = dao.getIndustrialProperty(id)
+            if(id != null) {
+                val property = dao.getOfficeProperty(id)
                 if (property != null) {
                     call.respond(HttpStatusCode.OK, property)
-                } else {
+                }else {
                     call.respond(HttpStatusCode.NotFound, "No property found with the provided ID.")
                 }
             } else {
@@ -145,15 +132,12 @@ fun Route.createIndustrialRoute() {
         put("updateProperty/{id}") {
             val id = call.parameters["id"]?.toIntOrNull()
             val multiPart = call.receiveMultipart()
-            if (id != null) {
-                var propertyType: String? = null
+            if(id != null) {
+                var layoutType: String? = null
                 var squareFoot: Double? = null
-                var zoningInfo: String? = null
-                var cellingHeight: Int? = null
-                var numberOfLoadingDocks: Int? = null
-                var powerCapabilities: String? = null
-                var accessToTransportation: String? = null
-                var environmentalReports: String? = null
+                var floorNumber: Int? = null
+                var amenities: String? = null
+                var accessibility: String? = null
                 var location: String? = null
                 var agentContact: String? = null
                 var price: Double? = null
@@ -164,23 +148,19 @@ fun Route.createIndustrialRoute() {
                     when (part) {
                         is PartData.FormItem -> {
                             if (part.name?.isEmpty() == true) {
-                                call.respond(HttpStatusCode.OK, BasicApiResponse(false, "${part.name} can't be empty"))
+                                call.respond(HttpStatusCode.OK, BasicApiResponse(false,"${part.name} can't be empty"))
                             }
                             when (part.name) {
-                                "propertyType" -> propertyType = part.value
+                                "layoutType" -> layoutType = part.value
                                 "squareFoot" -> squareFoot = part.value.toDoubleOrNull()
-                                "zoningInfo" -> zoningInfo = part.value
-                                "cellingHeight" -> cellingHeight = part.value.toIntOrNull()
-                                "numberOfLoadingDocks" -> numberOfLoadingDocks = part.value.toIntOrNull()
-                                "powerCapabilities" -> powerCapabilities = part.value
-                                "accessToTransportation" -> accessToTransportation = part.value
-                                "environmentalReports" -> environmentalReports = part.value
+                                "floorNumber" -> floorNumber = part.value.toIntOrNull()
+                                "amenities" -> amenities = part.value
+                                "accessibility" -> accessibility = part.value
                                 "location" -> location = part.value
                                 "agentContact" -> agentContact = part.value
                                 "price" -> price = part.value.toDoubleOrNull()
                             }
                         }
-
                         is PartData.FileItem -> {
                             if (part.name == "video" || part.name == "image") {
                                 val fileBytes = part.streamProvider().readBytes()
@@ -207,7 +187,7 @@ fun Route.createIndustrialRoute() {
                                 if (part.name == "video") videoURLs.add(filePath ?: "")
                                 else imageURLs.add(filePath ?: "")
                             }
-                            val industrialProperty = IndustrialProperty(
+                            val officeProperty = OfficeProperty(
                                     property = Property(
                                             id = 0, // This value will be replaced by autoincrement id
                                             agentContact = agentContact ?: "",
@@ -216,24 +196,20 @@ fun Route.createIndustrialRoute() {
                                             videos = videoURLs.map { Video(url = it, propertyId = 0, videoId = 0) },
                                             location = location ?: "",
                                     ),
-                                    propertyType = propertyType ?: "",
+                                    layoutType = layoutType ?: "",
                                     squareFoot = squareFoot ?: 0.0,
-                                    zoningInfo = zoningInfo ?: "",
-                                    cellingHeight = cellingHeight ?: 0,
-                                    numberOfLoadingDocks = numberOfLoadingDocks ?: 0,
-                                    powerCapabilities = powerCapabilities ?: "",
-                                    accessToTransportation = accessToTransportation ?: "",
-                                    environmentalReports = environmentalReports ?: ""
+                                    floorNumber = floorNumber ?: 0,
+                                    amenities = amenities ?: "",
+                                    accessibility = accessibility ?: "",
                             )
-                            val isUpdated = dao.updateIndustrialProperty(id, industrialProperty)
+                            val isUpdated = dao.updateOfficeProperty(id, officeProperty)
                             if (isUpdated) {
-                                call.respond(HttpStatusCode.OK, BasicApiResponse(true, "Property updated successfully."))
+                                call.respond(HttpStatusCode.OK,BasicApiResponse(true,"Property updated successfully."))
                             } else {
                                 call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
                             }
 
                         }
-
                         else -> return@forEachPart
                     }
                     part.dispose()

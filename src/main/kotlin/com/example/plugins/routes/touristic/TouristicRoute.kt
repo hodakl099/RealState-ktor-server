@@ -1,10 +1,10 @@
-package com.example.plugins.routes
+package com.example.plugins.routes.touristic
 
 import com.example.dao.dao
 import com.example.model.Image
 import com.example.model.Property
 import com.example.model.Video
-import com.example.model.properties.OfficeProperty
+import com.example.model.properties.LeisureAndTouristicProperty
 import com.example.util.BasicApiResponse
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.storage.BlobId
@@ -20,15 +20,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.FileInputStream
 
-fun Route.createOfficeRoute() {
-    route("/office") {
+
+fun Route.createTouristicRoute() {
+    route("touristic") {
         post {
             val multiPart = call.receiveMultipart()
-            var layoutType: String? = null
+            var propertyType: String? = null
             var squareFoot: Double? = null
-            var floorNumber: Int? = null
+            var rooms: Int? = null
+            var units: Int? = null
             var amenities: String? = null
-            var accessibility: String? = null
+            var proximityToAttractions: String? = null
+            var occupancyRate: String? = null
             var location: String? = null
             var agentContact: String? = null
             var price: Double? = null
@@ -42,11 +45,13 @@ fun Route.createOfficeRoute() {
                             call.respond(HttpStatusCode.OK, BasicApiResponse(false,"${part.name} can't be empty"))
                         }
                         when (part.name) {
-                            "layoutType" -> layoutType = part.value
+                            "propertyType" -> propertyType = part.value
                             "squareFoot" -> squareFoot = part.value.toDoubleOrNull()
-                            "floorNumber" -> floorNumber = part.value.toIntOrNull()
+                            "rooms" -> rooms = part.value.toIntOrNull()
+                            "units" -> units = part.value.toIntOrNull()
                             "amenities" -> amenities = part.value
-                            "accessibility" -> accessibility = part.value
+                            "proximityToAttractions" -> proximityToAttractions = part.value
+                            "occupancyRate" -> occupancyRate = part.value
                             "location" -> location = part.value
                             "agentContact" -> agentContact = part.value
                             "price" -> price = part.value.toDoubleOrNull()
@@ -84,7 +89,7 @@ fun Route.createOfficeRoute() {
                 part.dispose()
             }
 
-            val officeProperty = OfficeProperty(
+            val leisureAndTouristicProperty = LeisureAndTouristicProperty(
                 property = Property(
                     id = 0, // This value will be replaced by autoincrement id
                     agentContact = agentContact ?: "",
@@ -93,22 +98,24 @@ fun Route.createOfficeRoute() {
                         videos = videoURLs.map { Video(url = it, propertyId = 0, videoId = 0) },
                     location = location ?: "",
                 ),
-                layoutType = layoutType ?: "",
+                propertyType = propertyType ?: "",
                 squareFoot = squareFoot ?: 0.0,
-                floorNumber = floorNumber ?: 0,
+                rooms = rooms ?: 0,
+                units = units ?: 0,
+                proximityToAttractions = proximityToAttractions ?: "",
+                occupancyRate = occupancyRate ?: "",
                 amenities = amenities ?: "",
-                accessibility = accessibility ?: "",
             )
 
-            dao.addOfficeProperty(officeProperty, imageURL = videoURLs, videoURL = imageURLs)
-            call.respond(HttpStatusCode.OK, BasicApiResponse(true,"New Office Property Added Successfully."))
+            dao.addTouristicProperty(leisureAndTouristicProperty, imageURL = videoURLs, videoURL = imageURLs)
+            call.respond(HttpStatusCode.OK, BasicApiResponse(true,"New touristic Property Added Successfully."))
         }
         delete("/{id}") {
             val id = call.parameters["id"]?.toIntOrNull()
             if(id != null) {
-                val isDeleted = dao.deleteOfficeProperty(id)
+                val isDeleted = dao.deleteTouristicProperty(id)
                 if (isDeleted) {
-                    call.respond(HttpStatusCode.OK, BasicApiResponse(true,"The Office was deleted successfully."))
+                    call.respond(HttpStatusCode.OK, BasicApiResponse(true,"The touristic was deleted successfully."))
                 }else {
                     call.respond(HttpStatusCode.NotFound,"no property found")
                 }
@@ -119,7 +126,7 @@ fun Route.createOfficeRoute() {
         get("property/{id}") {
             val id = call.parameters["id"]?.toIntOrNull()
             if(id != null) {
-                val property = dao.getOfficeProperty(id)
+                val property = dao.getTouristicProperty(id)
                 if (property != null) {
                     call.respond(HttpStatusCode.OK, property)
                 }else {
@@ -133,11 +140,13 @@ fun Route.createOfficeRoute() {
             val id = call.parameters["id"]?.toIntOrNull()
             val multiPart = call.receiveMultipart()
             if(id != null) {
-                var layoutType: String? = null
+                var propertyType: String? = null
                 var squareFoot: Double? = null
-                var floorNumber: Int? = null
+                var rooms: Int? = null
+                var units: Int? = null
                 var amenities: String? = null
-                var accessibility: String? = null
+                var proximityToAttractions: String? = null
+                var occupancyRate: String? = null
                 var location: String? = null
                 var agentContact: String? = null
                 var price: Double? = null
@@ -151,11 +160,13 @@ fun Route.createOfficeRoute() {
                                 call.respond(HttpStatusCode.OK, BasicApiResponse(false,"${part.name} can't be empty"))
                             }
                             when (part.name) {
-                                "layoutType" -> layoutType = part.value
+                                "propertyType" -> propertyType = part.value
                                 "squareFoot" -> squareFoot = part.value.toDoubleOrNull()
-                                "floorNumber" -> floorNumber = part.value.toIntOrNull()
+                                "rooms" -> rooms = part.value.toIntOrNull()
+                                "units" -> units = part.value.toIntOrNull()
                                 "amenities" -> amenities = part.value
-                                "accessibility" -> accessibility = part.value
+                                "proximityToAttractions" -> proximityToAttractions = part.value
+                                "occupancyRate" -> occupancyRate = part.value
                                 "location" -> location = part.value
                                 "agentContact" -> agentContact = part.value
                                 "price" -> price = part.value.toDoubleOrNull()
@@ -187,7 +198,8 @@ fun Route.createOfficeRoute() {
                                 if (part.name == "video") videoURLs.add(filePath ?: "")
                                 else imageURLs.add(filePath ?: "")
                             }
-                            val officeProperty = OfficeProperty(
+
+                            val leisureAndTouristicProperty = LeisureAndTouristicProperty(
                                     property = Property(
                                             id = 0, // This value will be replaced by autoincrement id
                                             agentContact = agentContact ?: "",
@@ -196,13 +208,15 @@ fun Route.createOfficeRoute() {
                                             videos = videoURLs.map { Video(url = it, propertyId = 0, videoId = 0) },
                                             location = location ?: "",
                                     ),
-                                    layoutType = layoutType ?: "",
+                                    propertyType = propertyType ?: "",
                                     squareFoot = squareFoot ?: 0.0,
-                                    floorNumber = floorNumber ?: 0,
+                                    rooms = rooms ?: 0,
+                                    units = units ?: 0,
+                                    proximityToAttractions = proximityToAttractions ?: "",
+                                    occupancyRate = occupancyRate ?: "",
                                     amenities = amenities ?: "",
-                                    accessibility = accessibility ?: "",
                             )
-                            val isUpdated = dao.updateOfficeProperty(id, officeProperty)
+                            val isUpdated = dao.updateTouristicProperty(id, leisureAndTouristicProperty)
                             if (isUpdated) {
                                 call.respond(HttpStatusCode.OK,BasicApiResponse(true,"Property updated successfully."))
                             } else {
@@ -245,5 +259,4 @@ fun Route.createOfficeRoute() {
             }
         }
     }
-
 }

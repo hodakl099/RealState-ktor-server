@@ -1,4 +1,4 @@
-package com.example.plugins.routes
+package com.example.plugins.routes.commercial
 
 import com.example.dao.dao
 import com.example.model.Image
