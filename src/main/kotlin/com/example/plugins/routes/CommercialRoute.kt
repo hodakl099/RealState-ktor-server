@@ -219,20 +219,7 @@ fun Route.createCommercialRoute() {
                 call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
             }
         }
-        delete("removeImage/{id}") {
-            val propertyId = call.parameters["propertyId"]?.toIntOrNull()
-            val imageId = call.parameters["imageId"]?.toIntOrNull()
-            if (propertyId == null || imageId == null) {
-                call.respond(HttpStatusCode.BadRequest)
-                return@delete
-            }
-            if (dao.deleteImageByPropertyId(imageId)) {
-                call.respond(HttpStatusCode.OK, BasicApiResponse(true, "deleted successfully!")) // Successfully deleted
-            } else {
-                call.respond(HttpStatusCode.NotFound) // Image not found
-            }
-        }
-        delete("removeVideo/{id}") {
+        delete("removeVideo/{propertyId}/{videoId}") {
             val propertyId = call.parameters["propertyId"]?.toIntOrNull()
             val videoId = call.parameters["videoId"]?.toIntOrNull()
             if (propertyId == null || videoId == null) {
@@ -240,9 +227,22 @@ fun Route.createCommercialRoute() {
                 return@delete
             }
             if (dao.deleteVideosById(videoId)) {
-                call.respond(HttpStatusCode.NoContent) // Successfully deleted
+                call.respond(HttpStatusCode.OK,BasicApiResponse(true,"Video deleted successfully."))  // Successfully deleted
             } else {
-                call.respond(HttpStatusCode.NotFound) // Video not found
+                call.respond(HttpStatusCode.NotFound,BasicApiResponse(false,"something went wrong!")) // Video not found
+            }
+        }
+        delete("removeImage/{propertyId}/{id}") {
+            val propertyId = call.parameters["propertyId"]?.toIntOrNull()
+            val imageId = call.parameters["id"]?.toIntOrNull()
+            if (propertyId == null || imageId == null) {
+                call.respond(HttpStatusCode.BadRequest)
+                return@delete
+            }
+            if (dao.deleteImageByPropertyId(imageId)) {
+                call.respond(HttpStatusCode.OK,BasicApiResponse(true,"Video deleted successfully."))  // Successfully deleted
+            } else {
+                call.respond(HttpStatusCode.NotFound) // Image not found
             }
         }
     }
