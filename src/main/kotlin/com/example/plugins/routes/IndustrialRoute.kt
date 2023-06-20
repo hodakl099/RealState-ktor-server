@@ -1,7 +1,9 @@
 package com.example.plugins.routes
 
 import com.example.dao.dao
+import com.example.model.Image
 import com.example.model.Property
+import com.example.model.Video
 import com.example.model.properties.IndustrialProperty
 import com.example.util.BasicApiResponse
 import com.google.auth.oauth2.GoogleCredentials
@@ -96,8 +98,8 @@ fun Route.createIndustrialRoute() {
                             id = 0, // This value will be replaced by autoincrement id
                             agentContact = agentContact ?: "",
                             price = price ?: 0.0,
-                            images = imageURLs,
-                            videos = videoURLs,
+                            images = imageURLs.map { Image(url = it, propertyId = 0, imageId = 0) },
+                            videos = videoURLs.map { Video(url = it, propertyId = 0, videoId = 0) },
                             location = location ?: "",
                     ),
                     propertyType = propertyType ?: "",
@@ -210,8 +212,8 @@ fun Route.createIndustrialRoute() {
                                             id = 0, // This value will be replaced by autoincrement id
                                             agentContact = agentContact ?: "",
                                             price = price ?: 0.0,
-                                            images = imageURLs,
-                                            videos = videoURLs,
+                                            images = imageURLs.map { Image(url = it, propertyId = 0, imageId = 0) },
+                                            videos = videoURLs.map { Video(url = it, propertyId = 0, videoId = 0) },
                                             location = location ?: "",
                                     ),
                                     propertyType = propertyType ?: "",

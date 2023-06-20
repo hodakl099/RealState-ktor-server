@@ -1,7 +1,9 @@
 package com.example.plugins.routes
 
 import com.example.dao.dao
+import com.example.model.Image
 import com.example.model.Property
+import com.example.model.Video
 import com.example.model.Videos
 import com.example.model.properties.ResidentialProperty
 import com.example.util.BasicApiResponse
@@ -91,8 +93,8 @@ fun Route.createResidentialRoute() {
                     id = 0, // This value will be replaced by autoincrement id
                     agentContact = agentContact ?: "",
                     price = price ?: 0.0,
-                    images = imageURLs,
-                    videos = videoURLs,
+                        images = imageURLs.map { Image(url = it, propertyId = 0, imageId = 0) },
+                        videos = videoURLs.map { Video(url = it, propertyId = 0, videoId = 0) },
                     location = location ?: "",
                 ),
                 propertyType = propertyType ?: "",
@@ -198,8 +200,8 @@ fun Route.createResidentialRoute() {
                                                 id = 0, // This value will be replaced by autoincrement id
                                                 agentContact = agentContact ?: "",
                                                 price = price ?: 0.0,
-                                                images = imageURLs,
-                                                videos = videoURLs,
+                                                images = imageURLs.map { Image(url = it, propertyId = 0, imageId = 0) },
+                                                videos = videoURLs.map { Video(url = it, propertyId = 0, videoId = 0) },
                                                 location = location ?: "",
                                         ),
                                         propertyType = propertyType ?: "",
@@ -234,7 +236,7 @@ fun Route.createResidentialRoute() {
                 return@delete
             }
             if (dao.deleteVideosById(videoId)) {
-                call.respond(HttpStatusCode.OK) // Successfully deleted
+                call.respond(HttpStatusCode.OK,BasicApiResponse(true,"Video deleted successfully."))  // Successfully deleted
             } else {
                 call.respond(HttpStatusCode.NotFound,BasicApiResponse(false,"something went wrong!")) // Video not found
             }
@@ -247,7 +249,7 @@ fun Route.createResidentialRoute() {
                 return@delete
             }
             if (dao.deleteImageByPropertyId(imageId)) {
-                call.respond(HttpStatusCode.OK)  // Successfully deleted
+                call.respond(HttpStatusCode.OK,BasicApiResponse(true,"Video deleted successfully."))  // Successfully deleted
             } else {
                 call.respond(HttpStatusCode.NotFound) // Image not found
             }
@@ -256,3 +258,4 @@ fun Route.createResidentialRoute() {
     }
 
 }
+

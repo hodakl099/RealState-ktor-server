@@ -5,12 +5,12 @@ import org.jetbrains.exposed.sql.Table
 
 @Serializable
 data class Property(
-    val id: Int,
-    val agentContact: String,
-    val price: Double,
-    val location: String,
-    val images : List<String>,
-    val videos : List<String>,
+        val id: Int,
+        val agentContact: String,
+        val price: Double,
+        val location: String,
+        val images: List<Image>,
+        val videos: List<Video>,
 )
 
 object Properties : Table() {
