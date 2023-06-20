@@ -13,41 +13,41 @@ class PropertyDaoImpl : PropertyDao {
      * ResidentialProperty dao implementation.
      */
     private fun toResidentialProperty(row: ResultRow): ResidentialProperty =
-            ResidentialProperty(
-                    property = Property(
-                            id = row[Properties.id],
-                            agentContact = row[Properties.agentContact],
-                            price = row[Properties.price],
-                            images = Images.select { Images.propertyId eq row[Properties.id] }.map {
-                                Image(
-                                        imageId = it[Images.id].value,
-                                        propertyId = it[Images.propertyId],
-                                        url = it[Images.url],
-                                        objectName = it[Images.objectName]
-                                )
-                            },
-                            videos = Videos.select { Videos.propertyId eq row[Properties.id] }.map {
-                                Video(
-                                        videoId = it[Videos.id].value,
-                                        propertyId = it[Videos.propertyId],
-                                        url = it[Videos.url],
-                                        objectName = it[Images.objectName]
-                                )
-                            },
-                            location = row[Properties.location],
-                    ),
-                    propertyType = row[ResidentialProperties.propertyType],
-                    squareFootage = row[ResidentialProperties.squareFootage],
-                    bedrooms = row[ResidentialProperties.bedrooms],
-                    bathrooms = row[ResidentialProperties.bathrooms],
-                    amenities = row[ResidentialProperties.amenities],
-                    parking = row[ResidentialProperties.parking],
-            )
+        ResidentialProperty(
+            property = Property(
+                id = row[Properties.id],
+                agentContact = row[Properties.agentContact],
+                price = row[Properties.price],
+                images = Images.select { Images.propertyId eq row[Properties.id] }.map {
+                    Image(
+                        imageId = it[Images.id].value,
+                        propertyId = it[Images.propertyId],
+                        url = it[Images.url],
+                        objectName = it[Images.objectName]
+                    )
+                },
+                videos = Videos.select { Videos.propertyId eq row[Properties.id] }.map {
+                    Video(
+                        videoId = it[Videos.id].value,
+                        propertyId = it[Videos.propertyId],
+                        url = it[Videos.url],
+                        objectName = it[Images.objectName]
+                    )
+                },
+                location = row[Properties.location],
+            ),
+            propertyType = row[ResidentialProperties.propertyType],
+            squareFootage = row[ResidentialProperties.squareFootage],
+            bedrooms = row[ResidentialProperties.bedrooms],
+            bathrooms = row[ResidentialProperties.bathrooms],
+            amenities = row[ResidentialProperties.amenities],
+            parking = row[ResidentialProperties.parking],
+        )
 
     override suspend fun addResidentialProperty(
-            residentialProperty: ResidentialProperty,
-            videoURL: List<String>,
-            imageURL: List<String>
+        residentialProperty: ResidentialProperty,
+        videoURL: List<Pair<String, String>>,
+        imageURL: List<Pair<String, String>>
     ): ResidentialProperty = dbQuery {
         val idProperty = Properties.insert {
             it[agentContact] = residentialProperty.property.agentContact
@@ -64,22 +64,29 @@ class PropertyDaoImpl : PropertyDao {
             it[parking] = residentialProperty.parking
 
         }
-        imageURL.forEach { imageUrl ->
-            Images.insert {
-                it[propertyId] = idProperty
-                it[url] = imageUrl
-            }
-        }
-        videoURL.forEach { videoUrl ->
+        videoURL.forEach { video ->
             Videos.insert {
                 it[propertyId] = idProperty
-                it[url] = videoUrl
+                it[url] = video.first
+                it[this.objectName] = video.second
+            }
+        }
+        imageURL.forEach { image ->
+            Images.insert {
+                it[propertyId] = idProperty
+                it[url] = image.first
+                it[this.objectName] = image.second
             }
         }
         residentialProperty
     }
 
-    override suspend fun updateResidentialProperty(id: Int, updatedProperty: ResidentialProperty): Boolean = dbQuery {
+    override suspend fun updateResidentialProperty(
+        id: Int,
+        updatedProperty: ResidentialProperty,
+        videoURL: List<Pair<String, String>>,
+        imageURL: List<Pair<String, String>>
+    ): Boolean = dbQuery {
         val updateProperty = Properties.update({ Properties.id eq id }) {
             it[agentContact] = updatedProperty.property.agentContact
             it[price] = updatedProperty.property.price
@@ -93,17 +100,19 @@ class PropertyDaoImpl : PropertyDao {
             it[amenities] = updatedProperty.amenities
             it[parking] = updatedProperty.parking
         }
-        updatedProperty.property.images.forEach { image ->
+        imageURL.forEach { image ->
             Images.insert {
                 it[propertyId] = id
-                it[url] = image.url
+                it[url] = image.first
+                it[objectName] = image.second
 
             }
         }
-        updatedProperty.property.videos.forEach { video ->
+        videoURL.forEach { video ->
             Videos.insert {
-                it[propertyId] = id
-                it[url] = video.url
+                it[Images.propertyId] = id
+                it[Images.url] = video.first
+                it[Images.objectName] = video.second
             }
         }
         updateResidential > 0 && updateProperty > 0
@@ -111,9 +120,9 @@ class PropertyDaoImpl : PropertyDao {
 
     override suspend fun getResidentialProperty(id: Int): ResidentialProperty? = dbQuery {
         (Properties innerJoin ResidentialProperties)
-                .select { Properties.id eq id }
-                .map { toResidentialProperty(it) }
-                .firstOrNull()
+            .select { Properties.id eq id }
+            .map { toResidentialProperty(it) }
+            .firstOrNull()
     }
 
     override suspend fun deleteResidentialProperty(id: Int): Boolean = dbQuery {
@@ -126,8 +135,8 @@ class PropertyDaoImpl : PropertyDao {
 
     override suspend fun getAllResidentialProperties(): List<ResidentialProperty> = dbQuery {
         (Properties innerJoin ResidentialProperties)
-                .selectAll()
-                .map { toResidentialProperty(it) }
+            .selectAll()
+            .map { toResidentialProperty(it) }
     }
 
     /**
@@ -135,42 +144,42 @@ class PropertyDaoImpl : PropertyDao {
      */
 
     private fun toAgriculturalProperty(row: ResultRow): AgriculturalProperty =
-            AgriculturalProperty(
-                    property = Property(
-                            id = row[Properties.id],
-                            agentContact = row[Properties.agentContact],
-                            price = row[Properties.price],
-                            images = Images.select { Images.propertyId eq row[Properties.id] }.map {
-                                Image(
-                                        imageId = it[Images.id].value,
-                                        propertyId = it[Images.propertyId],
-                                        url = it[Images.url],
-                                        objectName = it[Images.objectName]
-                                )
-                            },
-                            videos = Videos.select { Videos.propertyId eq row[Properties.id] }.map {
-                                Video(
-                                        videoId = it[Videos.id].value,
-                                        propertyId = it[Videos.propertyId],
-                                        url = it[Videos.url],
-                                        objectName = it[Videos.objectName]
-                                )
-                            },
-                            location = row[Properties.location]
-                    ),
-                    propertyType = row[AgriculturalProperties.propertyType],
-                    acres = row[AgriculturalProperties.acres],
-                    buildings = row[AgriculturalProperties.buildings],
-                    crops = row[AgriculturalProperties.crops],
-                    waterSources = row[AgriculturalProperties.waterSources],
-                    equipment = row[AgriculturalProperties.equipment],
-                    soilType = row[AgriculturalProperties.soilType]
-            )
+        AgriculturalProperty(
+            property = Property(
+                id = row[Properties.id],
+                agentContact = row[Properties.agentContact],
+                price = row[Properties.price],
+                images = Images.select { Images.propertyId eq row[Properties.id] }.map {
+                    Image(
+                        imageId = it[Images.id].value,
+                        propertyId = it[Images.propertyId],
+                        url = it[Images.url],
+                        objectName = it[Images.objectName]
+                    )
+                },
+                videos = Videos.select { Videos.propertyId eq row[Properties.id] }.map {
+                    Video(
+                        videoId = it[Videos.id].value,
+                        propertyId = it[Videos.propertyId],
+                        url = it[Videos.url],
+                        objectName = it[Videos.objectName]
+                    )
+                },
+                location = row[Properties.location]
+            ),
+            propertyType = row[AgriculturalProperties.propertyType],
+            acres = row[AgriculturalProperties.acres],
+            buildings = row[AgriculturalProperties.buildings],
+            crops = row[AgriculturalProperties.crops],
+            waterSources = row[AgriculturalProperties.waterSources],
+            equipment = row[AgriculturalProperties.equipment],
+            soilType = row[AgriculturalProperties.soilType]
+        )
 
     override suspend fun addAgriculturalProperty(
-            agriculturalProperty: AgriculturalProperty,
-            videoURL: List<String>,
-            imageURL: List<String>
+        agriculturalProperty: AgriculturalProperty,
+        videoURL: List<Pair<String, String>>,
+        imageURL: List<Pair<String, String>>
     ): AgriculturalProperty = dbQuery {
         val idProperty = Properties.insert {
             it[agentContact] = agriculturalProperty.property.agentContact
@@ -188,57 +197,66 @@ class PropertyDaoImpl : PropertyDao {
             it[equipment] = agriculturalProperty.equipment
         }
 
-        agriculturalProperty.property.videos.forEach { video ->
+        videoURL.forEach { video ->
             Videos.insert {
                 it[propertyId] = idProperty
-                it[url] = video.url
+                it[url] = video.first
+                it[this.objectName] = video.second
             }
         }
-        agriculturalProperty.property.images.forEach { image ->
+        imageURL.forEach { image ->
             Images.insert {
                 it[propertyId] = idProperty
-                it[url] = image.url
+                it[url] = image.first
+                it[this.objectName] = image.second
             }
-
         }
         agriculturalProperty
     }
 
-    override suspend fun updateAgriculturalProperty(id: Int, agriculturalProperty: AgriculturalProperty): Boolean = dbQuery {
-        val updateProperty = Properties.update({ Properties.id eq id }) {
-            it[agentContact] = agriculturalProperty.property.agentContact
-            it[price] = agriculturalProperty.property.price
-            it[location] = agriculturalProperty.property.location
-        }
-        val updateAgriculturalProperty = AgriculturalProperties.update({ AgriculturalProperties.id eq id }) {
-            it[propertyType] = agriculturalProperty.propertyType
-            it[acres] = agriculturalProperty.acres
-            it[buildings] = agriculturalProperty.buildings
-            it[crops] = agriculturalProperty.crops
-            it[waterSources] = agriculturalProperty.waterSources
-            it[soilType] = agriculturalProperty.soilType
-            it[equipment] = agriculturalProperty.equipment
-        }
-        agriculturalProperty.property.images.forEach { image ->
-            Images.insert {
-                it[propertyId] = id
-                it[url] = image.url
+    override suspend fun updateAgriculturalProperty(
+        id: Int,
+        agriculturalProperty: AgriculturalProperty,
+        videoURL: List<Pair<String, String>>,
+        imageURL: List<Pair<String, String>>
+    ): Boolean =
+        dbQuery {
+            val updateProperty = Properties.update({ Properties.id eq id }) {
+                it[agentContact] = agriculturalProperty.property.agentContact
+                it[price] = agriculturalProperty.property.price
+                it[location] = agriculturalProperty.property.location
             }
-        }
-        agriculturalProperty.property.videos.forEach { video ->
-            Videos.insert {
-                it[propertyId] = id
-                it[url] = video.url
+            val updateAgriculturalProperty = AgriculturalProperties.update({ AgriculturalProperties.id eq id }) {
+                it[propertyType] = agriculturalProperty.propertyType
+                it[acres] = agriculturalProperty.acres
+                it[buildings] = agriculturalProperty.buildings
+                it[crops] = agriculturalProperty.crops
+                it[waterSources] = agriculturalProperty.waterSources
+                it[soilType] = agriculturalProperty.soilType
+                it[equipment] = agriculturalProperty.equipment
             }
+            videoURL.forEach { video ->
+                Videos.insert {
+                    it[propertyId] = id
+                    it[url] = video.first
+                    it[this.objectName] = video.second
+                }
+            }
+            imageURL.forEach { image ->
+                Images.insert {
+                    it[propertyId] = id
+                    it[url] = image.first
+                    it[this.objectName] = image.second
+                }
+            }
+            updateAgriculturalProperty > 0 && updateProperty > 0
         }
-        updateAgriculturalProperty > 0 && updateProperty > 0
-    }
 
     override suspend fun getAgriculturalProperty(id: Int): AgriculturalProperty? = dbQuery {
         (Properties innerJoin AgriculturalProperties)
-                .select { Properties.id eq id }
-                .map { toAgriculturalProperty(it) }
-                .firstOrNull()
+            .select { Properties.id eq id }
+            .map { toAgriculturalProperty(it) }
+            .firstOrNull()
     }
 
     override suspend fun deleteAgriculturalProperty(id: Int): Boolean = dbQuery {
@@ -252,8 +270,8 @@ class PropertyDaoImpl : PropertyDao {
 
     override suspend fun getAllAgriculturalProperties(): List<AgriculturalProperty> = dbQuery {
         (Properties innerJoin AgriculturalProperties)
-                .selectAll()
-                .map { toAgriculturalProperty(it) }
+            .selectAll()
+            .map { toAgriculturalProperty(it) }
     }
 
     /**
@@ -261,38 +279,40 @@ class PropertyDaoImpl : PropertyDao {
      */
 
     private fun toOfficeProperty(row: ResultRow): OfficeProperty =
-            OfficeProperty(
-                    property = Property(
-                            id = row[Properties.id],
-                            agentContact = row[Properties.agentContact],
-                            price = row[Properties.price],
-                            images = Images.select { Images.propertyId eq row[Properties.id] }.map {
-                                Image(
-                                        imageId = it[Images.id].value,
-                                        propertyId = it[Images.propertyId],
-                                        url = it[Images.url]
-                                )
-                            },
-                            videos = Videos.select { Videos.propertyId eq row[Properties.id] }.map {
-                                Video(
-                                        videoId = it[Videos.id].value,
-                                        propertyId = it[Videos.propertyId],
-                                        url = it[Videos.url]
-                                )
-                            },
-                            location = row[Properties.location]
-                    ),
-                    layoutType = row[OfficeProperties.layoutType],
-                    squareFoot = row[OfficeProperties.squareFoot],
-                    floorNumber = row[OfficeProperties.floorNumber],
-                    amenities = row[OfficeProperties.amenities],
-                    accessibility = row[OfficeProperties.accessibility],
-            )
+        OfficeProperty(
+            property = Property(
+                id = row[Properties.id],
+                agentContact = row[Properties.agentContact],
+                price = row[Properties.price],
+                images = Images.select { Images.propertyId eq row[Properties.id] }.map {
+                    Image(
+                        imageId = it[Images.id].value,
+                        propertyId = it[Images.propertyId],
+                        url = it[Images.url],
+                        objectName = it[Images.objectName]
+                    )
+                },
+                videos = Videos.select { Videos.propertyId eq row[Properties.id] }.map {
+                    Video(
+                        videoId = it[Videos.id].value,
+                        propertyId = it[Videos.propertyId],
+                        url = it[Videos.url],
+                        objectName = it[Videos.objectName]
+                    )
+                },
+                location = row[Properties.location]
+            ),
+            layoutType = row[OfficeProperties.layoutType],
+            squareFoot = row[OfficeProperties.squareFoot],
+            floorNumber = row[OfficeProperties.floorNumber],
+            amenities = row[OfficeProperties.amenities],
+            accessibility = row[OfficeProperties.accessibility],
+        )
 
     override suspend fun addOfficeProperty(
-            officeProperty: OfficeProperty,
-            videoURL: List<String>,
-            imageURL: List<String>
+        officeProperty: OfficeProperty,
+        videoURL: List<Pair<String, String>>,
+        imageURL: List<Pair<String, String>>
     ): OfficeProperty = dbQuery {
         val idProperty = Properties.insert {
             it[agentContact] = officeProperty.property.agentContact
@@ -308,23 +328,29 @@ class PropertyDaoImpl : PropertyDao {
             it[accessibility] = officeProperty.accessibility
         }
 
-        officeProperty.property.videos.forEach { video ->
+        videoURL.forEach { video ->
             Videos.insert {
                 it[propertyId] = idProperty
-                it[url] = video.url
+                it[url] = video.first
+                it[this.objectName] = video.second
             }
         }
-        officeProperty.property.images.forEach { image ->
+        imageURL.forEach { image ->
             Images.insert {
                 it[propertyId] = idProperty
-                it[url] = image.url
+                it[url] = image.first
+                it[this.objectName] = image.second
             }
-
         }
         officeProperty
     }
 
-    override suspend fun updateOfficeProperty(id: Int, officeProperty: OfficeProperty): Boolean = dbQuery {
+    override suspend fun updateOfficeProperty(
+        id: Int,
+        officeProperty: OfficeProperty,
+        videoURL: List<Pair<String, String>>,
+        imageURL: List<Pair<String, String>>
+    ): Boolean = dbQuery {
         val updateProperty = Properties.update({ Properties.id eq id }) {
             it[agentContact] = officeProperty.property.agentContact
             it[price] = officeProperty.property.price
@@ -337,16 +363,19 @@ class PropertyDaoImpl : PropertyDao {
             it[amenities] = officeProperty.amenities
             it[accessibility] = officeProperty.accessibility
         }
-        officeProperty.property.images.forEach { image ->
+        imageURL.forEach { image ->
             Images.insert {
                 it[propertyId] = id
-                it[url] = image.url
+                it[url] = image.first
+                it[objectName] = image.second
+
             }
         }
-        officeProperty.property.videos.forEach { video ->
+        videoURL.forEach { video ->
             Videos.insert {
-                it[propertyId] = id
-                it[url] = video.url
+                it[Images.propertyId] = id
+                it[Images.url] = video.first
+                it[Images.objectName] = video.second
             }
         }
         updateOfficeProperty > 0 && updateProperty > 0
@@ -362,53 +391,60 @@ class PropertyDaoImpl : PropertyDao {
 
     override suspend fun getAllOfficeProperties(): List<OfficeProperty> = dbQuery {
         (Properties innerJoin OfficeProperties)
-                .selectAll()
-                .map { toOfficeProperty(it) }
+            .selectAll()
+            .map { toOfficeProperty(it) }
     }
 
     override suspend fun getOfficeProperty(id: Int): OfficeProperty? = dbQuery {
         (Properties innerJoin OfficeProperties)
-                .select { Properties.id eq id }
-                .map { toOfficeProperty(it) }
-                .firstOrNull()
+            .select { Properties.id eq id }
+            .map { toOfficeProperty(it) }
+            .firstOrNull()
     }
 
     /**
      * IndustrialProperty Dao Implementation.
      */
     private fun toIndustrialProperty(row: ResultRow): IndustrialProperty =
-            IndustrialProperty(
-                    property = Property(
-                            id = row[Properties.id],
-                            agentContact = row[Properties.agentContact],
-                            price = row[Properties.price],
-                            images = Images.select { Images.propertyId eq row[Properties.id] }.map {
-                                Image(
-                                        imageId = it[Images.id].value,
-                                        propertyId = it[Images.propertyId],
-                                        url = it[Images.url]
-                                )
-                            },
-                            videos = Videos.select { Videos.propertyId eq row[Properties.id] }.map {
-                                Video(
-                                        videoId = it[Videos.id].value,
-                                        propertyId = it[Videos.propertyId],
-                                        url = it[Videos.url]
-                                )
-                            },
-                            location = row[Properties.location]
-                    ),
-                    propertyType = row[IndustrialProperties.propertyType],
-                    squareFoot = row[IndustrialProperties.squareFoot],
-                    zoningInfo = row[IndustrialProperties.zoningInfo],
-                    cellingHeight = row[IndustrialProperties.cellingHeight],
-                    numberOfLoadingDocks = row[IndustrialProperties.numberOfLoadingDocks],
-                    powerCapabilities = row[IndustrialProperties.powerCapabilities],
-                    accessToTransportation = row[IndustrialProperties.accessToTransportation],
-                    environmentalReports = row[IndustrialProperties.environmentalReports],
-            )
+        IndustrialProperty(
+            property = Property(
+                id = row[Properties.id],
+                agentContact = row[Properties.agentContact],
+                price = row[Properties.price],
+                images = Images.select { Images.propertyId eq row[Properties.id] }.map {
+                    Image(
+                        imageId = it[Images.id].value,
+                        propertyId = it[Images.propertyId],
+                        url = it[Images.url],
+                        objectName = it[Images.objectName]
+                    )
+                },
+                videos = Videos.select { Videos.propertyId eq row[Properties.id] }.map {
+                    Video(
+                        videoId = it[Videos.id].value,
+                        propertyId = it[Videos.propertyId],
+                        url = it[Videos.url],
+                        objectName = it[Videos.objectName]
+                    )
+                },
+                location = row[Properties.location]
+            ),
+            propertyType = row[IndustrialProperties.propertyType],
+            squareFoot = row[IndustrialProperties.squareFoot],
+            zoningInfo = row[IndustrialProperties.zoningInfo],
+            cellingHeight = row[IndustrialProperties.cellingHeight],
+            numberOfLoadingDocks = row[IndustrialProperties.numberOfLoadingDocks],
+            powerCapabilities = row[IndustrialProperties.powerCapabilities],
+            accessToTransportation = row[IndustrialProperties.accessToTransportation],
+            environmentalReports = row[IndustrialProperties.environmentalReports],
+        )
 
-    override suspend fun updateIndustrialProperty(id: Int, updatedProperty: IndustrialProperty): Boolean = dbQuery {
+    override suspend fun updateIndustrialProperty(
+        id: Int,
+        updatedProperty: IndustrialProperty,
+        videoURL: List<Pair<String, String>>,
+        imageURL: List<Pair<String, String>>
+    ): Boolean = dbQuery {
         val updateProperty = Properties.update({ Properties.id eq id }) {
             it[agentContact] = updatedProperty.property.agentContact
             it[price] = updatedProperty.property.price
@@ -424,25 +460,28 @@ class PropertyDaoImpl : PropertyDao {
             it[accessToTransportation] = updatedProperty.accessToTransportation
             it[environmentalReports] = updatedProperty.environmentalReports
         }
-        updatedProperty.property.images.forEach { image ->
+        imageURL.forEach { image ->
             Images.insert {
                 it[propertyId] = id
-                it[url] = image.url
+                it[url] = image.first
+                it[objectName] = image.second
+
             }
         }
-        updatedProperty.property.videos.forEach { video ->
+        videoURL.forEach { video ->
             Videos.insert {
-                it[propertyId] = id
-                it[url] = video.url
+                it[Images.propertyId] = id
+                it[Images.url] = video.first
+                it[Images.objectName] = video.second
             }
         }
         updateResidential > 0 && updateProperty > 0
     }
 
     override suspend fun addIndustrialProperty(
-            industrialProperty: IndustrialProperty,
-            videoURL: List<String>,
-            imageURL: List<String>
+        industrialProperty: IndustrialProperty,
+        videoURL: List<Pair<String, String>>,
+        imageURL: List<Pair<String, String>>
     ): IndustrialProperty = dbQuery {
         val idProperty = Properties.insert {
             it[agentContact] = industrialProperty.property.agentContact
@@ -461,18 +500,19 @@ class PropertyDaoImpl : PropertyDao {
             it[environmentalReports] = industrialProperty.environmentalReports
         }
 
-        industrialProperty.property.videos.forEach { video ->
+        videoURL.forEach { video ->
             Videos.insert {
                 it[propertyId] = idProperty
-                it[url] = video.url
+                it[url] = video.first
+                it[this.objectName] = video.second
             }
         }
-        industrialProperty.property.images.forEach { image ->
+        imageURL.forEach { image ->
             Images.insert {
                 it[propertyId] = idProperty
-                it[url] = image.url
+                it[url] = image.first
+                it[this.objectName] = image.second
             }
-
         }
         industrialProperty
     }
@@ -487,15 +527,15 @@ class PropertyDaoImpl : PropertyDao {
 
     override suspend fun getAllIndustrialProperties(): List<IndustrialProperty> = dbQuery {
         (Properties innerJoin IndustrialProperties)
-                .selectAll()
-                .map { toIndustrialProperty(it) }
+            .selectAll()
+            .map { toIndustrialProperty(it) }
     }
 
     override suspend fun getIndustrialProperty(id: Int): IndustrialProperty? = dbQuery {
         (Properties innerJoin IndustrialProperties)
-                .select { Properties.id eq id }
-                .map { toIndustrialProperty(it) }
-                .firstOrNull()
+            .select { Properties.id eq id }
+            .map { toIndustrialProperty(it) }
+            .firstOrNull()
     }
 
 
@@ -505,38 +545,40 @@ class PropertyDaoImpl : PropertyDao {
 
 
     private fun toCommercialProperty(row: ResultRow): CommercialProperty =
-            CommercialProperty(
-                    property = Property(
-                            id = row[Properties.id],
-                            agentContact = row[Properties.agentContact],
-                            price = row[Properties.price],
-                            images = Images.select { Images.propertyId eq row[Properties.id] }.map {
-                                Image(
-                                        imageId = it[Images.id].value,
-                                        propertyId = it[Images.propertyId],
-                                        url = it[Images.url]
-                                )
-                            },
-                            videos = Videos.select { Videos.propertyId eq row[Properties.id] }.map {
-                                Video(
-                                        videoId = it[Videos.id].value,
-                                        propertyId = it[Videos.propertyId],
-                                        url = it[Videos.url]
-                                )
-                            },
-                            location = row[Properties.location]
-                    ),
-                    propertyType = row[CommercialProperties.propertyType],
-                    squareFoot = row[CommercialProperties.squareFoot],
-                    zoningInfo = row[CommercialProperties.zoningInfo],
-                    trafficCount = row[CommercialProperties.trafficCount],
-                    amenities = row[CommercialProperties.amenities],
-            )
+        CommercialProperty(
+            property = Property(
+                id = row[Properties.id],
+                agentContact = row[Properties.agentContact],
+                price = row[Properties.price],
+                images = Images.select { Images.propertyId eq row[Properties.id] }.map {
+                    Image(
+                        imageId = it[Images.id].value,
+                        propertyId = it[Images.propertyId],
+                        url = it[Images.url],
+                        objectName = it[Images.objectName]
+                    )
+                },
+                videos = Videos.select { Videos.propertyId eq row[Properties.id] }.map {
+                    Video(
+                        videoId = it[Videos.id].value,
+                        propertyId = it[Videos.propertyId],
+                        url = it[Videos.url],
+                        objectName = it[Videos.objectName]
+                    )
+                },
+                location = row[Properties.location]
+            ),
+            propertyType = row[CommercialProperties.propertyType],
+            squareFoot = row[CommercialProperties.squareFoot],
+            zoningInfo = row[CommercialProperties.zoningInfo],
+            trafficCount = row[CommercialProperties.trafficCount],
+            amenities = row[CommercialProperties.amenities],
+        )
 
     override suspend fun addCommercialProperty(
-            commercialProperty: CommercialProperty,
-            videoURL: List<String>,
-            imageURL: List<String>
+        commercialProperty: CommercialProperty,
+        videoURL: List<Pair<String, String>>,
+        imageURL: List<Pair<String, String>>
     ): CommercialProperty = dbQuery {
         val idProperty = Properties.insert {
             it[agentContact] = commercialProperty.property.agentContact
@@ -552,23 +594,29 @@ class PropertyDaoImpl : PropertyDao {
             it[amenities] = commercialProperty.amenities
         }
 
-        commercialProperty.property.videos.forEach { video ->
+        videoURL.forEach { video ->
             Videos.insert {
                 it[propertyId] = idProperty
-                it[url] = video.url
+                it[url] = video.first
+                it[this.objectName] = video.second
             }
         }
-        commercialProperty.property.images.forEach { image ->
+        imageURL.forEach { image ->
             Images.insert {
                 it[propertyId] = idProperty
-                it[url] = image.url
+                it[url] = image.first
+                it[this.objectName] = image.second
             }
-
         }
         commercialProperty
     }
 
-    override suspend fun updateCommercialProperty(id: Int, commercialProperty: CommercialProperty): Boolean = dbQuery {
+    override suspend fun updateCommercialProperty(
+        id: Int,
+        commercialProperty: CommercialProperty,
+        videoURL: List<Pair<String, String>>,
+        imageURL: List<Pair<String, String>>
+    ): Boolean = dbQuery {
         val updateProperty = Properties.update({ Properties.id eq id }) {
             it[agentContact] = commercialProperty.property.agentContact
             it[price] = commercialProperty.property.price
@@ -581,16 +629,19 @@ class PropertyDaoImpl : PropertyDao {
             it[trafficCount] = commercialProperty.trafficCount
             it[amenities] = commercialProperty.amenities
         }
-        commercialProperty.property.images.forEach { image ->
+        imageURL.forEach { image ->
             Images.insert {
                 it[propertyId] = id
-                it[url] = image.url
+                it[url] = image.first
+                it[objectName] = image.second
+
             }
         }
-        commercialProperty.property.videos.forEach { video ->
+        videoURL.forEach { video ->
             Videos.insert {
-                it[propertyId] = id
-                it[url] = video.url
+                it[Images.propertyId] = id
+                it[Images.url] = video.first
+                it[Images.objectName] = video.second
             }
         }
         updateCommercial > 0 && updateProperty > 0
@@ -606,87 +657,99 @@ class PropertyDaoImpl : PropertyDao {
 
     override suspend fun getAllCommercialProperties(): List<CommercialProperty> = dbQuery {
         (Properties innerJoin CommercialProperties)
-                .selectAll()
-                .map { toCommercialProperty(it) }
+            .selectAll()
+            .map { toCommercialProperty(it) }
     }
 
     override suspend fun getCommercialProperty(id: Int): CommercialProperty? = dbQuery {
         (Properties innerJoin CommercialProperties)
-                .select { Properties.id eq id }
-                .map { toCommercialProperty(it) }
-                .firstOrNull()
+            .select { Properties.id eq id }
+            .map { toCommercialProperty(it) }
+            .firstOrNull()
     }
 
     /**
      * Leisure Property Dao Implementation.
      */
     private fun toTouristicProperty(row: ResultRow): LeisureAndTouristicProperty =
-            LeisureAndTouristicProperty(
-                    property = Property(
-                            id = row[Properties.id],
-                            agentContact = row[Properties.agentContact],
-                            price = row[Properties.price],
-                            images = Images.select { Images.propertyId eq row[Properties.id] }.map {
-                                Image(
-                                        imageId = it[Images.id].value,
-                                        propertyId = it[Images.propertyId],
-                                        url = it[Images.url]
-                                )
-                            },
-                            videos = Videos.select { Videos.propertyId eq row[Properties.id] }.map {
-                                Video(
-                                        videoId = it[Videos.id].value,
-                                        propertyId = it[Videos.propertyId],
-                                        url = it[Videos.url]
-                                )
-                            },
-                            location = row[Properties.location]
-                    ),
-                    propertyType = row[LeisureAndTouristicProperties.propertyType],
-                    squareFoot = row[LeisureAndTouristicProperties.squareFoot],
-                    rooms = row[LeisureAndTouristicProperties.rooms],
-                    units = row[LeisureAndTouristicProperties.units],
-                    amenities = row[LeisureAndTouristicProperties.amenities],
-                    proximityToAttractions = row[LeisureAndTouristicProperties.proximityToAttractions],
-                    occupancyRate = row[LeisureAndTouristicProperties.occupancyRate],
-            )
+        LeisureAndTouristicProperty(
+            property = Property(
+                id = row[Properties.id],
+                agentContact = row[Properties.agentContact],
+                price = row[Properties.price],
+                images = Images.select { Images.propertyId eq row[Properties.id] }.map {
+                    Image(
+                        imageId = it[Images.id].value,
+                        propertyId = it[Images.propertyId],
+                        url = it[Images.url],
+                        objectName = it[Images.objectName]
+                    )
+                },
+                videos = Videos.select { Videos.propertyId eq row[Properties.id] }.map {
+                    Video(
+                        videoId = it[Videos.id].value,
+                        propertyId = it[Videos.propertyId],
+                        url = it[Videos.url],
+                        objectName = it[Videos.objectName]
+                    )
+                },
+                location = row[Properties.location]
+            ),
+            propertyType = row[LeisureAndTouristicProperties.propertyType],
+            squareFoot = row[LeisureAndTouristicProperties.squareFoot],
+            rooms = row[LeisureAndTouristicProperties.rooms],
+            units = row[LeisureAndTouristicProperties.units],
+            amenities = row[LeisureAndTouristicProperties.amenities],
+            proximityToAttractions = row[LeisureAndTouristicProperties.proximityToAttractions],
+            occupancyRate = row[LeisureAndTouristicProperties.occupancyRate],
+        )
 
-    override suspend fun updateTouristicProperty(id: Int, touristicProperty: LeisureAndTouristicProperty): Boolean = dbQuery {
-        val updateProperty = Properties.update({ Properties.id eq id }) {
-            it[agentContact] = touristicProperty.property.agentContact
-            it[price] = touristicProperty.property.price
-            it[location] = touristicProperty.property.location
-        }
-        val updateCommercial = LeisureAndTouristicProperties.update({ LeisureAndTouristicProperties.id eq id }) {
-            it[propertyType] = touristicProperty.propertyType
-            it[squareFoot] = touristicProperty.squareFoot
-            it[rooms] = touristicProperty.rooms
-            it[units] = touristicProperty.units
-            it[amenities] = touristicProperty.amenities
-            it[proximityToAttractions] = touristicProperty.proximityToAttractions
-            it[occupancyRate] = touristicProperty.occupancyRate
-        }
-        touristicProperty.property.images.forEach { image ->
-            Images.insert {
-                it[propertyId] = id
-                it[url] = image.url
+    override suspend fun updateTouristicProperty(
+        id: Int,
+        touristicProperty: LeisureAndTouristicProperty,
+        videoURL: List<Pair<String, String>>,
+        imageURL: List<Pair<String, String>>
+    ): Boolean =
+        dbQuery {
+            val updateProperty = Properties.update({ Properties.id eq id }) {
+                it[agentContact] = touristicProperty.property.agentContact
+                it[price] = touristicProperty.property.price
+                it[location] = touristicProperty.property.location
             }
-        }
-        touristicProperty.property.videos.forEach { video ->
-            Videos.insert {
-                it[propertyId] = id
-                it[url] = video.url
+            val updateCommercial = LeisureAndTouristicProperties.update({ LeisureAndTouristicProperties.id eq id }) {
+                it[propertyType] = touristicProperty.propertyType
+                it[squareFoot] = touristicProperty.squareFoot
+                it[rooms] = touristicProperty.rooms
+                it[units] = touristicProperty.units
+                it[amenities] = touristicProperty.amenities
+                it[proximityToAttractions] = touristicProperty.proximityToAttractions
+                it[occupancyRate] = touristicProperty.occupancyRate
             }
+            imageURL.forEach { image ->
+                Images.insert {
+                    it[propertyId] = id
+                    it[url] = image.first
+                    it[objectName] = image.second
+
+                }
+            }
+            videoURL.forEach { video ->
+                Videos.insert {
+                    it[Images.propertyId] = id
+                    it[Images.url] = video.first
+                    it[Images.objectName] = video.second
+                }
+            }
+            updateCommercial > 0 && updateProperty > 0
         }
-        updateCommercial > 0 && updateProperty > 0
-    }
 
 
     override suspend fun addTouristicProperty(
-            leisureAndTouristicProperty: LeisureAndTouristicProperty,
-            videoURL: List<String>,
-            imageURL: List<String>
-    ): LeisureAndTouristicProperty = dbQuery {
+        leisureAndTouristicProperty: LeisureAndTouristicProperty,
+        videoURL: List<Pair<String, String>>,
+        imageURL: List<Pair<String, String>>,
+
+        ): LeisureAndTouristicProperty = dbQuery {
         val idProperty = Properties.insert {
             it[agentContact] = leisureAndTouristicProperty.property.agentContact
             it[price] = leisureAndTouristicProperty.property.price
@@ -703,16 +766,18 @@ class PropertyDaoImpl : PropertyDao {
             it[occupancyRate] = leisureAndTouristicProperty.occupancyRate
         }
 
-        leisureAndTouristicProperty.property.videos.forEach { video ->
+        videoURL.forEach { video ->
             Videos.insert {
                 it[propertyId] = idProperty
-                it[url] = video.url
+                it[url] = video.first
+                it[this.objectName] = video.second
             }
         }
-        leisureAndTouristicProperty.property.images.forEach { image ->
+        imageURL.forEach { image ->
             Images.insert {
                 it[propertyId] = idProperty
-                it[url] = image.url
+                it[url] = image.first
+                it[this.objectName] = image.second
             }
         }
         leisureAndTouristicProperty
@@ -722,22 +787,23 @@ class PropertyDaoImpl : PropertyDao {
     override suspend fun deleteTouristicProperty(id: Int): Boolean = dbQuery {
         val deleteImages = Images.deleteWhere { Images.propertyId eq id }
         val deleteVideos = Videos.deleteWhere { Videos.propertyId eq id }
-        val deleteTouristicProperty = LeisureAndTouristicProperties.deleteWhere { LeisureAndTouristicProperties.id eq id }
+        val deleteTouristicProperty =
+            LeisureAndTouristicProperties.deleteWhere { LeisureAndTouristicProperties.id eq id }
         val deleteProperty = Properties.deleteWhere { Properties.id eq id }
         deleteTouristicProperty > 0 && deleteProperty > 0 && deleteImages > 0 && deleteVideos > 0
     }
 
     override suspend fun getAllTouristicProperties(): List<LeisureAndTouristicProperty> = dbQuery {
         (Properties innerJoin LeisureAndTouristicProperties)
-                .selectAll()
-                .map { toTouristicProperty(it) }
+            .selectAll()
+            .map { toTouristicProperty(it) }
     }
 
     override suspend fun getTouristicProperty(id: Int): LeisureAndTouristicProperty? = dbQuery {
         (Properties innerJoin LeisureAndTouristicProperties)
-                .select { Properties.id eq id }
-                .map { toTouristicProperty(it) }
-                .firstOrNull()
+            .select { Properties.id eq id }
+            .map { toTouristicProperty(it) }
+            .firstOrNull()
     }
 
     /**
@@ -745,22 +811,22 @@ class PropertyDaoImpl : PropertyDao {
      */
 
 
-    private fun toImage(row: ResultRow): Image =
-            Image(
-                    imageId = row[Images.id].value,
-                    propertyId = row[Images.propertyId],
-                    url = row[Images.url],
-                    objectName = row[Images.objectName]
+    private fun toImage(row: ResultRow): ImageResponse =
+        Image(
+            imageId = row[Images.id].value,
+            propertyId = row[Images.propertyId],
+            url = row[Images.url],
+            objectName = row[Images.objectName]
 
-            )
+        ).toImageResponse()
 
-    private fun toVideo(row: ResultRow): Video =
-            Video(
-                    videoId = row[Videos.id].value,
-                    propertyId = row[Videos.propertyId],
-                    url = row[Videos.url],
-                    objectName = row[Images.objectName]
-            )
+    private fun toVideo(row: ResultRow): VideoResponse =
+        Video(
+            videoId = row[Videos.id].value,
+            propertyId = row[Videos.propertyId],
+            url = row[Videos.url],
+            objectName = row[Images.objectName]
+        ).toVideoResponse()
 
     override suspend fun deleteVideosById(videoId: Int): Boolean = dbQuery {
         Videos.deleteWhere { Videos.id eq videoId } > 0
@@ -770,16 +836,16 @@ class PropertyDaoImpl : PropertyDao {
         Images.deleteWhere { Images.id eq imageId } > 0
     }
 
-    override suspend fun getImageById(imageId: Int): Image? = dbQuery {
+    override suspend fun getImageById(imageId: Int): ImageResponse? = dbQuery {
         Images.select { Images.id eq imageId }
-                .mapNotNull { toImage(it) }
-                .singleOrNull()
+            .mapNotNull { toImage(it) }
+            .singleOrNull()
     }
 
-    override suspend fun getVideoById(videoId: Int): Video? = dbQuery {
+    override suspend fun getVideoById(videoId: Int): VideoResponse? = dbQuery {
         Videos.select { Videos.id eq videoId }
-                .mapNotNull { toVideo(it) }
-                .singleOrNull()
+            .mapNotNull { toVideo(it) }
+            .singleOrNull()
     }
 
 }

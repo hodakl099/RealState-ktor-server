@@ -35,8 +35,8 @@ fun Route.putAgriculturalRoute() {
             var location: String? = null
             var price: Double? = null
             var agentContact: String? = null
-            val videoURLs = mutableListOf<String>()
-            val imageURLs = mutableListOf<String>()
+            val videoURLs = mutableListOf<Pair<String,String>>()
+            val imageURLs = mutableListOf<Pair<String,String>>()
 
 
             multiPart.forEachPart { part ->
@@ -65,31 +65,32 @@ fun Route.putAgriculturalRoute() {
                             }
                             val storage = StorageOptions.newBuilder().setCredentials(creds).build().service
 
-                            // The name of your bucket
                             val bucketName = "tajaqar"
 
-                            // Create a blobId with the name of the file
                             val blobId = part.originalFileName?.let { BlobId.of(bucketName, it) }
 
-                            // Create a blobInfo
                             val blobInfo = blobId?.let { BlobInfo.newBuilder(it).build() }
 
-                            // Upload the file to the bucket
+
+
                             blobInfo?.let { storage?.create(it, fileBytes) }
 
-                            // Get the download URL
+
                             val filePath = blobId?.let { storage?.get(it)?.mediaLink }
 
-                            if (part.name == "video") videoURLs.add(filePath ?: "")
-                            else imageURLs.add(filePath ?: "")
+
+                            val urlAndName = Pair(filePath ?: "", part.originalFileName ?: "")
+
+                            if (part.name == "video") videoURLs.add(urlAndName)
+                            else imageURLs.add(urlAndName)
                         }
                         val agriculturalProperty = AgriculturalProperty(
                                 property = Property(
                                         id = 0, // This value will be replaced by autoincrement id
                                         agentContact = agentContact ?: "",
                                         price = price ?: 0.0,
-                                        images = imageURLs.map { Image(url = it, propertyId = 0, imageId = 0) },
-                                        videos = videoURLs.map { Video(url = it, propertyId = 0, videoId = 0) },
+                                        images = imageURLs.map { Image(url = it.first, propertyId = 0, imageId = 0, objectName = it.second) },
+                                        videos = videoURLs.map { Video(url = it.first, propertyId = 0, videoId = 0, objectName = it.second) },
                                         location = location ?: ""
                                 ),
                                 propertyType = propertyType ?: "",
@@ -100,7 +101,7 @@ fun Route.putAgriculturalRoute() {
                                 soilType = soilType ?: "",
                                 equipment = equipment ?: ""
                         )
-                        val isUpdated = dao.updateAgriculturalProperty(id, agriculturalProperty)
+                        val isUpdated = dao.updateAgriculturalProperty(id, agriculturalProperty, videoURL = videoURLs,imageURL = imageURLs)
                         if (isUpdated) {
                             call.respond(HttpStatusCode.OK,BasicApiResponse(true,"Property updated successfully."))
                         } else {

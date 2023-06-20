@@ -24,7 +24,7 @@ fun Route.putOfficeProperty() {
     put("updateProperty/{id}") {
         val id = call.parameters["id"]?.toIntOrNull()
         val multiPart = call.receiveMultipart()
-        if(id != null) {
+        if (id != null) {
             var layoutType: String? = null
             var squareFoot: Double? = null
             var floorNumber: Int? = null
@@ -33,14 +33,14 @@ fun Route.putOfficeProperty() {
             var location: String? = null
             var agentContact: String? = null
             var price: Double? = null
-            val videoURLs = mutableListOf<String>()
-            val imageURLs = mutableListOf<String>()
+            val videoURLs = mutableListOf<Pair<String, String>>()
+            val imageURLs = mutableListOf<Pair<String, String>>()
 
             multiPart.forEachPart { part ->
                 when (part) {
                     is PartData.FormItem -> {
                         if (part.name?.isEmpty() == true) {
-                            call.respond(HttpStatusCode.OK, BasicApiResponse(false,"${part.name} can't be empty"))
+                            call.respond(HttpStatusCode.OK, BasicApiResponse(false, "${part.name} can't be empty"))
                         }
                         when (part.name) {
                             "layoutType" -> layoutType = part.value
@@ -53,6 +53,7 @@ fun Route.putOfficeProperty() {
                             "price" -> price = part.value.toDoubleOrNull()
                         }
                     }
+
                     is PartData.FileItem -> {
                         if (part.name == "video" || part.name == "image") {
                             val fileBytes = part.streamProvider().readBytes()
@@ -75,33 +76,49 @@ fun Route.putOfficeProperty() {
 
                             // Get the download URL
                             val filePath = blobId?.let { storage?.get(it)?.mediaLink }
+                            val urlAndName = Pair(filePath ?: "", part.originalFileName ?: "")
 
-                            if (part.name == "video") videoURLs.add(filePath ?: "")
-                            else imageURLs.add(filePath ?: "")
+                            if (part.name == "video") videoURLs.add(urlAndName)
+                            else imageURLs.add(urlAndName)
                         }
                         val officeProperty = OfficeProperty(
-                                property = Property(
-                                        id = 0, // This value will be replaced by autoincrement id
-                                        agentContact = agentContact ?: "",
-                                        price = price ?: 0.0,
-                                        images = imageURLs.map { Image(url = it, propertyId = 0, imageId = 0) },
-                                        videos = videoURLs.map { Video(url = it, propertyId = 0, videoId = 0) },
-                                        location = location ?: "",
-                                ),
-                                layoutType = layoutType ?: "",
-                                squareFoot = squareFoot ?: 0.0,
-                                floorNumber = floorNumber ?: 0,
-                                amenities = amenities ?: "",
-                                accessibility = accessibility ?: "",
+                            property = Property(
+                                id = 0, // This value will be replaced by autoincrement id
+                                agentContact = agentContact ?: "",
+                                price = price ?: 0.0,
+                                images = imageURLs.map {
+                                    Image(
+                                        url = it.first,
+                                        propertyId = 0,
+                                        imageId = 0,
+                                        objectName = it.second
+                                    )
+                                },
+                                videos = videoURLs.map {
+                                    Video(
+                                        url = it.first,
+                                        propertyId = 0,
+                                        videoId = 0,
+                                        objectName = it.second
+                                    )
+                                },
+                                location = location ?: "",
+                            ),
+                            layoutType = layoutType ?: "",
+                            squareFoot = squareFoot ?: 0.0,
+                            floorNumber = floorNumber ?: 0,
+                            amenities = amenities ?: "",
+                            accessibility = accessibility ?: "",
                         )
-                        val isUpdated = dao.updateOfficeProperty(id, officeProperty)
+                        val isUpdated = dao.updateOfficeProperty(id, officeProperty,videoURL = videoURLs,imageURL = imageURLs)
                         if (isUpdated) {
-                            call.respond(HttpStatusCode.OK, BasicApiResponse(true,"Property updated successfully."))
+                            call.respond(HttpStatusCode.OK, BasicApiResponse(true, "Property updated successfully."))
                         } else {
                             call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
                         }
 
                     }
+
                     else -> return@forEachPart
                 }
                 part.dispose()

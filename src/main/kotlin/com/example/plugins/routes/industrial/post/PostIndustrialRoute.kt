@@ -34,8 +34,8 @@ fun Route.postIndustrialProperty() {
         var location: String? = null
         var agentContact: String? = null
         var price: Double? = null
-        val videoURLs = mutableListOf<String>()
-        val imageURLs = mutableListOf<String>()
+        val videoURLs = mutableListOf<Pair<String,String>>()
+        val imageURLs = mutableListOf<Pair<String,String>>()
 
         multiPart.forEachPart { part ->
             when (part) {
@@ -81,8 +81,10 @@ fun Route.postIndustrialProperty() {
                         // Get the download URL
                         val filePath = blobId?.let { storage?.get(it)?.mediaLink }
 
-                        if (part.name == "video") videoURLs.add(filePath ?: "")
-                        else imageURLs.add(filePath ?: "")
+                        val urlAndName = Pair(filePath ?: "", part.originalFileName ?: "")
+
+                        if (part.name == "video") videoURLs.add(urlAndName)
+                        else imageURLs.add(urlAndName)
                     }
                 }
 
@@ -92,22 +94,22 @@ fun Route.postIndustrialProperty() {
         }
 
         val industrialProperty = IndustrialProperty(
-                property = Property(
-                        id = 0, // This value will be replaced by autoincrement id
-                        agentContact = agentContact ?: "",
-                        price = price ?: 0.0,
-                        images = imageURLs.map { Image(url = it, propertyId = 0, imageId = 0) },
-                        videos = videoURLs.map { Video(url = it, propertyId = 0, videoId = 0) },
-                        location = location ?: "",
-                ),
-                propertyType = propertyType ?: "",
-                squareFoot = squareFoot ?: 0.0,
-                zoningInfo = zoningInfo ?: "",
-                cellingHeight = cellingHeight ?: 0,
-                numberOfLoadingDocks = numberOfLoadingDocks ?: 0,
-                powerCapabilities = powerCapabilities ?: "",
-                accessToTransportation = accessToTransportation ?: "",
-                environmentalReports = environmentalReports ?: ""
+            property = Property(
+                id = 0, // This value will be replaced by autoincrement id
+                agentContact = agentContact ?: "",
+                price = price ?: 0.0,
+                images = imageURLs.map { Image(url = it.first, propertyId = 0, imageId = 0, objectName = it.second) },
+                videos = videoURLs.map { Video(url = it.first, propertyId = 0, videoId = 0, objectName = it.second) },
+                location = location ?: "",
+            ),
+            propertyType = propertyType ?: "",
+            squareFoot = squareFoot ?: 0.0,
+            zoningInfo = zoningInfo ?: "",
+            cellingHeight = cellingHeight ?: 0,
+            numberOfLoadingDocks = numberOfLoadingDocks ?: 0,
+            powerCapabilities = powerCapabilities ?: "",
+            accessToTransportation = accessToTransportation ?: "",
+            environmentalReports = environmentalReports ?: ""
         )
 
         dao.addIndustrialProperty(industrialProperty, imageURL = videoURLs, videoURL = imageURLs)

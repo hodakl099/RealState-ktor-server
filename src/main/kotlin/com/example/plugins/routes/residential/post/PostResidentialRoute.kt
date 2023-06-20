@@ -34,14 +34,15 @@ fun Route.postResidentialProperty() {
         var location: String? = null
         var agentContact: String? = null
         var price: Double? = null
-        val videoURLs = mutableListOf<String>()
-        val imageURLs = mutableListOf<String>()
+        val videoURLs = mutableListOf<Pair<String, String>>()
+        val imageURLs = mutableListOf<Pair<String, String>>()
+
 
         multiPart.forEachPart { part ->
             when (part) {
                 is PartData.FormItem -> {
                     if (part.name?.isEmpty() == true) {
-                        call.respond(HttpStatusCode.OK, BasicApiResponse(false,"${part.name} can't be empty"))
+                        call.respond(HttpStatusCode.OK, BasicApiResponse(false, "${part.name} can't be empty"))
                     }
                     when (part.name) {
                         "agentContact" -> agentContact = part.value
@@ -55,6 +56,7 @@ fun Route.postResidentialProperty() {
                         "location" -> location = part.value
                     }
                 }
+
                 is PartData.FileItem -> {
                     if (part.name == "video" || part.name == "image") {
                         val fileBytes = part.streamProvider().readBytes()
@@ -78,33 +80,39 @@ fun Route.postResidentialProperty() {
                         // Get the download URL
                         val filePath = blobId?.let { storage?.get(it)?.mediaLink }
 
-                        if (part.name == "video") videoURLs.add(filePath ?: "")
-                        else imageURLs.add(filePath ?: "")
+                        val urlAndName = Pair(filePath ?: "", part.originalFileName ?: "")
+
+                        if (part.name == "video") videoURLs.add(urlAndName)
+                        else imageURLs.add(urlAndName)
                     }
                 }
+
                 else -> return@forEachPart
             }
             part.dispose()
         }
 
         val residentialProperty = ResidentialProperty(
-                property = Property(
-                        id = 0, // This value will be replaced by autoincrement id
-                        agentContact = agentContact ?: "",
-                        price = price ?: 0.0,
-                        images = imageURLs.map { Image(url = it, propertyId = 0, imageId = 0) },
-                        videos = videoURLs.map { Video(url = it, propertyId = 0, videoId = 0) },
-                        location = location ?: "",
-                ),
-                propertyType = propertyType ?: "",
-                squareFootage = squareFootage ?: 0.0,
-                bedrooms = bedrooms ?: 0,
-                bathrooms = bathrooms ?: 0,
-                amenities = amenities ?: "",
-                parking = parking ?: false,
+            property = Property(
+                id = 0, // This value will be replaced by autoincrement id
+                agentContact = agentContact ?: "",
+                price = price ?: 0.0,
+                images = imageURLs.map { Image(url = it.first, propertyId = 0, imageId = 0, objectName = it.second) },
+                videos = videoURLs.map { Video(url = it.first, propertyId = 0, videoId = 0, objectName = it.second) },
+                location = location ?: "",
+            ),
+            propertyType = propertyType ?: "",
+            squareFootage = squareFootage ?: 0.0,
+            bedrooms = bedrooms ?: 0,
+            bathrooms = bathrooms ?: 0,
+            amenities = amenities ?: "",
+            parking = parking ?: false,
         )
 
         dao.addResidentialProperty(residentialProperty, imageURL = videoURLs, videoURL = imageURLs)
-        call.respond(HttpStatusCode.OK, BasicApiResponse(true,"New Residential Property Added Successfully ${Videos.idValue}."))
+        call.respond(
+            HttpStatusCode.OK,
+            BasicApiResponse(true, "New Residential Property Added Successfully ${Videos.idValue}.")
+        )
     }
 }

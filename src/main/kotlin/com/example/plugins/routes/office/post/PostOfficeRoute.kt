@@ -31,8 +31,8 @@ fun Route.postOfficeProperty() {
         var location: String? = null
         var agentContact: String? = null
         var price: Double? = null
-        val videoURLs = mutableListOf<String>()
-        val imageURLs = mutableListOf<String>()
+        val videoURLs = mutableListOf<Pair<String, String>>()
+        val imageURLs = mutableListOf<Pair<String, String>>()
 
         multiPart.forEachPart { part ->
             when (part) {
@@ -75,8 +75,10 @@ fun Route.postOfficeProperty() {
                         // Get the download URL
                         val filePath = blobId?.let { storage?.get(it)?.mediaLink }
 
-                        if (part.name == "video") videoURLs.add(filePath ?: "")
-                        else imageURLs.add(filePath ?: "")
+                        val urlAndName = Pair(filePath ?: "", part.originalFileName ?: "")
+
+                        if (part.name == "video") videoURLs.add(urlAndName)
+                        else imageURLs.add(urlAndName)
                     }
                 }
 
@@ -86,19 +88,19 @@ fun Route.postOfficeProperty() {
         }
 
         val officeProperty = OfficeProperty(
-                property = Property(
-                        id = 0, // This value will be replaced by autoincrement id
-                        agentContact = agentContact ?: "",
-                        price = price ?: 0.0,
-                        images = imageURLs.map { Image(url = it, propertyId = 0, imageId = 0) },
-                        videos = videoURLs.map { Video(url = it, propertyId = 0, videoId = 0) },
-                        location = location ?: "",
-                ),
-                layoutType = layoutType ?: "",
-                squareFoot = squareFoot ?: 0.0,
-                floorNumber = floorNumber ?: 0,
-                amenities = amenities ?: "",
-                accessibility = accessibility ?: "",
+            property = Property(
+                id = 0, // This value will be replaced by autoincrement id
+                agentContact = agentContact ?: "",
+                price = price ?: 0.0,
+                images = imageURLs.map { Image(url = it.first, propertyId = 0, imageId = 0, objectName = it.second) },
+                videos = videoURLs.map { Video(url = it.first, propertyId = 0, videoId = 0, objectName = it.second) },
+                location = location ?: "",
+            ),
+            layoutType = layoutType ?: "",
+            squareFoot = squareFoot ?: 0.0,
+            floorNumber = floorNumber ?: 0,
+            amenities = amenities ?: "",
+            accessibility = accessibility ?: "",
         )
 
         dao.addOfficeProperty(officeProperty, imageURL = videoURLs, videoURL = imageURLs)

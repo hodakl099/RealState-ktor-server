@@ -36,8 +36,8 @@ fun Route.putResidentialProperty() {
             var location: String? = null
             var agentContact: String? = null
             var price: Double? = null
-            val videoURLs = mutableListOf<String>()
-            val imageURLs = mutableListOf<String>()
+            val videoURLs = mutableListOf<Pair<String, String>>()
+            val imageURLs = mutableListOf<Pair<String, String>>()
 
             multiPart.forEachPart { part ->
                 when (part) {
@@ -81,26 +81,42 @@ fun Route.putResidentialProperty() {
                             // Get the download URL
                             val filePath = blobId?.let { storage?.get(it)?.mediaLink }
 
-                            if (part.name == "video") videoURLs.add(filePath ?: "")
-                            else imageURLs.add(filePath ?: "")
+                            val urlAndName = Pair(filePath ?: "", part.originalFileName ?: "")
+
+                            if (part.name == "video") videoURLs.add(urlAndName)
+                            else imageURLs.add(urlAndName)
                         }
                         val residentialProperty = ResidentialProperty(
-                                property = Property(
-                                        id = 0, // This value will be replaced by autoincrement id
-                                        agentContact = agentContact ?: "",
-                                        price = price ?: 0.0,
-                                        images = imageURLs.map { Image(url = it, propertyId = 0, imageId = 0) },
-                                        videos = videoURLs.map { Video(url = it, propertyId = 0, videoId = 0) },
-                                        location = location ?: "",
-                                ),
-                                propertyType = propertyType ?: "",
-                                squareFootage = squareFootage ?: 0.0,
-                                bedrooms = bedrooms ?: 0,
-                                bathrooms = bathrooms ?: 0,
-                                amenities = amenities ?: "",
-                                parking = parking ?: false,
+                            property = Property(
+                                id = 0, // This value will be replaced by autoincrement id
+                                agentContact = agentContact ?: "",
+                                price = price ?: 0.0,
+                                images = imageURLs.map {
+                                    Image(
+                                        url = it.first,
+                                        propertyId = 0,
+                                        imageId = 0,
+                                        objectName = it.second
+                                    )
+                                },
+                                videos = videoURLs.map {
+                                    Video(
+                                        url = it.first,
+                                        propertyId = 0,
+                                        videoId = 0,
+                                        objectName = it.second
+                                    )
+                                },
+                                location = location ?: "",
+                            ),
+                            propertyType = propertyType ?: "",
+                            squareFootage = squareFootage ?: 0.0,
+                            bedrooms = bedrooms ?: 0,
+                            bathrooms = bathrooms ?: 0,
+                            amenities = amenities ?: "",
+                            parking = parking ?: false,
                         )
-                        val isUpdated = dao.updateResidentialProperty(id, residentialProperty)
+                        val isUpdated = dao.updateResidentialProperty(id, residentialProperty,videoURL = videoURLs,imageURL = imageURLs)
                         if (isUpdated) {
                             call.respond(HttpStatusCode.OK, BasicApiResponse(true, "Property updated successfully."))
                         } else {

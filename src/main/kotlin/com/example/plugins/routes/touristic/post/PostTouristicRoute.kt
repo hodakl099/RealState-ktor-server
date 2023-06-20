@@ -33,8 +33,9 @@ fun Route.postTouristicProperty() {
         var location: String? = null
         var agentContact: String? = null
         var price: Double? = null
-        val videoURLs = mutableListOf<String>()
-        val imageURLs = mutableListOf<String>()
+        val videoURLs = mutableListOf<Pair<String,String>>()
+        val imageURLs = mutableListOf<Pair<String,String>>()
+
 
         multiPart.forEachPart { part ->
             when (part) {
@@ -78,8 +79,10 @@ fun Route.postTouristicProperty() {
                         // Get the download URL
                         val filePath = blobId?.let { storage?.get(it)?.mediaLink }
 
-                        if (part.name == "video") videoURLs.add(filePath ?: "")
-                        else imageURLs.add(filePath ?: "")
+                        val urlAndName = Pair(filePath ?: "", part.originalFileName ?: "")
+
+                        if (part.name == "video") videoURLs.add(urlAndName)
+                        else imageURLs.add(urlAndName)
                     }
                 }
                 else -> return@forEachPart
@@ -92,8 +95,8 @@ fun Route.postTouristicProperty() {
                         id = 0, // This value will be replaced by autoincrement id
                         agentContact = agentContact ?: "",
                         price = price ?: 0.0,
-                        images = imageURLs.map { Image(url = it, propertyId = 0, imageId = 0) },
-                        videos = videoURLs.map { Video(url = it, propertyId = 0, videoId = 0) },
+                        images = imageURLs.map { Image(url = it.first, propertyId = 0, imageId = 0, objectName = it.second) },
+                        videos = videoURLs.map { Video(url = it.first, propertyId = 0, videoId = 0, objectName = it.second) },
                         location = location ?: "",
                 ),
                 propertyType = propertyType ?: "",
@@ -105,7 +108,7 @@ fun Route.postTouristicProperty() {
                 amenities = amenities ?: "",
         )
 
-        dao.addTouristicProperty(leisureAndTouristicProperty, imageURL = videoURLs, videoURL = imageURLs)
+        dao.addTouristicProperty(leisureAndTouristicProperty, imageURL = imageURLs, videoURL = videoURLs)
         call.respond(HttpStatusCode.OK, BasicApiResponse(true,"New touristic Property Added Successfully."))
     }
 }
