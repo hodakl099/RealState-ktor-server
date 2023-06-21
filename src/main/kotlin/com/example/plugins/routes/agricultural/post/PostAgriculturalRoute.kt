@@ -91,7 +91,7 @@ fun Route.postAgriculturalRoute() {
                         id = 0, // This value will be replaced by autoincrement id
                         agentContact = agentContact ?: "",
                         price = price ?: 0.0,
-                        images = imageURLs.map { Image(url = it.first , propertyId = 0, imageId = 0,objectName = it.second) },
+                        images = imageURLs.map { Image(url = it.first , propertyId = 0, imageId = 0, objectName = it.second) },
                         videos = videoURLs.map { Video(url = it.first , propertyId = 0, videoId = 0, objectName =it.second) },
                         location = location ?: ""
                 ),

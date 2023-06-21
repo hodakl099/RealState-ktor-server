@@ -18,7 +18,7 @@ interface PropertyDao {
 
     suspend fun getAllResidentialProperties(): List<ResidentialProperty>
     suspend fun getResidentialProperty(id: Int): ResidentialProperty?
-    suspend fun updateResidentialProperty(id: Int,residentialProperty: ResidentialProperty,videoURL : List<Pair<String,String>>, imageURL : List<Pair<String,String>>): Boolean
+    suspend fun updateResidentialProperty(id: Int,updatedProperty: ResidentialProperty,videoURL : List<Pair<String,String>>, imageURL : List<Pair<String,String>>): Boolean
 
     /**
      * AgriculturalProperty Dao.
@@ -34,18 +34,18 @@ interface PropertyDao {
     /**
      * OfficeProperty Dao.
      */
-    suspend fun addOfficeProperty(residentialProperty: OfficeProperty, videoURL : List<Pair<String,String>>, imageURL : List<Pair<String,String>>): OfficeProperty
+    suspend fun addOfficeProperty(officeProperty: OfficeProperty, videoURL : List<Pair<String,String>>, imageURL : List<Pair<String,String>>): OfficeProperty
 
     suspend fun deleteOfficeProperty(id: Int): Boolean
 
     suspend fun getAllOfficeProperties(): List<OfficeProperty>
     suspend fun getOfficeProperty(id: Int): OfficeProperty?
-    suspend fun updateOfficeProperty(id: Int,officeProperty: OfficeProperty,videoURL : List<Pair<String,String>>, imageURL : List<Pair<String,String>>): Boolean
+    suspend fun updateOfficeProperty(id: Int,updatedProperty: OfficeProperty,videoURL : List<Pair<String,String>>, imageURL : List<Pair<String,String>>): Boolean
 
     /**
      * IndustrialProperty Dao.
      */
-    suspend fun addIndustrialProperty(residentialProperty: IndustrialProperty, videoURL : List<Pair<String,String>>, imageURL : List<Pair<String,String>>): IndustrialProperty
+    suspend fun addIndustrialProperty(industrialProperty: IndustrialProperty, videoURL : List<Pair<String,String>>, imageURL : List<Pair<String,String>>): IndustrialProperty
 
     suspend fun deleteIndustrialProperty(id: Int): Boolean
 

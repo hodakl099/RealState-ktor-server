@@ -36,7 +36,8 @@ fun Route.deleteAgriculturalVideo() {
         if (dao.deleteVideosById(videoId)) {
             call.respond(HttpStatusCode.OK, BasicApiResponse(true,"Video deleted successfully."))
         } else {
-            call.respond(HttpStatusCode.NotFound, BasicApiResponse(false,"something went wrong!"))
+            call.respond(HttpStatusCode.NotFound, BasicApiResponse(false,"Invalid Video!"))
+            return@delete
         }
     }
 }
