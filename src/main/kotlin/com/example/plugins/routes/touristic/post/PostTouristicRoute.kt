@@ -96,7 +96,6 @@ fun Route.postTouristicProperty() {
             part.dispose()
         }
 
-
         if (imageURLs.isEmpty() && videoURLs.isEmpty()) {
             call.respond(HttpStatusCode.BadRequest, BasicApiResponse(false, "At least one image or video must be provided."))
             return@post
