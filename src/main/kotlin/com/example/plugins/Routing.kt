@@ -9,6 +9,7 @@ import com.example.plugins.routes.residential.createResidentialRoute
 import com.example.plugins.routes.touristic.createTouristicRoute
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.plugins.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -17,11 +18,14 @@ import io.ktor.server.routing.*
 fun Application.configureRouting() {
     install(StatusPages) {
         exception<Throwable> { call, cause ->
-            call.respondText(text = "500: $cause" , status = HttpStatusCode.InternalServerError)
+            call.respond(HttpStatusCode.InternalServerError, cause.localizedMessage)
         }
+        exception<NotFoundException> {call, cause ->
+            call.respond(HttpStatusCode.NotFound, cause.localizedMessage)
+        }
+
     }
     routing {
-        //post routes
         route("/properties") {
             createCommercialRoute()
             createIndustrialRoute()
@@ -30,7 +34,6 @@ fun Application.configureRouting() {
             createTouristicRoute()
             createResidentialRoute()
         }
-
     }
 }
 
