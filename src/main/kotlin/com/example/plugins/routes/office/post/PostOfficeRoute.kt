@@ -37,9 +37,6 @@ fun Route.postOfficeProperty() {
         multiPart.forEachPart { part ->
             when (part) {
                 is PartData.FormItem -> {
-                    if (part.name?.isEmpty() == true) {
-                        call.respond(HttpStatusCode.OK, BasicApiResponse(false, "${part.name} can't be empty"))
-                    }
                     when (part.name) {
                         "layoutType" -> layoutType = part.value
                         "squareFoot" -> squareFoot = part.value.toDoubleOrNull()
@@ -55,6 +52,9 @@ fun Route.postOfficeProperty() {
                 is PartData.FileItem -> {
                     if (part.name == "video" || part.name == "image") {
                         val fileBytes = part.streamProvider().readBytes()
+                        if (fileBytes.isEmpty()) {
+                            call.respond(HttpStatusCode.BadRequest, BasicApiResponse(false, "At least one image or video must be provided."))
+                        }
                         try {
                             val creds = withContext(Dispatchers.IO) {
                                 GoogleCredentials.fromStream(FileInputStream("src/main/resources/verdant-option-390012-977b2708f8e5.json"))
@@ -91,6 +91,12 @@ fun Route.postOfficeProperty() {
                 else -> return@forEachPart
             }
             part.dispose()
+        }
+
+
+        if (imageURLs.isEmpty() && videoURLs.isEmpty()) {
+            call.respond(HttpStatusCode.BadRequest, BasicApiResponse(false, "At least one image or video must be provided."))
+            return@post
         }
 
         val officeProperty = OfficeProperty(

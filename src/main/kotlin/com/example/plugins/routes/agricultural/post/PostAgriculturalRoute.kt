@@ -55,6 +55,9 @@ fun Route.postAgriculturalRoute() {
                 is PartData.FileItem -> {
                     if (part.name == "video" || part.name == "image") {
                         val fileBytes = part.streamProvider().readBytes()
+                        if (fileBytes.isEmpty()) {
+                            call.respond(HttpStatusCode.BadRequest, BasicApiResponse(false, "At least one image or video must be provided."))
+                        }
                         try {
                             val creds = withContext(Dispatchers.IO) {
                                 GoogleCredentials.fromStream(FileInputStream("src/main/resources/verdant-option-390012-977b2708f8e5.json"))
@@ -90,6 +93,11 @@ fun Route.postAgriculturalRoute() {
                 else -> return@forEachPart
             }
             part.dispose()
+        }
+
+        if (imageURLs.isEmpty() && videoURLs.isEmpty()) {
+            call.respond(HttpStatusCode.BadRequest, BasicApiResponse(false, "At least one image or video must be provided."))
+            return@post
         }
 
         val agriculturalProperty = AgriculturalProperty(
