@@ -62,29 +62,37 @@ fun Route.putTouristicProperty() {
                     is PartData.FileItem -> {
                         if (part.name == "video" || part.name == "image") {
                             val fileBytes = part.streamProvider().readBytes()
-                            val creds = withContext(Dispatchers.IO) {
-                                GoogleCredentials.fromStream(FileInputStream("src/main/resources/verdant-option-390012-977b2708f8e5.json"))
+                            try {
+                                val creds = withContext(Dispatchers.IO) {
+                                    GoogleCredentials.fromStream(FileInputStream("src/main/resources/verdant-option-390012-977b2708f8e5.json"))
+                                }
+                                val storage = StorageOptions.newBuilder().setCredentials(creds).build().service
+
+
+                                val bucketName = "tajaqar"
+
+
+                                val blobId = part.originalFileName?.let { BlobId.of(bucketName, it) }
+
+
+                                val blobInfo = blobId?.let { BlobInfo.newBuilder(it).build() }
+
+                                blobInfo?.let { storage?.create(it, fileBytes) }
+
+
+                                val filePath = blobId?.let { storage?.get(it)?.mediaLink }
+
+                                val urlAndName = Pair(filePath ?: "", part.originalFileName ?: "")
+
+                                if (part.name == "video") videoURLs.add(urlAndName)
+                                else imageURLs.add(urlAndName)
+                            } catch (e: Exception) {
+                                call.respond(
+                                    HttpStatusCode.InternalServerError,
+                                    BasicApiResponse(false, "An error occurred while uploading the file.")
+                                )
+                                return@forEachPart
                             }
-                            val storage = StorageOptions.newBuilder().setCredentials(creds).build().service
-
-
-                            val bucketName = "tajaqar"
-
-
-                            val blobId = part.originalFileName?.let { BlobId.of(bucketName, it) }
-
-
-                            val blobInfo = blobId?.let { BlobInfo.newBuilder(it).build() }
-
-                            blobInfo?.let { storage?.create(it, fileBytes) }
-
-                            // Get the download URL
-                            val filePath = blobId?.let { storage?.get(it)?.mediaLink }
-
-                            val urlAndName = Pair(filePath ?: "", part.originalFileName ?: "")
-
-                            if (part.name == "video") videoURLs.add(urlAndName)
-                            else imageURLs.add(urlAndName)
                         }
 
                         val leisureAndTouristicProperty = LeisureAndTouristicProperty(

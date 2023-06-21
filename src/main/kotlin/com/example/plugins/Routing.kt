@@ -16,6 +16,7 @@ import io.ktor.server.routing.*
 
 
 fun Application.configureRouting() {
+
     install(StatusPages) {
         exception<Throwable> { call, cause ->
             call.respond(HttpStatusCode.InternalServerError, cause.localizedMessage)
@@ -23,8 +24,8 @@ fun Application.configureRouting() {
         exception<NotFoundException> {call, cause ->
             call.respond(HttpStatusCode.NotFound, cause.localizedMessage)
         }
-
     }
+
     routing {
         route("/properties") {
             createCommercialRoute()
@@ -35,5 +36,6 @@ fun Application.configureRouting() {
             createResidentialRoute()
         }
     }
+
 }
 

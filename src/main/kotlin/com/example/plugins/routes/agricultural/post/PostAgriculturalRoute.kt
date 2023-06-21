@@ -40,14 +40,11 @@ fun Route.postAgriculturalRoute() {
         multiPart.forEachPart { part ->
             when (part) {
                 is PartData.FormItem -> {
-                    if (part.name?.isEmpty() == true) {
-                        call.respond(HttpStatusCode.OK, BasicApiResponse(false,"${part.name} can't be empty"))
-                    }
                     when (part.name) {
                         "agentContact" -> agentContact = part.value
-                        "price" -> price = part.value.toDoubleOrNull()
+                        "price" -> price = part.value.toDoubleOrNull() ?: throw java.lang.IllegalArgumentException("Invalid or missing price.")
                         "propertyType" -> propertyType = part.value
-                        "acres" -> acres = part.value.toDoubleOrNull()
+                        "acres" -> acres = part.value.toDoubleOrNull() ?: throw java.lang.IllegalArgumentException("Invalid or missing price.")
                         "buildings" -> buildings = part.value
                         "crops" -> crops = part.value
                         "soilType" -> soilType = part.value
@@ -58,27 +55,36 @@ fun Route.postAgriculturalRoute() {
                 is PartData.FileItem -> {
                     if (part.name == "video" || part.name == "image") {
                         val fileBytes = part.streamProvider().readBytes()
-                        val creds = withContext(Dispatchers.IO) {
-                            GoogleCredentials.fromStream(FileInputStream("src/main/resources/verdant-option-390012-977b2708f8e5.json"))
+                        try {
+                            val creds = withContext(Dispatchers.IO) {
+                                GoogleCredentials.fromStream(FileInputStream("src/main/resources/verdant-option-390012-977b2708f8e5.json"))
+                            }
+                            val storage = StorageOptions.newBuilder().setCredentials(creds).build().service
+
+
+                            val bucketName = "tajaqar"
+
+                            val blobId = part.originalFileName?.let { BlobId.of(bucketName, it) }
+
+
+                            val blobInfo = blobId?.let { BlobInfo.newBuilder(it).build() }
+
+                            blobInfo?.let { storage?.create(it, fileBytes) }
+
+                            val filePath = blobId?.let { storage?.get(it)?.mediaLink }
+
+                            val urlAndName = Pair(filePath ?: "", part.originalFileName ?: "")
+
+                            if (part.name == "video") videoURLs.add(urlAndName)
+                            else imageURLs.add(urlAndName)
+                        } catch (e: Exception) {
+                            call.respond(HttpStatusCode.InternalServerError, BasicApiResponse(false,"something went wrong while uploading the file."))
+                            return@forEachPart
+                        } catch (e: IllegalArgumentException) {
+                            call.respond(HttpStatusCode.BadRequest, BasicApiResponse(false,e.message ?: "Invalid input."))
+                            return@forEachPart
                         }
-                        val storage = StorageOptions.newBuilder().setCredentials(creds).build().service
 
-
-                        val bucketName = "tajaqar"
-
-                        val blobId = part.originalFileName?.let { BlobId.of(bucketName, it) }
-
-
-                        val blobInfo = blobId?.let { BlobInfo.newBuilder(it).build() }
-
-                        blobInfo?.let { storage?.create(it, fileBytes) }
-
-                        val filePath = blobId?.let { storage?.get(it)?.mediaLink }
-
-                        val urlAndName = Pair(filePath ?: "", part.originalFileName ?: "")
-
-                        if (part.name == "video") videoURLs.add(urlAndName)
-                        else imageURLs.add(urlAndName)
                     }
                 }
                 else -> return@forEachPart

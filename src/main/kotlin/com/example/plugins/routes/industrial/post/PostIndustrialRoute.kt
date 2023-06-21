@@ -61,33 +61,38 @@ fun Route.postIndustrialProperty() {
                 is PartData.FileItem -> {
                     if (part.name == "video" || part.name == "image") {
                         val fileBytes = part.streamProvider().readBytes()
-                        val creds = withContext(Dispatchers.IO) {
-                            GoogleCredentials.fromStream(FileInputStream("src/main/resources/verdant-option-390012-977b2708f8e5.json"))
+                        try {
+                            val creds = withContext(Dispatchers.IO) {
+                                GoogleCredentials.fromStream(FileInputStream("src/main/resources/verdant-option-390012-977b2708f8e5.json"))
+                            }
+                            val storage = StorageOptions.newBuilder().setCredentials(creds).build().service
+
+
+                            val bucketName = "tajaqar"
+
+                            val blobId = part.originalFileName?.let { BlobId.of(bucketName, it) }
+
+
+                            val blobInfo = blobId?.let { BlobInfo.newBuilder(it).build() }
+
+                            blobInfo?.let { storage?.create(it, fileBytes) }
+
+                            val filePath = blobId?.let { storage?.get(it)?.mediaLink }
+
+                            val urlAndName = Pair(filePath ?: "", part.originalFileName ?: "")
+
+                            if (part.name == "video") videoURLs.add(urlAndName)
+                            else imageURLs.add(urlAndName)
+                        } catch (e: Exception) {
+                            call.respond(HttpStatusCode.InternalServerError, BasicApiResponse(false,"something went wrong while uploading the file."))
+                            return@forEachPart
+                        } catch (e: IllegalArgumentException) {
+                            call.respond(HttpStatusCode.BadRequest, BasicApiResponse(false,e.message ?: "Invalid input."))
+                            return@forEachPart
                         }
-                        val storage = StorageOptions.newBuilder().setCredentials(creds).build().service
 
-                        // The name of your bucket
-                        val bucketName = "tajaqar"
-
-                        // Create a blobId with the name of the file
-                        val blobId = part.originalFileName?.let { BlobId.of(bucketName, it) }
-
-                        // Create a blobInfo
-                        val blobInfo = blobId?.let { BlobInfo.newBuilder(it).build() }
-
-                        // Upload the file to the bucket
-                        blobInfo?.let { storage?.create(it, fileBytes) }
-
-                        // Get the download URL
-                        val filePath = blobId?.let { storage?.get(it)?.mediaLink }
-
-                        val urlAndName = Pair(filePath ?: "", part.originalFileName ?: "")
-
-                        if (part.name == "video") videoURLs.add(urlAndName)
-                        else imageURLs.add(urlAndName)
                     }
                 }
-
                 else -> return@forEachPart
             }
             part.dispose()
