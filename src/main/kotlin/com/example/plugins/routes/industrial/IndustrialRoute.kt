@@ -12,7 +12,7 @@ import io.ktor.server.routing.*
 
 
 fun Route.createIndustrialRoute() {
-    route("/ sa ") {
+    route("/industrial") {
         postIndustrialProperty()
         putIndustrialProperty()
         getIndustrialProperty()
