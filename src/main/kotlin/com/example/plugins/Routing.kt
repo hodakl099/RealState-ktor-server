@@ -2,6 +2,7 @@ package com.example.plugins
 
 
 import com.example.plugins.routes.agricultural.createAgriculturalRoute
+import com.example.plugins.routes.agricultural.get.getAllAgriculturalRoute
 import com.example.plugins.routes.commercial.createCommercialRoute
 import com.example.plugins.routes.industrial.createIndustrialRoute
 import com.example.plugins.routes.office.createOfficeRoute
@@ -15,6 +16,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 
+/**
+ * Routing block
+ */
 fun Application.configureRouting() {
 
     install(StatusPages) {

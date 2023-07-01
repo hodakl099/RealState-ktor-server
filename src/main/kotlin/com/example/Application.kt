@@ -22,13 +22,13 @@ fun Application.module() {
     install(CORS) {
         anyHost()
         allowHeader(HttpHeaders.ContentType)
-         allowMethod(HttpMethod.Options)
+        allowMethod(HttpMethod.Options)
         allowMethod(HttpMethod.Put)
         allowMethod(HttpMethod.Delete)
         allowMethod(HttpMethod.Patch)
-         allowHeader(HttpHeaders.XForwardedProto)
-         allowCredentials = true
-         allowNonSimpleContentTypes = true
+        allowHeader(HttpHeaders.XForwardedProto)
+        allowCredentials = true
+        allowNonSimpleContentTypes = true
     }
     configureSerialization()
     configureRouting()

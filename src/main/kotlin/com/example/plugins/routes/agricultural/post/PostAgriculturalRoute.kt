@@ -20,6 +20,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.FileInputStream
 
+
+/**
+ * Here to post  a new Property with Google cloud storage,
+ * each Property post function is separated.
+ */
 fun Route.postAgriculturalRoute() {
     post {
         val multiPart = call.receiveMultipart()
@@ -58,6 +63,7 @@ fun Route.postAgriculturalRoute() {
                         if (fileBytes.isEmpty()) {
                             call.respond(HttpStatusCode.BadRequest, BasicApiResponse(false, "At least one image or video must be provided."))
                         }
+                        //here uploading to the google cloud,
                         try {
                             val creds = withContext(Dispatchers.IO) {
                                 GoogleCredentials.fromStream(FileInputStream("src/main/resources/verdant-option-390012-977b2708f8e5.json"))

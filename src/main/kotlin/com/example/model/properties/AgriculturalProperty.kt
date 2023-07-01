@@ -4,6 +4,11 @@ import com.example.model.Properties
 import com.example.model.Property
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Table
+
+
+/**
+ * Agricultural table using expose table.
+ */
 @Serializable
 data class AgriculturalProperty(
     val property: Property,

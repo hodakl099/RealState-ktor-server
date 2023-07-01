@@ -6,6 +6,10 @@ import java.time.Duration
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 
+/**
+ * Web socket messages under development with the Admin Dashboard.
+ */
+
 fun Application.configureSockets() {
     install(WebSockets) {
         pingPeriod = Duration.ofSeconds(15)

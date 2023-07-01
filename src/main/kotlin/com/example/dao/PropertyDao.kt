@@ -7,7 +7,9 @@ import com.example.model.properties.ResidentialProperty
 import com.example.model.properties.*
 
 
-
+/**
+ * Dto to access tables in Property implementation.
+ */
 interface PropertyDao {
     /**
      * ResidentialProperty Dao.

@@ -21,6 +21,7 @@ object DatabaseFactory {
         )
 
         transaction(database) {
+
             SchemaUtils.create(
                 AgriculturalProperties,
                 ResidentialProperties,
