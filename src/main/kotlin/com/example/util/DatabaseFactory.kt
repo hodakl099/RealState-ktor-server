@@ -22,6 +22,17 @@ object DatabaseFactory {
 
         transaction(database) {
 
+            SchemaUtils.drop(
+                AgriculturalProperties,
+                ResidentialProperties,
+                CommercialProperties,
+                LeisureAndTouristicProperties,
+                IndustrialProperties,
+                OfficeProperties,
+                Videos,
+                Images,
+                Properties)
+
             SchemaUtils.create(
                 AgriculturalProperties,
                 ResidentialProperties,

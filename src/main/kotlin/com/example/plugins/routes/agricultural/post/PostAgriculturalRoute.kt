@@ -26,7 +26,7 @@ import java.io.FileInputStream
  * each Property post function is separated.
  */
 fun Route.postAgriculturalRoute() {
-    post {
+    post("/Add") {
         val multiPart = call.receiveMultipart()
         var propertyType: String? = null
         var acres: Double? = null
