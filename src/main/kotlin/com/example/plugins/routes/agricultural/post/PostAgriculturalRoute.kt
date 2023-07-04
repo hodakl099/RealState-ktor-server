@@ -20,23 +20,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.FileInputStream
 
-
-/**
- * Here to post  a new Property with Google cloud storage,
- * each Property post function is separated.
- */
 fun Route.postAgriculturalRoute() {
     post("/Add") {
         val multiPart = call.receiveMultipart()
         var propertyType: String? = null
-        var acres: Double? = null
+        var acres: Int? = null
         var buildings: String? = null
         var crops: String? = null
-        val waterSources: String? = null
+        var waterSources: String? = null
         var soilType: String? = null
         var equipment: String? = null
         var location: String? = null
-        var price: Double? = null
+        var price: Int? = null
         var agentContact: String? = null
         val videoURLs = mutableListOf<Pair<String,String>>()
         val imageURLs = mutableListOf<Pair<String,String>>()
@@ -45,16 +40,19 @@ fun Route.postAgriculturalRoute() {
         multiPart.forEachPart { part ->
             when (part) {
                 is PartData.FormItem -> {
+                    println("price from admin: $price" )
+                    println("acres from admin: $acres" )
                     when (part.name) {
                         "agentContact" -> agentContact = part.value
-                        "price" -> price = part.value.toDoubleOrNull() ?: throw java.lang.IllegalArgumentException("Invalid or missing price.")
+                        "price" -> price = part.value.toIntOrNull() ?: throw java.lang.IllegalArgumentException("Invalid or missing price.")
                         "propertyType" -> propertyType = part.value
-                        "acres" -> acres = part.value.toDoubleOrNull() ?: throw java.lang.IllegalArgumentException("Invalid or missing price.")
+                        "acres" -> acres = part.value.toIntOrNull() ?: throw java.lang.IllegalArgumentException("Invalid or missing Area.")
                         "buildings" -> buildings = part.value
                         "crops" -> crops = part.value
                         "soilType" -> soilType = part.value
                         "equipment" -> equipment = part.value
                         "location" -> location = part.value
+                        "waterSources" -> waterSources = part.value
                     }
                 }
                 is PartData.FileItem -> {
@@ -63,7 +61,6 @@ fun Route.postAgriculturalRoute() {
                         if (fileBytes.isEmpty()) {
                             call.respond(HttpStatusCode.BadRequest, BasicApiResponse(false, "At least one image or video must be provided."))
                         }
-                        //here uploading to the google cloud,
                         try {
                             val creds = withContext(Dispatchers.IO) {
                                 GoogleCredentials.fromStream(FileInputStream("src/main/resources/verdant-option-390012-977b2708f8e5.json"))
@@ -110,13 +107,13 @@ fun Route.postAgriculturalRoute() {
                 property = Property(
                         id = 0, // This value will be replaced by autoincrement id
                         agentContact = agentContact ?: "",
-                        price = price ?: 0.0,
+                        price = price ?: 100,
                         images = imageURLs.map { Image(url = it.first , propertyId = 0, imageId = 0, objectName = it.second) },
                         videos = videoURLs.map { Video(url = it.first , propertyId = 0, videoId = 0, objectName =it.second) },
                         location = location ?: ""
                 ),
                 propertyType = propertyType ?: "",
-                acres = acres  ?: 0.0,
+                acres = acres  ?: 10,
                 buildings = buildings ?: "",
                 crops = crops ?: "",
                 waterSources = waterSources ?: "",

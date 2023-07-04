@@ -6,6 +6,9 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Table
 import javax.management.monitor.StringMonitor
 
+/**
+ * CommercialProperty Property.
+ */
 @Serializable
 data class CommercialProperty(
     val property: Property,

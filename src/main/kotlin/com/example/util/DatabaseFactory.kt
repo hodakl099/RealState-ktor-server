@@ -16,22 +16,11 @@ object DatabaseFactory {
        val database =  Database.connect(
             url = "jdbc:postgresql://localhost:5432/postgres",
             driver = "org.postgresql.Driver",
-           user = "postgres",
-           password = "mahmoud99"
+           user = "alkateb",
+           password = "weedinternal099$$#"
         )
 
         transaction(database) {
-
-            SchemaUtils.drop(
-                AgriculturalProperties,
-                ResidentialProperties,
-                CommercialProperties,
-                LeisureAndTouristicProperties,
-                IndustrialProperties,
-                OfficeProperties,
-                Videos,
-                Images,
-                Properties)
 
             SchemaUtils.create(
                 AgriculturalProperties,
@@ -42,7 +31,8 @@ object DatabaseFactory {
                 OfficeProperties,
                 Videos,
                 Images,
-                Properties)
+                Properties
+            )
         }
     }
 

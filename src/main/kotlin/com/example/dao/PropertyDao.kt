@@ -6,6 +6,9 @@ import com.example.model.Video
 import com.example.model.properties.ResidentialProperty
 import com.example.model.properties.*
 
+/**
+ * This is all classes and dao object for databases.
+ */
 
 /**
  * Dto to access tables in Property implementation.

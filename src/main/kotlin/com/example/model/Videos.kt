@@ -4,6 +4,9 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.id.IntIdTable
 
 
+/**
+ * Each Video has a reference to a property.
+ */
 @Serializable
 data class Video(
         val videoId : Int,

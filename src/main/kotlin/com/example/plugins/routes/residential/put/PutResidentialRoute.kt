@@ -35,7 +35,7 @@ fun Route.putResidentialProperty() {
             var parking: Boolean? = null
             var location: String? = null
             var agentContact: String? = null
-            var price: Double? = null
+            var price: Int? = null
             val videoURLs = mutableListOf<Pair<String, String>>()
             val imageURLs = mutableListOf<Pair<String, String>>()
 
@@ -47,7 +47,7 @@ fun Route.putResidentialProperty() {
                         }
                         when (part.name) {
                             "agentContact" -> agentContact = part.value
-                            "price" -> price = part.value.toDoubleOrNull()
+                            "price" -> price = part.value.toIntOrNull()
                             "propertyType" -> propertyType = part.value
                             "squareFootage" -> squareFootage = part.value.toDoubleOrNull()
                             "bedrooms" -> bedrooms = part.value.toIntOrNull()
@@ -97,7 +97,7 @@ fun Route.putResidentialProperty() {
                             property = Property(
                                 id = 0, // This value will be replaced by autoincrement id
                                 agentContact = agentContact ?: "",
-                                price = price ?: 0.0,
+                                price = price ?: 0,
                                 images = imageURLs.map {
                                     Image(
                                         url = it.first,

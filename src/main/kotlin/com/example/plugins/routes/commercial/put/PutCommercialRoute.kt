@@ -32,7 +32,7 @@ fun Route.putCommercialRoute() {
             var amenities: String? = null
             var location: String? = null
             var agentContact: String? = null
-            var price: Double? = null
+            var price: Int? = null
             val videoURLs = mutableListOf<Pair<String, String>>()
             val imageURLs = mutableListOf<Pair<String, String>>()
 
@@ -50,7 +50,7 @@ fun Route.putCommercialRoute() {
                             "amenities" -> amenities = part.value
                             "location" -> location = part.value
                             "agentContact" -> agentContact = part.value
-                            "price" -> price = part.value.toDoubleOrNull()
+                            "price" -> price = part.value.toIntOrNull()
                         }
                     }
 
@@ -93,7 +93,7 @@ fun Route.putCommercialRoute() {
                             property = Property(
                                 id = 0,
                                 agentContact = agentContact ?: "",
-                                price = price ?: 0.0,
+                                price = price ?: 0,
                                 images = imageURLs.map {
                                     Image(
                                         url = it.first,

@@ -7,6 +7,9 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+/**
+ * Get Route.
+ */
 fun Route.getAgriculturalRoute() {
     get("property/{id}") {
         val id = call.parameters["id"]?.toIntOrNull()

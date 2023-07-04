@@ -4,15 +4,10 @@ import com.example.model.Properties
 import com.example.model.Property
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Table
-
-
-/**
- * Agricultural table using expose table.
- */
 @Serializable
 data class AgriculturalProperty(
     val property: Property,
-    val acres: Double,
+    val acres: Int,
     val propertyType: String,
     val buildings: String,
     val crops: String,
@@ -23,7 +18,7 @@ data class AgriculturalProperty(
 
 object AgriculturalProperties : Table() {
     val id = integer("property_id").references(Properties.id)
-    val acres = double("acres")
+    val acres = integer("acres")
     val propertyType = varchar("property_type", 256)
     val buildings = varchar("buildings", 256)
     val crops = varchar("crops", 256)

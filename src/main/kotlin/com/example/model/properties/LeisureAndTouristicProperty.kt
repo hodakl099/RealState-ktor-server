@@ -5,6 +5,9 @@ import com.example.model.Property
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Table
 
+/**
+ * Leisure And Touristic Property
+ */
 @Serializable
 data class LeisureAndTouristicProperty(
     val property: Property,

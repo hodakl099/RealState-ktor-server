@@ -32,7 +32,7 @@ fun Route.postTouristicProperty() {
         var occupancyRate: String? = null
         var location: String? = null
         var agentContact: String? = null
-        var price: Double? = null
+        var price: Int? = null
         val videoURLs = mutableListOf<Pair<String,String>>()
         val imageURLs = mutableListOf<Pair<String,String>>()
 
@@ -50,7 +50,7 @@ fun Route.postTouristicProperty() {
                         "occupancyRate" -> occupancyRate = part.value
                         "location" -> location = part.value
                         "agentContact" -> agentContact = part.value
-                        "price" -> price = part.value.toDoubleOrNull()
+                        "price" -> price = part.value.toIntOrNull()
                     }
                 }
                 is PartData.FileItem -> {
@@ -105,7 +105,7 @@ fun Route.postTouristicProperty() {
                 property = Property(
                         id = 0, // This value will be replaced by autoincrement id
                         agentContact = agentContact ?: "",
-                        price = price ?: 0.0,
+                        price = price ?: 0,
                         images = imageURLs.map { Image(url = it.first, propertyId = 0, imageId = 0, objectName = it.second) },
                         videos = videoURLs.map { Video(url = it.first, propertyId = 0, videoId = 0, objectName = it.second) },
                         location = location ?: "",

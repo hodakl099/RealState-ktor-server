@@ -13,6 +13,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.FileInputStream
 
+
+/**
+ * Delete route.
+ */
 fun Route.deleteCommercialImage() {
     delete("removeImage/{propertyId}/{id}") {
         val propertyId = call.parameters["propertyId"]?.toIntOrNull()

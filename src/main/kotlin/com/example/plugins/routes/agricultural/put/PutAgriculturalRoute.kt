@@ -20,20 +20,25 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.FileInputStream
 
+
+/**
+ * Update Route.
+ */
+
 fun Route.putAgriculturalRoute() {
     put("updateProperty/{id}") {
         val id = call.parameters["id"]?.toIntOrNull()
         val multiPart = call.receiveMultipart()
         if(id != null) {
             var propertyType: String? = null
-            var acres: Double? = null
+            var acres: Int? = null
             var buildings: String? = null
             var crops: String? = null
             val waterSources: String? = null
             var soilType: String? = null
             var equipment: String? = null
             var location: String? = null
-            var price: Double? = null
+            var price: Int? = null
             var agentContact: String? = null
             val videoURLs = mutableListOf<Pair<String,String>>()
             val imageURLs = mutableListOf<Pair<String,String>>()
@@ -47,9 +52,9 @@ fun Route.putAgriculturalRoute() {
                         }
                         when (part.name) {
                             "agentContact" -> agentContact = part.value
-                            "price" -> price = part.value.toDoubleOrNull()
+                            "price" -> price = part.value.toIntOrNull()
                             "propertyType" -> propertyType = part.value
-                            "acres" -> acres = part.value.toDoubleOrNull()
+                            "acres" -> acres = part.value.toIntOrNull()
                             "buildings" -> buildings = part.value
                             "crops" -> crops = part.value
                             "soilType" -> soilType = part.value
@@ -96,13 +101,13 @@ fun Route.putAgriculturalRoute() {
                                 property = Property(
                                         id = 0, // This value will be replaced by autoincrement id
                                         agentContact = agentContact ?: "",
-                                        price = price ?: 0.0,
+                                        price = price ?: 0,
                                         images = imageURLs.map { Image(url = it.first, propertyId = 0, imageId = 0, objectName = it.second) },
                                         videos = videoURLs.map { Video(url = it.first, propertyId = 0, videoId = 0, objectName = it.second) },
                                         location = location ?: ""
                                 ),
                                 propertyType = propertyType ?: "",
-                                acres = acres  ?: 0.0,
+                                acres = acres  ?: 0,
                                 buildings = buildings ?: "",
                                 crops = crops ?: "",
                                 waterSources = waterSources ?: "",

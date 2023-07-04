@@ -10,6 +10,9 @@ import io.ktor.server.routing.*
  * Web socket messages under development with the Admin Dashboard.
  */
 
+/**
+ * Messaging web socket route: Still in development progress.
+ */
 fun Application.configureSockets() {
     install(WebSockets) {
         pingPeriod = Duration.ofSeconds(15)

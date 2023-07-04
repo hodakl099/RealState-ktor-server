@@ -7,9 +7,6 @@ import com.example.util.DatabaseFactory.dbQuery
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
-/**
- *Implementation of the properties database using Expose library.
- */
 class PropertyDaoImpl : PropertyDao {
 
     /**
