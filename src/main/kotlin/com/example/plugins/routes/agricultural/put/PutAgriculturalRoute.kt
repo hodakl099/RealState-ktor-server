@@ -47,9 +47,6 @@ fun Route.putAgriculturalRoute() {
             multiPart.forEachPart { part ->
                 when (part) {
                     is PartData.FormItem -> {
-                        if (part.name?.isEmpty() == true) {
-                            call.respond(HttpStatusCode.OK, BasicApiResponse(false,"${part.name} can't be empty"))
-                        }
                         when (part.name) {
                             "agentContact" -> agentContact = part.value
                             "price" -> price = part.value.toIntOrNull()
@@ -98,34 +95,34 @@ fun Route.putAgriculturalRoute() {
                                 return@forEachPart
                             }
                         }
-                        val agriculturalProperty = AgriculturalProperty(
-                                property = Property(
-                                        id = 0, // This value will be replaced by autoincrement id
-                                        agentContact = agentContact ?: "",
-                                        price = price ?: 0,
-                                        images = imageURLs.map { Image(url = it.first, propertyId = 0, imageId = 0, objectName = it.second) },
-                                        videos = videoURLs.map { Video(url = it.first, propertyId = 0, videoId = 0, objectName = it.second) },
-                                        location = location ?: ""
-                                ),
-                                propertyType = propertyType ?: "",
-                                acres = acres  ?: 0,
-                                buildings = buildings ?: "",
-                                crops = crops ?: "",
-                                waterSources = waterSources ?: "",
-                                soilType = soilType ?: "",
-                                equipment = equipment ?: ""
-                        )
-                        val isUpdated = dao.updateAgriculturalProperty(id, agriculturalProperty, videoURL = videoURLs,imageURL = imageURLs)
-                        if (isUpdated) {
-                            call.respond(HttpStatusCode.OK,BasicApiResponse(true,"Property updated successfully."))
-                        } else {
-                            call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
-                        }
 
                     }
                     else -> return@forEachPart
                 }
                 part.dispose()
+            }
+            val agriculturalProperty = AgriculturalProperty(
+                property = Property(
+                    id = 0, // This value will be replaced by autoincrement id
+                    agentContact = agentContact ?: "",
+                    price = price ?: 0,
+                    images = imageURLs.map { Image(url = it.first, propertyId = 0, imageId = 0, objectName = it.second) },
+                    videos = videoURLs.map { Video(url = it.first, propertyId = 0, videoId = 0, objectName = it.second) },
+                    location = location ?: ""
+                ),
+                propertyType = propertyType ?: "",
+                acres = acres  ?: 0,
+                buildings = buildings ?: "",
+                crops = crops ?: "",
+                waterSources = waterSources ?: "",
+                soilType = soilType ?: "",
+                equipment = equipment ?: ""
+            )
+            val isUpdated = dao.updateAgriculturalProperty(id, agriculturalProperty, videoURL = videoURLs,imageURL = imageURLs)
+            if (isUpdated) {
+                call.respond(HttpStatusCode.OK,BasicApiResponse(true,"Property updated successfully."))
+            } else {
+                call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
             }
         } else {
             call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")

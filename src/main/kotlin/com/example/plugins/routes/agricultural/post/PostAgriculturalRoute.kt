@@ -40,8 +40,6 @@ fun Route.postAgriculturalRoute() {
         multiPart.forEachPart { part ->
             when (part) {
                 is PartData.FormItem -> {
-                    println("price from admin: $price" )
-                    println("acres from admin: $acres" )
                     when (part.name) {
                         "agentContact" -> agentContact = part.value
                         "price" -> price = part.value.toIntOrNull() ?: throw java.lang.IllegalArgumentException("Invalid or missing price.")
