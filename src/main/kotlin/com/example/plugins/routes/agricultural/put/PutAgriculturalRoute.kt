@@ -34,7 +34,7 @@ fun Route.putAgriculturalRoute() {
             var acres: Int? = null
             var buildings: String? = null
             var crops: String? = null
-            val waterSources: String? = null
+            var waterSources: String? = null
             var soilType: String? = null
             var equipment: String? = null
             var location: String? = null
@@ -60,6 +60,7 @@ fun Route.putAgriculturalRoute() {
                             "soilType" -> soilType = part.value
                             "equipment" -> equipment = part.value
                             "location" -> location = part.value
+                            "waterSources" -> waterSources = part.value
                         }
                     }
                     is PartData.FileItem -> {
