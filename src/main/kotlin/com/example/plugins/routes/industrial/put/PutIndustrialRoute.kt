@@ -119,7 +119,7 @@ fun Route.putIndustrialProperty() {
                                 location = location ?: "",
                             ),
                             propertyType = propertyType ?: "",
-                            squareFoot = squareFoot ?: 0.0,
+                            acres = squareFoot ?: 0.0,
                             zoningInfo = zoningInfo ?: "",
                             cellingHeight = cellingHeight ?: 0,
                             numberOfLoadingDocks = numberOfLoadingDocks ?: 0,

@@ -13,7 +13,7 @@ import org.jetbrains.exposed.sql.Table
 data class IndustrialProperty(
     val property: Property,
     val propertyType: String,
-    val squareFoot : Double,
+    val acres : Int,
     val zoningInfo : String,
     val cellingHeight : Int,
     val numberOfLoadingDocks : Int,
@@ -25,7 +25,7 @@ data class IndustrialProperty(
 object IndustrialProperties : Table() {
     val id = integer("property_id").references(Properties.id)
     val propertyType = varchar("property_type", 256)
-    val squareFoot = double("squareFoot")
+    val acres = integer("acres")
     val zoningInfo = varchar("zoningInfo", 256)
     val cellingHeight = integer("cellingHeight")
     val numberOfLoadingDocks = integer("numberOfLoadingDocks")
