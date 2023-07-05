@@ -26,7 +26,7 @@ fun Route.putCommercialRoute() {
         val multiPart = call.receiveMultipart()
         if (id != null) {
             var propertyType: String? = null
-            var squareFoot: Int? = null
+            var acres: Int? = null
             var trafficCount: String? = null
             var zoningInfo: String? = null
             var amenities: String? = null
@@ -44,7 +44,7 @@ fun Route.putCommercialRoute() {
                         }
                         when (part.name) {
                             "propertyType" -> propertyType = part.value
-                            "squareFoot" -> squareFoot = part.value.toIntOrNull()
+                            "acres" -> acres = part.value.toIntOrNull()
                             "trafficCount" -> trafficCount = part.value
                             "zoningInfo" -> zoningInfo = part.value
                             "amenities" -> amenities = part.value
@@ -89,48 +89,48 @@ fun Route.putCommercialRoute() {
                                 return@forEachPart
                             }
                         }
-                        val commercialProperty = CommercialProperty(
-                            property = Property(
-                                id = 0,
-                                agentContact = agentContact ?: "",
-                                price = price ?: 0,
-                                images = imageURLs.map {
-                                    Image(
-                                        url = it.first,
-                                        propertyId = 0,
-                                        imageId = 0,
-                                        objectName = it.second
-                                    )
-                                },
-                                videos = videoURLs.map {
-                                    Video(
-                                        url = it.first,
-                                        propertyId = 0,
-                                        videoId = 0,
-                                        objectName = it.second
-                                    )
-                                },
-                                location = location ?: "",
-                            ),
-                            propertyType = propertyType ?: "",
-                            acres = squareFoot ?: 0,
-                            trafficCount = trafficCount ?: "",
-                            zoningInfo = zoningInfo ?: "",
-                            amenities = amenities ?: "",
-                        )
-                        val isUpdated = dao.updateCommercialProperty(id, commercialProperty,videoURL = videoURLs,imageURL = imageURLs)
-                        if (isUpdated) {
-                            call.respond(HttpStatusCode.OK, BasicApiResponse(true, "Property updated successfully."))
-                        } else {
-                            call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
-                        }
-
                     }
 
                     else -> return@forEachPart
                 }
                 part.dispose()
             }
+            val commercialProperty = CommercialProperty(
+                property = Property(
+                    id = 0,
+                    agentContact = agentContact ?: "",
+                    price = price ?: 0,
+                    images = imageURLs.map {
+                        Image(
+                            url = it.first,
+                            propertyId = 0,
+                            imageId = 0,
+                            objectName = it.second
+                        )
+                    },
+                    videos = videoURLs.map {
+                        Video(
+                            url = it.first,
+                            propertyId = 0,
+                            videoId = 0,
+                            objectName = it.second
+                        )
+                    },
+                    location = location ?: "",
+                ),
+                propertyType = propertyType ?: "",
+                acres = acres ?: 0,
+                trafficCount = trafficCount ?: "",
+                zoningInfo = zoningInfo ?: "",
+                amenities = amenities ?: "",
+            )
+            val isUpdated = dao.updateCommercialProperty(id, commercialProperty,videoURL = videoURLs,imageURL = imageURLs)
+            if (isUpdated) {
+                call.respond(HttpStatusCode.OK, BasicApiResponse(true, "Property updated successfully."))
+            } else {
+                call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
+            }
+
         } else {
             call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
         }

@@ -24,7 +24,7 @@ fun Route.postCommercialRoute() {
     post("/Add") {
         val multiPart = call.receiveMultipart()
         var propertyType: String? = null
-        var squareFoot: Int? = null
+        var acres: Int? = null
         var trafficCount: String? = null
         var zoningInfo: String? = null
         var amenities: String? = null
@@ -42,7 +42,7 @@ fun Route.postCommercialRoute() {
                     }
                     when (part.name) {
                         "propertyType" -> propertyType = part.value
-                        "squareFoot" -> squareFoot = part.value.toIntOrNull()
+                        "acres" -> acres = part.value.toIntOrNull()
                         "trafficCount" -> trafficCount = part.value
                         "zoningInfo" -> zoningInfo = part.value
                         "amenities" -> amenities = part.value
@@ -111,13 +111,13 @@ fun Route.postCommercialRoute() {
                 location = location ?: "",
             ),
             propertyType = propertyType ?: "",
-            acres = squareFoot ?: 0,
+            acres = acres ?: 0,
             trafficCount = trafficCount ?: "",
             zoningInfo = zoningInfo ?: "",
             amenities = amenities ?: "",
         )
 
-        dao.addCommercialProperty(commercialProperty, imageURL = videoURLs, videoURL = imageURLs)
+        dao.addCommercialProperty(commercialProperty, imageURL = imageURLs, videoURL = videoURLs)
         call.respond(HttpStatusCode.OK, BasicApiResponse(true, "New Commercial Property Added Successfully."))
     }
 }
