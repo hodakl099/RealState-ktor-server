@@ -26,7 +26,7 @@ fun Route.putIndustrialProperty() {
         val multiPart = call.receiveMultipart()
         if (id != null) {
             var propertyType: String? = null
-            var squareFoot: Double? = null
+            var acres: Int? = null
             var zoningInfo: String? = null
             var cellingHeight: Int? = null
             var numberOfLoadingDocks: Int? = null
@@ -47,7 +47,7 @@ fun Route.putIndustrialProperty() {
                         }
                         when (part.name) {
                             "propertyType" -> propertyType = part.value
-                            "squareFoot" -> squareFoot = part.value.toDoubleOrNull()
+                            "squareFoot" -> acres = part.value.toIntOrNull()
                             "zoningInfo" -> zoningInfo = part.value
                             "cellingHeight" -> cellingHeight = part.value.toIntOrNull()
                             "numberOfLoadingDocks" -> numberOfLoadingDocks = part.value.toIntOrNull()
@@ -119,7 +119,7 @@ fun Route.putIndustrialProperty() {
                                 location = location ?: "",
                             ),
                             propertyType = propertyType ?: "",
-                            acres = squareFoot ?: 0.0,
+                            acres = acres ?: 0,
                             zoningInfo = zoningInfo ?: "",
                             cellingHeight = cellingHeight ?: 0,
                             numberOfLoadingDocks = numberOfLoadingDocks ?: 0,

@@ -430,7 +430,7 @@ class PropertyDaoImpl : PropertyDao {
                 location = row[Properties.location]
             ),
             propertyType = row[IndustrialProperties.propertyType],
-            acres = row[IndustrialProperties.squareFoot],
+            acres = row[IndustrialProperties.acres],
             zoningInfo = row[IndustrialProperties.zoningInfo],
             cellingHeight = row[IndustrialProperties.cellingHeight],
             numberOfLoadingDocks = row[IndustrialProperties.numberOfLoadingDocks],
@@ -452,7 +452,7 @@ class PropertyDaoImpl : PropertyDao {
         }
         val updateResidential = IndustrialProperties.update({ IndustrialProperties.id eq id }) {
             it[propertyType] = updatedProperty.propertyType
-            it[squareFoot] = updatedProperty.acres
+            it[acres] = updatedProperty.acres
             it[zoningInfo] = updatedProperty.zoningInfo
             it[cellingHeight] = updatedProperty.cellingHeight
             it[numberOfLoadingDocks] = updatedProperty.numberOfLoadingDocks
@@ -491,7 +491,7 @@ class PropertyDaoImpl : PropertyDao {
         IndustrialProperties.insert {
             it[id] = idProperty
             it[propertyType] = industrialProperty.propertyType
-            it[squareFoot] = industrialProperty.acres
+            it[acres] = industrialProperty.acres
             it[zoningInfo] = industrialProperty.zoningInfo
             it[cellingHeight] = industrialProperty.cellingHeight
             it[numberOfLoadingDocks] = industrialProperty.numberOfLoadingDocks
