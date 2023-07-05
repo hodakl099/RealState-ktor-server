@@ -45,7 +45,7 @@ fun Route.postIndustrialProperty() {
                     }
                     when (part.name) {
                         "propertyType" -> propertyType = part.value
-                        "acres" -> acres = part.value.toDoubleOrNull()
+                        "acres" -> acres = part.value.toIntOrNull()
                         "zoningInfo" -> zoningInfo = part.value
                         "cellingHeight" -> cellingHeight = part.value.toIntOrNull()
                         "numberOfLoadingDocks" -> numberOfLoadingDocks = part.value.toIntOrNull()
