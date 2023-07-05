@@ -21,10 +21,10 @@ import kotlinx.coroutines.withContext
 import java.io.FileInputStream
 
 fun Route.postCommercialRoute() {
-    post {
+    post("/Add") {
         val multiPart = call.receiveMultipart()
         var propertyType: String? = null
-        var squareFoot: Double? = null
+        var squareFoot: Int? = null
         var trafficCount: String? = null
         var zoningInfo: String? = null
         var amenities: String? = null
@@ -42,7 +42,7 @@ fun Route.postCommercialRoute() {
                     }
                     when (part.name) {
                         "propertyType" -> propertyType = part.value
-                        "squareFoot" -> squareFoot = part.value.toDoubleOrNull()
+                        "squareFoot" -> squareFoot = part.value.toIntOrNull()
                         "trafficCount" -> trafficCount = part.value
                         "zoningInfo" -> zoningInfo = part.value
                         "amenities" -> amenities = part.value
@@ -111,7 +111,7 @@ fun Route.postCommercialRoute() {
                 location = location ?: "",
             ),
             propertyType = propertyType ?: "",
-            squareFoot = squareFoot ?: 0.0,
+            acres = squareFoot ?: 0,
             trafficCount = trafficCount ?: "",
             zoningInfo = zoningInfo ?: "",
             amenities = amenities ?: "",

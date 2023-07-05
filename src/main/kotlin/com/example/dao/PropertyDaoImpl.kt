@@ -569,7 +569,7 @@ class PropertyDaoImpl : PropertyDao {
                 location = row[Properties.location]
             ),
             propertyType = row[CommercialProperties.propertyType],
-            squareFoot = row[CommercialProperties.squareFoot],
+            acres = row[CommercialProperties.acres],
             zoningInfo = row[CommercialProperties.zoningInfo],
             trafficCount = row[CommercialProperties.trafficCount],
             amenities = row[CommercialProperties.amenities],
@@ -588,7 +588,7 @@ class PropertyDaoImpl : PropertyDao {
         CommercialProperties.insert {
             it[id] = idProperty
             it[propertyType] = commercialProperty.propertyType
-            it[squareFoot] = commercialProperty.squareFoot
+            it[acres] = commercialProperty.acres
             it[zoningInfo] = commercialProperty.zoningInfo
             it[trafficCount] = commercialProperty.trafficCount
             it[amenities] = commercialProperty.amenities
@@ -624,7 +624,7 @@ class PropertyDaoImpl : PropertyDao {
         }
         val updateCommercial = CommercialProperties.update({ CommercialProperties.id eq id }) {
             it[propertyType] = commercialProperty.propertyType
-            it[squareFoot] = commercialProperty.squareFoot
+            it[acres] = commercialProperty.acres
             it[zoningInfo] = commercialProperty.zoningInfo
             it[trafficCount] = commercialProperty.trafficCount
             it[amenities] = commercialProperty.amenities
