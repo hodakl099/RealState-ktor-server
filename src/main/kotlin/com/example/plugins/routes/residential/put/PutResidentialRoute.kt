@@ -49,7 +49,7 @@ fun Route.putResidentialProperty() {
                             "agentContact" -> agentContact = part.value
                             "price" -> price = part.value.toIntOrNull()
                             "propertyType" -> propertyType = part.value
-                            "squareFootage" -> acres = part.value.toIntOrNull()
+                            "acres" -> acres = part.value.toIntOrNull()
                             "bedrooms" -> bedrooms = part.value.toIntOrNull()
                             "bathrooms" -> bathrooms = part.value.toIntOrNull()
                             "amenities" -> amenities = part.value
@@ -93,48 +93,48 @@ fun Route.putResidentialProperty() {
                                 return@forEachPart
                             }
                         }
-                        val residentialProperty = ResidentialProperty(
-                            property = Property(
-                                id = 0, // This value will be replaced by autoincrement id
-                                agentContact = agentContact ?: "",
-                                price = price ?: 0,
-                                images = imageURLs.map {
-                                    Image(
-                                        url = it.first,
-                                        propertyId = 0,
-                                        imageId = 0,
-                                        objectName = it.second
-                                    )
-                                },
-                                videos = videoURLs.map {
-                                    Video(
-                                        url = it.first,
-                                        propertyId = 0,
-                                        videoId = 0,
-                                        objectName = it.second
-                                    )
-                                },
-                                location = location ?: "",
-                            ),
-                            propertyType = propertyType ?: "",
-                            acres = acres ?: 0,
-                            bedrooms = bedrooms ?: 0,
-                            bathrooms = bathrooms ?: 0,
-                            amenities = amenities ?: "",
-                            parking = parking ?: "",
-                        )
-                        val isUpdated = dao.updateResidentialProperty(id, residentialProperty,videoURL = videoURLs,imageURL = imageURLs)
-                        if (isUpdated) {
-                            call.respond(HttpStatusCode.OK, BasicApiResponse(true, "Property updated successfully."))
-                        } else {
-                            call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
-                        }
 
                     }
 
                     else -> return@forEachPart
                 }
                 part.dispose()
+            }
+            val residentialProperty = ResidentialProperty(
+                property = Property(
+                    id = 0, // This value will be replaced by autoincrement id
+                    agentContact = agentContact ?: "",
+                    price = price ?: 0,
+                    images = imageURLs.map {
+                        Image(
+                            url = it.first,
+                            propertyId = 0,
+                            imageId = 0,
+                            objectName = it.second
+                        )
+                    },
+                    videos = videoURLs.map {
+                        Video(
+                            url = it.first,
+                            propertyId = 0,
+                            videoId = 0,
+                            objectName = it.second
+                        )
+                    },
+                    location = location ?: "",
+                ),
+                propertyType = propertyType ?: "",
+                acres = acres ?: 0,
+                bedrooms = bedrooms ?: 0,
+                bathrooms = bathrooms ?: 0,
+                amenities = amenities ?: "",
+                parking = parking ?: "",
+            )
+            val isUpdated = dao.updateResidentialProperty(id, residentialProperty,videoURL = videoURLs,imageURL = imageURLs)
+            if (isUpdated) {
+                call.respond(HttpStatusCode.OK, BasicApiResponse(true, "Property updated successfully."))
+            } else {
+                call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
             }
         } else {
             call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")

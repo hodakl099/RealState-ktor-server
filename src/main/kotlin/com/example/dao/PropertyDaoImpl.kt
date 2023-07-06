@@ -31,7 +31,7 @@ class PropertyDaoImpl : PropertyDao {
                         videoId = it[Videos.id].value,
                         propertyId = it[Videos.propertyId],
                         url = it[Videos.url],
-                        objectName = it[Images.objectName]
+                        objectName = it[Videos.objectName]
                     )
                 },
                 location = row[Properties.location],
@@ -110,9 +110,9 @@ class PropertyDaoImpl : PropertyDao {
         }
         videoURL.forEach { video ->
             Videos.insert {
-                it[Images.propertyId] = id
-                it[Images.url] = video.first
-                it[Images.objectName] = video.second
+                it[propertyId] = id
+                it[url] = video.first
+                it[objectName] = video.second
             }
         }
         updateResidential > 0 && updateProperty > 0
@@ -132,6 +132,7 @@ class PropertyDaoImpl : PropertyDao {
         val deleteProperty = Properties.deleteWhere { Properties.id eq id }
         deleteResidentialProperty > 0 && deleteProperty > 0 && deleteImages > 0 && deleteVideos > 0
     }
+
 
     override suspend fun getAllResidentialProperties(): List<ResidentialProperty> = dbQuery {
         (Properties innerJoin ResidentialProperties)

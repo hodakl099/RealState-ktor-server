@@ -47,39 +47,30 @@ fun Route.postResidentialProperty() {
                     when (part.name) {
                         "agentContact" ->  {
                             agentContact = part.value
-                            println("Received agentContact: $agentContact")
                         }
                         "price" -> {
                             price = part.value.toIntOrNull()
-                            println("Received price: $price")
                         }
                         "propertyType" -> {
                             propertyType = part.value
-                            println("Received propertyType: $propertyType")
                         }
                         "acres" -> {
                             acres = part.value.toIntOrNull()
-                            println("Received acres: $acres")
                         }
                         "bedrooms" -> {
                             bedrooms = part.value.toIntOrNull()
-                            println("Received bedrooms: $bedrooms")
                         }
                         "bathrooms" -> {
                             bathrooms = part.value.toIntOrNull()
-                            println("Received bathrooms: $bathrooms")
                         }
                         "amenities" -> {
                             amenities = part.value
-                            println("Received amenities: $amenities")
                         }
                         "parking" ->{
                             parking = part.value
-                            println("Received parking: $parking")
                         }
                         "location" ->  {
                             location = part.value
-                            println("Received location: $location")
                         }
                     }
                 }
