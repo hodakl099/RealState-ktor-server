@@ -303,10 +303,11 @@ class PropertyDaoImpl : PropertyDao {
                 location = row[Properties.location]
             ),
             layoutType = row[OfficeProperties.layoutType],
-            squareFoot = row[OfficeProperties.squareFoot],
+            acres = row[OfficeProperties.acres],
             floorNumber = row[OfficeProperties.floorNumber],
             amenities = row[OfficeProperties.amenities],
             accessibility = row[OfficeProperties.accessibility],
+            propertyType = row[OfficeProperties.propertyType]
         )
 
     override suspend fun addOfficeProperty(
@@ -322,7 +323,9 @@ class PropertyDaoImpl : PropertyDao {
         OfficeProperties.insert {
             it[id] = idProperty
             it[layoutType] = officeProperty.layoutType
-            it[squareFoot] = officeProperty.squareFoot
+            it[acres] = officeProperty.acres
+            it[propertyType] = officeProperty.propertyType
+            it[propertyType] = officeProperty.propertyType
             it[floorNumber] = officeProperty.floorNumber
             it[amenities] = officeProperty.amenities
             it[accessibility] = officeProperty.accessibility
@@ -358,7 +361,8 @@ class PropertyDaoImpl : PropertyDao {
         }
         val updateOfficeProperty = OfficeProperties.update({ OfficeProperties.id eq id }) {
             it[layoutType] = officeProperty.layoutType
-            it[squareFoot] = officeProperty.squareFoot
+            it[propertyType] = officeProperty.propertyType
+            it[acres] = officeProperty.acres
             it[floorNumber] = officeProperty.floorNumber
             it[amenities] = officeProperty.amenities
             it[accessibility] = officeProperty.accessibility
@@ -441,24 +445,24 @@ class PropertyDaoImpl : PropertyDao {
 
     override suspend fun updateIndustrialProperty(
         id: Int,
-        updatedProperty: IndustrialProperty,
+        industrialProperty: IndustrialProperty,
         videoURL: List<Pair<String, String>>,
         imageURL: List<Pair<String, String>>
     ): Boolean = dbQuery {
         val updateProperty = Properties.update({ Properties.id eq id }) {
-            it[agentContact] = updatedProperty.property.agentContact
-            it[price] = updatedProperty.property.price
-            it[location] = updatedProperty.property.location
+            it[agentContact] = industrialProperty.property.agentContact
+            it[price] = industrialProperty.property.price
+            it[location] = industrialProperty.property.location
         }
         val updateResidential = IndustrialProperties.update({ IndustrialProperties.id eq id }) {
-            it[propertyType] = updatedProperty.propertyType
-            it[acres] = updatedProperty.acres
-            it[zoningInfo] = updatedProperty.zoningInfo
-            it[cellingHeight] = updatedProperty.cellingHeight
-            it[numberOfLoadingDocks] = updatedProperty.numberOfLoadingDocks
-            it[powerCapabilities] = updatedProperty.powerCapabilities
-            it[accessToTransportation] = updatedProperty.accessToTransportation
-            it[environmentalReports] = updatedProperty.environmentalReports
+            it[propertyType] = industrialProperty.propertyType
+            it[acres] = industrialProperty.acres
+            it[zoningInfo] = industrialProperty.zoningInfo
+            it[cellingHeight] = industrialProperty.cellingHeight
+            it[numberOfLoadingDocks] = industrialProperty.numberOfLoadingDocks
+            it[powerCapabilities] = industrialProperty.powerCapabilities
+            it[accessToTransportation] = industrialProperty.accessToTransportation
+            it[environmentalReports] = industrialProperty.environmentalReports
         }
         imageURL.forEach { image ->
             Images.insert {

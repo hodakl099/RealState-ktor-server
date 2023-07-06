@@ -26,12 +26,13 @@ fun Route.putOfficeProperty() {
         val multiPart = call.receiveMultipart()
         if (id != null) {
             var layoutType: String? = null
-            var squareFoot: Double? = null
+            var acres: Int? = null
             var floorNumber: Int? = null
             var amenities: String? = null
             var accessibility: String? = null
             var location: String? = null
             var agentContact: String? = null
+            var propertyType: String? = null
             var price: Int? = null
             val videoURLs = mutableListOf<Pair<String, String>>()
             val imageURLs = mutableListOf<Pair<String, String>>()
@@ -44,9 +45,10 @@ fun Route.putOfficeProperty() {
                         }
                         when (part.name) {
                             "layoutType" -> layoutType = part.value
-                            "squareFoot" -> squareFoot = part.value.toDoubleOrNull()
+                            "squareFoot" -> acres = part.value.toIntOrNull()
                             "floorNumber" -> floorNumber = part.value.toIntOrNull()
                             "amenities" -> amenities = part.value
+                            "propertyType" -> propertyType = part.value
                             "accessibility" -> accessibility = part.value
                             "location" -> location = part.value
                             "agentContact" -> agentContact = part.value
@@ -89,47 +91,48 @@ fun Route.putOfficeProperty() {
                                 return@forEachPart
                             }
                         }
-                        val officeProperty = OfficeProperty(
-                            property = Property(
-                                id = 0, // This value will be replaced by autoincrement id
-                                agentContact = agentContact ?: "",
-                                price = price ?: 0,
-                                images = imageURLs.map {
-                                    Image(
-                                        url = it.first,
-                                        propertyId = 0,
-                                        imageId = 0,
-                                        objectName = it.second
-                                    )
-                                },
-                                videos = videoURLs.map {
-                                    Video(
-                                        url = it.first,
-                                        propertyId = 0,
-                                        videoId = 0,
-                                        objectName = it.second
-                                    )
-                                },
-                                location = location ?: "",
-                            ),
-                            layoutType = layoutType ?: "",
-                            squareFoot = squareFoot ?: 0.0,
-                            floorNumber = floorNumber ?: 0,
-                            amenities = amenities ?: "",
-                            accessibility = accessibility ?: "",
-                        )
-                        val isUpdated = dao.updateOfficeProperty(id, officeProperty,videoURL = videoURLs,imageURL = imageURLs)
-                        if (isUpdated) {
-                            call.respond(HttpStatusCode.OK, BasicApiResponse(true, "Property updated successfully."))
-                        } else {
-                            call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
-                        }
 
                     }
 
                     else -> return@forEachPart
                 }
                 part.dispose()
+            }
+            val officeProperty = OfficeProperty(
+                property = Property(
+                    id = 0, // This value will be replaced by autoincrement id
+                    agentContact = agentContact ?: "",
+                    price = price ?: 0,
+                    images = imageURLs.map {
+                        Image(
+                            url = it.first,
+                            propertyId = 0,
+                            imageId = 0,
+                            objectName = it.second
+                        )
+                    },
+                    videos = videoURLs.map {
+                        Video(
+                            url = it.first,
+                            propertyId = 0,
+                            videoId = 0,
+                            objectName = it.second
+                        )
+                    },
+                    location = location ?: "",
+                ),
+                layoutType = layoutType ?: "",
+                acres = acres ?: 0,
+                floorNumber = floorNumber ?: 0,
+                amenities = amenities ?: "",
+                accessibility = accessibility ?: "",
+                propertyType = propertyType ?: ""
+            )
+            val isUpdated = dao.updateOfficeProperty(id, officeProperty, videoURL = videoURLs, imageURL = imageURLs)
+            if (isUpdated) {
+                call.respond(HttpStatusCode.OK, BasicApiResponse(true, "Property updated successfully."))
+            } else {
+                call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
             }
         } else {
             call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")

@@ -11,8 +11,9 @@ import org.jetbrains.exposed.sql.Table
 @Serializable
 data class OfficeProperty(
     val property: Property,
+    val propertyType: String,
     val layoutType: String,
-    val squareFoot : Double,
+    val acres : Int,
     val floorNumber : Int,
     val amenities  : String,
     val accessibility : String,
@@ -21,7 +22,8 @@ data class OfficeProperty(
 object OfficeProperties : Table() {
     val id = integer("property_id").references(Properties.id)
     val layoutType = varchar("layout_type", 256)
-    val squareFoot = double("squareFoot")
+    val propertyType = varchar("property_type", 256)
+    val acres = integer("acres")
     val floorNumber = integer("floorNumber")
     val accessibility = varchar("accessibility",1024)
     val amenities = varchar("amenities",1024)

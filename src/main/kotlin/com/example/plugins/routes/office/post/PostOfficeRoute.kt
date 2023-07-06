@@ -24,10 +24,11 @@ fun Route.postOfficeProperty() {
     post {
         val multiPart = call.receiveMultipart()
         var layoutType: String? = null
-        var squareFoot: Double? = null
+        var acres: Int? = null
         var floorNumber: Int? = null
         var amenities: String? = null
         var accessibility: String? = null
+        var propertyType: String? = null
         var location: String? = null
         var agentContact: String? = null
         var price: Int? = null
@@ -39,9 +40,10 @@ fun Route.postOfficeProperty() {
                 is PartData.FormItem -> {
                     when (part.name) {
                         "layoutType" -> layoutType = part.value
-                        "squareFoot" -> squareFoot = part.value.toDoubleOrNull()
+                        "acres" -> acres = part.value.toInt()
                         "floorNumber" -> floorNumber = part.value.toIntOrNull()
                         "amenities" -> amenities = part.value
+                        "propertyType" -> propertyType = part.value
                         "accessibility" -> accessibility = part.value
                         "location" -> location = part.value
                         "agentContact" -> agentContact = part.value
@@ -109,10 +111,11 @@ fun Route.postOfficeProperty() {
                 location = location ?: "",
             ),
             layoutType = layoutType ?: "",
-            squareFoot = squareFoot ?: 0.0,
+            acres = acres ?: 0,
             floorNumber = floorNumber ?: 0,
             amenities = amenities ?: "",
             accessibility = accessibility ?: "",
+            propertyType = propertyType ?: "",
         )
 
         dao.addOfficeProperty(officeProperty, imageURL = videoURLs, videoURL = imageURLs)
