@@ -21,10 +21,10 @@ import kotlinx.coroutines.withContext
 import java.io.FileInputStream
 
 fun Route.postTouristicProperty() {
-    post {
+    post("/Add") {
         val multiPart = call.receiveMultipart()
         var propertyType: String? = null
-        var squareFoot: Double? = null
+        var acres: Int? = null
         var rooms: Int? = null
         var units: Int? = null
         var amenities: String? = null
@@ -42,7 +42,7 @@ fun Route.postTouristicProperty() {
                 is PartData.FormItem -> {
                     when (part.name) {
                         "propertyType" -> propertyType = part.value
-                        "squareFoot" -> squareFoot = part.value.toDoubleOrNull()
+                        "acres" -> acres = part.value.toIntOrNull()
                         "rooms" -> rooms = part.value.toIntOrNull()
                         "units" -> units = part.value.toIntOrNull()
                         "amenities" -> amenities = part.value
@@ -111,7 +111,7 @@ fun Route.postTouristicProperty() {
                         location = location ?: "",
                 ),
                 propertyType = propertyType ?: "",
-                squareFoot = squareFoot ?: 0.0,
+                acres = acres ?: 0,
                 rooms = rooms ?: 0,
                 units = units ?: 0,
                 proximityToAttractions = proximityToAttractions ?: "",

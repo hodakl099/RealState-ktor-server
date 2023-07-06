@@ -701,7 +701,7 @@ class PropertyDaoImpl : PropertyDao {
                 location = row[Properties.location]
             ),
             propertyType = row[LeisureAndTouristicProperties.propertyType],
-            squareFoot = row[LeisureAndTouristicProperties.squareFoot],
+            acres = row[LeisureAndTouristicProperties.acres],
             rooms = row[LeisureAndTouristicProperties.rooms],
             units = row[LeisureAndTouristicProperties.units],
             amenities = row[LeisureAndTouristicProperties.amenities],
@@ -723,7 +723,7 @@ class PropertyDaoImpl : PropertyDao {
             }
             val updateCommercial = LeisureAndTouristicProperties.update({ LeisureAndTouristicProperties.id eq id }) {
                 it[propertyType] = touristicProperty.propertyType
-                it[squareFoot] = touristicProperty.squareFoot
+                it[acres] = touristicProperty.acres
                 it[rooms] = touristicProperty.rooms
                 it[units] = touristicProperty.units
                 it[amenities] = touristicProperty.amenities
@@ -763,7 +763,7 @@ class PropertyDaoImpl : PropertyDao {
         LeisureAndTouristicProperties.insert {
             it[id] = idProperty
             it[propertyType] = leisureAndTouristicProperty.propertyType
-            it[squareFoot] = leisureAndTouristicProperty.squareFoot
+            it[acres] = leisureAndTouristicProperty.acres
             it[rooms] = leisureAndTouristicProperty.rooms
             it[units] = leisureAndTouristicProperty.units
             it[amenities] = leisureAndTouristicProperty.amenities

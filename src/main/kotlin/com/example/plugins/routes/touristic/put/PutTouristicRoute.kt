@@ -26,7 +26,7 @@ fun Route.putTouristicProperty() {
         val multiPart = call.receiveMultipart()
         if (id != null) {
             var propertyType: String? = null
-            var squareFoot: Double? = null
+            var acres: Int? = null
             var rooms: Int? = null
             var units: Int? = null
             var amenities: String? = null
@@ -47,7 +47,7 @@ fun Route.putTouristicProperty() {
                         }
                         when (part.name) {
                             "propertyType" -> propertyType = part.value
-                            "squareFoot" -> squareFoot = part.value.toDoubleOrNull()
+                            "acres" -> acres = part.value.toIntOrNull()
                             "rooms" -> rooms = part.value.toIntOrNull()
                             "units" -> units = part.value.toIntOrNull()
                             "amenities" -> amenities = part.value
@@ -94,50 +94,48 @@ fun Route.putTouristicProperty() {
                                 return@forEachPart
                             }
                         }
-
-                        val leisureAndTouristicProperty = LeisureAndTouristicProperty(
-                            property = Property(
-                                id = 0, // This value will be replaced by autoincrement id
-                                agentContact = agentContact ?: "",
-                                price = price ?: 0,
-                                images = imageURLs.map {
-                                    Image(
-                                        url = it.first,
-                                        propertyId = 0,
-                                        imageId = 0,
-                                        objectName = it.second
-                                    )
-                                },
-                                videos = videoURLs.map {
-                                    Video(
-                                        url = it.first,
-                                        propertyId = 0,
-                                        videoId = 0,
-                                        objectName = it.second
-                                    )
-                                },
-                                location = location ?: "",
-                            ),
-                            propertyType = propertyType ?: "",
-                            squareFoot = squareFoot ?: 0.0,
-                            rooms = rooms ?: 0,
-                            units = units ?: 0,
-                            proximityToAttractions = proximityToAttractions ?: "",
-                            occupancyRate = occupancyRate ?: "",
-                            amenities = amenities ?: "",
-                        )
-                        val isUpdated = dao.updateTouristicProperty(id, leisureAndTouristicProperty,videoURL = videoURLs,imageURL = imageURLs)
-                        if (isUpdated) {
-                            call.respond(HttpStatusCode.OK, BasicApiResponse(true, "Property updated successfully."))
-                        } else {
-                            call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
-                        }
-
                     }
-
                     else -> return@forEachPart
                 }
                 part.dispose()
+            }
+
+            val leisureAndTouristicProperty = LeisureAndTouristicProperty(
+                property = Property(
+                    id = 0, // This value will be replaced by autoincrement id
+                    agentContact = agentContact ?: "",
+                    price = price ?: 0,
+                    images = imageURLs.map {
+                        Image(
+                            url = it.first,
+                            propertyId = 0,
+                            imageId = 0,
+                            objectName = it.second
+                        )
+                    },
+                    videos = videoURLs.map {
+                        Video(
+                            url = it.first,
+                            propertyId = 0,
+                            videoId = 0,
+                            objectName = it.second
+                        )
+                    },
+                    location = location ?: "",
+                ),
+                propertyType = propertyType ?: "",
+                acres = acres ?: 0,
+                rooms = rooms ?: 0,
+                units = units ?: 0,
+                proximityToAttractions = proximityToAttractions ?: "",
+                occupancyRate = occupancyRate ?: "",
+                amenities = amenities ?: "",
+            )
+            val isUpdated = dao.updateTouristicProperty(id, leisureAndTouristicProperty,videoURL = videoURLs,imageURL = imageURLs)
+            if (isUpdated) {
+                call.respond(HttpStatusCode.OK, BasicApiResponse(true, "Property updated successfully."))
+            } else {
+                call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
             }
         } else {
             call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
