@@ -20,7 +20,6 @@ object DatabaseFactory {
             password = "mahmoud99"
         )
         transaction(database) {
-
             SchemaUtils.create(
                 AgriculturalProperties,
                 ResidentialProperties,
