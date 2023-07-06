@@ -28,11 +28,11 @@ fun Route.putResidentialProperty() {
         val multiPart = call.receiveMultipart()
         if (id != null) {
             var propertyType: String? = null
-            var squareFootage: Double? = null
+            var acres: Int? = null
             var bedrooms: Int? = null
             var bathrooms: Int? = null
             var amenities: String? = null
-            var parking: Boolean? = null
+            var parking: String? = null
             var location: String? = null
             var agentContact: String? = null
             var price: Int? = null
@@ -49,11 +49,11 @@ fun Route.putResidentialProperty() {
                             "agentContact" -> agentContact = part.value
                             "price" -> price = part.value.toIntOrNull()
                             "propertyType" -> propertyType = part.value
-                            "squareFootage" -> squareFootage = part.value.toDoubleOrNull()
+                            "squareFootage" -> acres = part.value.toIntOrNull()
                             "bedrooms" -> bedrooms = part.value.toIntOrNull()
                             "bathrooms" -> bathrooms = part.value.toIntOrNull()
                             "amenities" -> amenities = part.value
-                            "parking" -> parking = part.value.toBoolean()
+                            "parking" -> parking = part.value
                             "location" -> location = part.value
                         }
                     }
@@ -117,11 +117,11 @@ fun Route.putResidentialProperty() {
                                 location = location ?: "",
                             ),
                             propertyType = propertyType ?: "",
-                            squareFootage = squareFootage ?: 0.0,
+                            acres = acres ?: 0,
                             bedrooms = bedrooms ?: 0,
                             bathrooms = bathrooms ?: 0,
                             amenities = amenities ?: "",
-                            parking = parking ?: false,
+                            parking = parking ?: "",
                         )
                         val isUpdated = dao.updateResidentialProperty(id, residentialProperty,videoURL = videoURLs,imageURL = imageURLs)
                         if (isUpdated) {

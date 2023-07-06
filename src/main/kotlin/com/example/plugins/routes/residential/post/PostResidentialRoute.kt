@@ -23,14 +23,14 @@ import org.litote.kmongo.util.idValue
 import java.io.FileInputStream
 
 fun Route.postResidentialProperty() {
-    post {
+    post("/Add") {
         val multiPart = call.receiveMultipart()
         var propertyType: String? = null
-        var squareFootage: Double? = null
+        var acres: Int? = null
         var bedrooms: Int? = null
         var bathrooms: Int? = null
         var amenities: String? = null
-        var parking: Boolean? = null
+        var parking: String? = null
         var location: String? = null
         var agentContact: String? = null
         var price: Int? = null
@@ -45,15 +45,42 @@ fun Route.postResidentialProperty() {
                         call.respond(HttpStatusCode.OK, BasicApiResponse(false, "${part.name} can't be empty"))
                     }
                     when (part.name) {
-                        "agentContact" -> agentContact = part.value
-                        "price" -> price = part.value.toIntOrNull()
-                        "propertyType" -> propertyType = part.value
-                        "squareFootage" -> squareFootage = part.value.toDoubleOrNull()
-                        "bedrooms" -> bedrooms = part.value.toIntOrNull()
-                        "bathrooms" -> bathrooms = part.value.toIntOrNull()
-                        "amenities" -> amenities = part.value
-                        "parking" -> parking = part.value.toBoolean()
-                        "location" -> location = part.value
+                        "agentContact" ->  {
+                            agentContact = part.value
+                            println("Received agentContact: $agentContact")
+                        }
+                        "price" -> {
+                            price = part.value.toIntOrNull()
+                            println("Received price: $price")
+                        }
+                        "propertyType" -> {
+                            propertyType = part.value
+                            println("Received propertyType: $propertyType")
+                        }
+                        "acres" -> {
+                            acres = part.value.toIntOrNull()
+                            println("Received acres: $acres")
+                        }
+                        "bedrooms" -> {
+                            bedrooms = part.value.toIntOrNull()
+                            println("Received bedrooms: $bedrooms")
+                        }
+                        "bathrooms" -> {
+                            bathrooms = part.value.toIntOrNull()
+                            println("Received bathrooms: $bathrooms")
+                        }
+                        "amenities" -> {
+                            amenities = part.value
+                            println("Received amenities: $amenities")
+                        }
+                        "parking" ->{
+                            parking = part.value
+                            println("Received parking: $parking")
+                        }
+                        "location" ->  {
+                            location = part.value
+                            println("Received location: $location")
+                        }
                     }
                 }
                 is PartData.FileItem -> {
@@ -115,14 +142,14 @@ fun Route.postResidentialProperty() {
                 location = location ?: "",
             ),
             propertyType = propertyType ?: "",
-            squareFootage = squareFootage ?: 0.0,
+            acres = acres ?: 0,
             bedrooms = bedrooms ?: 0,
             bathrooms = bathrooms ?: 0,
             amenities = amenities ?: "",
-            parking = parking ?: false,
+            parking = parking ?: "",
         )
 
-        dao.addResidentialProperty(residentialProperty, imageURL = videoURLs, videoURL = imageURLs)
+        dao.addResidentialProperty(residentialProperty, imageURL = imageURLs, videoURL = videoURLs)
         call.respond(
             HttpStatusCode.OK,
             BasicApiResponse(true, "New Residential Property Added Successfully ${Videos.idValue}.")

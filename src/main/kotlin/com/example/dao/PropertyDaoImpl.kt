@@ -37,7 +37,7 @@ class PropertyDaoImpl : PropertyDao {
                 location = row[Properties.location],
             ),
             propertyType = row[ResidentialProperties.propertyType],
-            squareFootage = row[ResidentialProperties.squareFootage],
+            acres = row[ResidentialProperties.acres],
             bedrooms = row[ResidentialProperties.bedrooms],
             bathrooms = row[ResidentialProperties.bathrooms],
             amenities = row[ResidentialProperties.amenities],
@@ -57,7 +57,7 @@ class PropertyDaoImpl : PropertyDao {
         ResidentialProperties.insert {
             it[id] = idProperty
             it[propertyType] = residentialProperty.propertyType
-            it[squareFootage] = residentialProperty.squareFootage
+            it[acres] = residentialProperty.acres
             it[bedrooms] = residentialProperty.bedrooms
             it[bathrooms] = residentialProperty.bathrooms
             it[amenities] = residentialProperty.amenities
@@ -94,7 +94,7 @@ class PropertyDaoImpl : PropertyDao {
         }
         val updateResidential = ResidentialProperties.update({ ResidentialProperties.id eq id }) {
             it[propertyType] = updatedProperty.propertyType
-            it[squareFootage] = updatedProperty.squareFootage
+            it[acres] = updatedProperty.acres
             it[bedrooms] = updatedProperty.bedrooms
             it[bathrooms] = updatedProperty.bathrooms
             it[amenities] = updatedProperty.amenities

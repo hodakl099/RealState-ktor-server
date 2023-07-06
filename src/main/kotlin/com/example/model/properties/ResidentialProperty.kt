@@ -12,19 +12,19 @@ import org.jetbrains.exposed.sql.Table
 data class ResidentialProperty(
     val property: Property,
     val propertyType: String,
-    val squareFootage: Double,
+    val acres: Int,
     val bedrooms: Int,
     val bathrooms: Int,
     val amenities: String,
-    val parking: Boolean,
+    val parking: String,
 )
 
 object ResidentialProperties : Table() {
     val id = integer("property_id").references(Properties.id)
     val propertyType = varchar("property_type", 256)
-    val squareFootage = double("square_footage")
+    val acres = integer("acres")
     val bedrooms = integer("bedrooms")
     val bathrooms = integer("bathrooms")
     val amenities = varchar("amenities", 256)
-    val parking = bool("parking")
+    val parking = varchar("parking",265)
 }
