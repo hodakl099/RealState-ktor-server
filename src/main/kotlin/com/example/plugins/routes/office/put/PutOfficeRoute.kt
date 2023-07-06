@@ -44,15 +44,15 @@ fun Route.putOfficeProperty() {
                             call.respond(HttpStatusCode.OK, BasicApiResponse(false, "${part.name} can't be empty"))
                         }
                         when (part.name) {
+                            "agentContact" -> agentContact = part.value
+                            "price" -> price = part.value.toIntOrNull()
+                            "location" -> location = part.value
+                            "acres" -> acres = part.value.toInt()
                             "layoutType" -> layoutType = part.value
-                            "squareFoot" -> acres = part.value.toIntOrNull()
                             "floorNumber" -> floorNumber = part.value.toIntOrNull()
                             "amenities" -> amenities = part.value
                             "propertyType" -> propertyType = part.value
                             "accessibility" -> accessibility = part.value
-                            "location" -> location = part.value
-                            "agentContact" -> agentContact = part.value
-                            "price" -> price = part.value.toIntOrNull()
                         }
                     }
 

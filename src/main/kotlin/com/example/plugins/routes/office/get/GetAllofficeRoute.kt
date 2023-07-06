@@ -8,7 +8,7 @@ import io.ktor.server.routing.*
 
 fun Route.getAllOfficeProperty() {
     get("properties") {
-        val properties = dao.getAllIndustrialProperties()
+        val properties = dao.getAllOfficeProperties()
         if (properties.isNotEmpty()) {
             call.respond(HttpStatusCode.OK, properties)
         } else {

@@ -21,7 +21,7 @@ import kotlinx.coroutines.withContext
 import java.io.FileInputStream
 
 fun Route.postOfficeProperty() {
-    post {
+    post("/Add") {
         val multiPart = call.receiveMultipart()
         var layoutType: String? = null
         var acres: Int? = null
@@ -118,7 +118,7 @@ fun Route.postOfficeProperty() {
             propertyType = propertyType ?: "",
         )
 
-        dao.addOfficeProperty(officeProperty, imageURL = videoURLs, videoURL = imageURLs)
+        dao.addOfficeProperty(officeProperty, imageURL = imageURLs, videoURL = videoURLs)
         call.respond(HttpStatusCode.OK, BasicApiResponse(true, "New Office Property Added Successfully."))
     }
 }
