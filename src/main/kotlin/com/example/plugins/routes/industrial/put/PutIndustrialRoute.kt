@@ -47,7 +47,7 @@ fun Route.putIndustrialProperty() {
                         }
                         when (part.name) {
                             "propertyType" -> propertyType = part.value
-                            "squareFoot" -> acres = part.value.toIntOrNull()
+                            "acres" -> acres = part.value.toIntOrNull()
                             "zoningInfo" -> zoningInfo = part.value
                             "cellingHeight" -> cellingHeight = part.value.toIntOrNull()
                             "numberOfLoadingDocks" -> numberOfLoadingDocks = part.value.toIntOrNull()
@@ -95,50 +95,50 @@ fun Route.putIndustrialProperty() {
                                 return@forEachPart
                             }
                         }
-                        val industrialProperty = IndustrialProperty(
-                            property = Property(
-                                id = 0, // This value will be replaced by autoincrement id
-                                agentContact = agentContact ?: "",
-                                price = price ?: 0,
-                                images = imageURLs.map {
-                                    Image(
-                                        url = it.first,
-                                        propertyId = 0,
-                                        imageId = 0,
-                                        objectName = it.second
-                                    )
-                                },
-                                videos = videoURLs.map {
-                                    Video(
-                                        url = it.first,
-                                        propertyId = 0,
-                                        videoId = 0,
-                                        objectName = it.second
-                                    )
-                                },
-                                location = location ?: "",
-                            ),
-                            propertyType = propertyType ?: "",
-                            acres = acres ?: 0,
-                            zoningInfo = zoningInfo ?: "",
-                            cellingHeight = cellingHeight ?: 0,
-                            numberOfLoadingDocks = numberOfLoadingDocks ?: 0,
-                            powerCapabilities = powerCapabilities ?: "",
-                            accessToTransportation = accessToTransportation ?: "",
-                            environmentalReports = environmentalReports ?: ""
-                        )
-                        val isUpdated = dao.updateIndustrialProperty(id, industrialProperty,videoURL = videoURLs,imageURL = imageURLs)
-                        if (isUpdated) {
-                            call.respond(HttpStatusCode.OK, BasicApiResponse(true, "Property updated successfully."))
-                        } else {
-                            call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
-                        }
 
                     }
 
                     else -> return@forEachPart
                 }
                 part.dispose()
+            }
+            val industrialProperty = IndustrialProperty(
+                property = Property(
+                    id = 0, // This value will be replaced by autoincrement id
+                    agentContact = agentContact ?: "",
+                    price = price ?: 0,
+                    images = imageURLs.map {
+                        Image(
+                            url = it.first,
+                            propertyId = 0,
+                            imageId = 0,
+                            objectName = it.second
+                        )
+                    },
+                    videos = videoURLs.map {
+                        Video(
+                            url = it.first,
+                            propertyId = 0,
+                            videoId = 0,
+                            objectName = it.second
+                        )
+                    },
+                    location = location ?: "",
+                ),
+                propertyType = propertyType ?: "",
+                acres = acres ?: 0,
+                zoningInfo = zoningInfo ?: "",
+                cellingHeight = cellingHeight ?: 0,
+                numberOfLoadingDocks = numberOfLoadingDocks ?: 0,
+                powerCapabilities = powerCapabilities ?: "",
+                accessToTransportation = accessToTransportation ?: "",
+                environmentalReports = environmentalReports ?: ""
+            )
+            val isUpdated = dao.updateIndustrialProperty(id, industrialProperty,videoURL = videoURLs,imageURL = imageURLs)
+            if (isUpdated) {
+                call.respond(HttpStatusCode.OK, BasicApiResponse(true, "Property updated successfully."))
+            } else {
+                call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")
             }
         } else {
             call.respond(HttpStatusCode.BadRequest, "Invalid or missing ID.")

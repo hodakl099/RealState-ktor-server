@@ -16,7 +16,7 @@ fun main(args: Array<String>): Unit =
 fun Application.module() {
     DatabaseFactory.init()
     runBlocking {
-        val allRealStates = dao.getAllCommercialProperties()
+        val allRealStates = dao.getAllIndustrialProperties()
         println("The  real estate" + allRealStates + "!!!!")
     }
     install(CORS) {

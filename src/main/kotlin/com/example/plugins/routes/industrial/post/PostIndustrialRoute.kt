@@ -21,7 +21,7 @@ import kotlinx.coroutines.withContext
 import java.io.FileInputStream
 
 fun Route.postIndustrialProperty() {
-    post {
+    post("/Add") {
         val multiPart = call.receiveMultipart()
         var propertyType: String? = null
         var acres: Int? = null
@@ -126,7 +126,7 @@ fun Route.postIndustrialProperty() {
             environmentalReports = environmentalReports ?: ""
         )
 
-        dao.addIndustrialProperty(industrialProperty, imageURL = videoURLs, videoURL = imageURLs)
+        dao.addIndustrialProperty(industrialProperty, imageURL = imageURLs, videoURL = videoURLs)
         call.respond(HttpStatusCode.OK, BasicApiResponse(true, "New Industrial Property Added Successfully."))
     }
 }
